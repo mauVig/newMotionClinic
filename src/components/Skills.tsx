@@ -75,7 +75,7 @@ const Skills: React.FC = () => {
   return (
     <section className="bg-backBlack text-[#666666] px-6 pb-36 relative z-10" id='skills'>
       <div className='max-w-screen-2xl mx-auto'>
-        <h2 ref={h2Ref} className='text-4xl mid:text-6xl xsm:text-7xl mb-32 pt-4 text-violet font-bold fade-element'>{ myLang ? 'Skills':'Tratamientos' }</h2>
+        <h2 ref={h2Ref} className='text-4xl mid:text-6xl xsm:text-7xl mb-32 pt-32 text-violet font-bold fade-element -ml-1'>{ myLang ? 'Skills':'Tratamientos' }</h2>
         {skillsData.map((skill:Skill, i) => (
           <div
             className={`mt-8 hover:cursor-pointer pt-8 group ${
@@ -152,8 +152,8 @@ const Skills: React.FC = () => {
                 ${viewStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title] ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}
               `}
             >
-              <div className="mt-4 w-full flex flex-col xl:flex-row justify-start gap-4">
-                <img src={skill.img} className='xl:w-1/3 w-full object-contain max-h-96' alt={myLang ? skill.description.en : skill.description.es} />
+              <div className="mt-4 w-full flex flex-col xl:flex-row justify-start  gap-4">
+                <img src={skill.img} className='xl:w-1/3 w-full object-contain max-h-96 xl:max-h-fit' alt={myLang ? skill.description.en : skill.description.es} />
                 <div className='flex items-center xl:w-1/2 w-full'>
                   <p
                     className="leading-6 md:leading-8 text-sm mid:text-xl xl:pl-8 w-full mt-4 mb-8"
