@@ -1,0 +1,12 @@
+---
+import ContactForm from "@/components/Contact";
+import Footer from "@/components/Footer";
+import NavBar from "@/components/NavBar";
+import Layout from "@/layouts/Layout.astro";
+
+---
+<Layout>
+	<NavBar client:only tab="contact"/>
+    <ContactForm client:only/>
+	<Footer client:only contacto="yes"/>
+</Layout>
