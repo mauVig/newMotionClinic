@@ -14,6 +14,15 @@
 
       gtag('config', analyticsId);
     </script>
+<script type="module">
+  import { initLenis } from "/src/animations/lenis.js";
+  import { initScrollAnimations } from "/src/animations/scroll.js";
+  
+  const lenis = initLenis();
+  initScrollAnimations(lenis);
+</script>
+
+
     <meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width' />
     <meta name='generator' content={Astro.generator} />
@@ -31,33 +40,5 @@
   <body>
     <slot />
   </body>
-  <script>
-    import Lenis from "lenis";
-
-    // Initialize Lenis with smoother configuration
-    const lenis = new Lenis({
-      autoRaf: true,
-      duration: 40,
-      easing: (t) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t),
-    });
-
-    // Optional: Listen for the scroll event
-    lenis.on('scroll', (e) => {
-      // console.log(e); // Descomenta si necesitas debug
-    });
-
-    // Function to stop/start lenis
-    function lenis_stop() {
-      lenis.stop();
-    }
-
-    function lenis_start() {
-      lenis.start();
-    }
-
-    // Make lenis globally available for other components
-    (window as any).lenis = lenis;
-    (window as any).lenis_stop = lenis_stop;
-    (window as any).lenis_start = lenis_start;
-  </script>
+ 
 </html>

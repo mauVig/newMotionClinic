@@ -2,6 +2,9 @@
 import Welcome from '@/components/Welcome.tsx';
 import Layout from '@/layouts/Layout.astro';
 import Biography from '@/components/Biography';
+import ShinySection from '@/components/objetiveText/ShinySection.tsx';
+import DoItAgainSection from '@/components/objetiveText/DoItAgainSection.tsx';
+
 import Skills from '@/components/Skills.tsx';
 import TestifyWrapp from '@/components/testify/TestifyWrapp.astro';
 import TestifyVideos from '@/components/testify/TestifyVideos.tsx';
@@ -19,7 +22,10 @@ import Gallery2 from '@/components/gallery/Gallery2';
 <Layout>
 	<NavBar client:only tab="home"/>
 	<Welcome client:only/>
-	<WrapChangeBack client:only/>
+	
+	<ShinySection client:only />
+	<DoItAgainSection client:only />
+
 	<Biography client:only/>
 	<Gallery client:only />
 	<Gallery2 client:only />
