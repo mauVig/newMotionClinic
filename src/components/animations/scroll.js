@@ -19,7 +19,6 @@ export function initScrollAnimations(lenis) {
     }
   });
 
-  // ✅ Text Reveal
   const split = new SplitType(".reveal", { types: "lines, words" });
 
   gsap.from(split.words, {
