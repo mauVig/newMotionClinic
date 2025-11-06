@@ -24,50 +24,82 @@ export const Welcome = () => {
   // --- Esperar a que termine el loader y la imagen esté lista
   useEffect(() => {
     if (!loading && imageLoaded) {
-      // ✨ Mostrar el contenido ya oculto (sin flash)
       setShowContent(true);
     }
   }, [loading, imageLoaded]);
 
-  // --- Animación GSAP de entrada
-  useEffect(() => {
-    if (showContent && sectionRef.current) {
-      const el = sectionRef.current;
-      const h2 = el.querySelector("h2");
-      const p = el.querySelector("p");
-      const a = el.querySelector("a");
+useEffect(() => {
+  if (showContent && sectionRef.current) {
+    const el = sectionRef.current;
+    const lines = el.querySelectorAll(".line-wrapper span");
+    const button = el.querySelector("a");
 
-      // Aseguramos que empiece oculto
-      gsap.set([h2, p, a], { opacity: 0, y: 60, filter: "blur(8px)" });
+    gsap.set(lines, { xPercent: -120, opacity: 1 });
+    gsap.set(button, { xPercent: -80, opacity: 1 });
 
-      // Animación secuencial
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: 0.1 });
+    const tl = gsap.timeline({
+      defaults: { ease: "power3.out", duration: 1.1 },
+      delay: 0.3,
+    });
 
-      tl.to(h2, {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        duration: 1.1,
-        ease: "power4.out",
-      })
-        .to(
-          p,
-          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9 },
-          "-=0.7"
-        )
-        .to(
-          a,
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            filter: "blur(0px)",
-            duration: 0.7,
-          },
-          "-=0.5"
-        );
-    }
-  }, [showContent]);
+    tl.to(lines, {
+      xPercent: 0,
+      stagger: 0.15,
+    }).to(
+      button,
+      {
+        xPercent: 0,
+        duration: 0.9,
+        ease: "power2.out",
+      },
+      "-=0.3"
+    );
+  }
+}, [showContent]);
+
+
+// --- 🌀 Efecto Parallax por Mouse (lerp real y ambos ejes)
+useEffect(() => {
+  if (!showContent) return;
+
+  const bg = document.querySelector(`.${st.back}`);
+  if (!bg) return console.warn("❌ No se encontró el fondo .back");
+
+  console.log("✅ Parallax real activado en:", bg);
+  bg.style.backgroundPosition = "50% 50%";
+
+  // valores objetivo
+  let targetX = 50;
+  let targetY = 50;
+  let currentX = 50;
+  let currentY = 50;
+
+  const handleMove = (e) => {
+    const { innerWidth, innerHeight } = window;
+    const xNorm = (e.clientX / innerWidth - 0.5) * 2; // -1 a 1
+    const yNorm = (e.clientY / innerHeight - 0.5) * 2; // -1 a 1
+
+    // movimiento sutil e invertido vertical
+    targetX = 50 + xNorm * 2.5; // ±2.5%
+    targetY = 50 - yNorm * 2.5; // invertido
+  };
+
+  // suavizado manual tipo lerp (interpolación progresiva)
+  const update = () => {
+    currentX += (targetX - currentX) * 0.05; // factor 0.05 = muy suave
+    currentY += (targetY - currentY) * 0.05;
+    bg.style.backgroundPosition = `${currentX}% ${currentY}%`;
+  };
+
+  gsap.ticker.add(update);
+  window.addEventListener("mousemove", handleMove);
+
+  return () => {
+    window.removeEventListener("mousemove", handleMove);
+    gsap.ticker.remove(update);
+  };
+}, [showContent]);
+
 
   return (
     <ParallaxProvider>
@@ -79,28 +111,37 @@ export const Welcome = () => {
               ref={sectionRef}
               className="absolute bottom-[30%] sm:bottom-[27%] md:bottom-[26%] lg:bottom-[25%] xl:bottom-[20%]"
             >
-              <h2
-                className="text-7xl mid:text-[5.5rem] sm:text-[7rem] md:text-[8rem] lg:text-[10rem] font-bold w-32"
-                style={{ lineHeight: ".8" }}
-              >
-                The perfect surgery
-              </h2>
+         <h2
+  className="text-7xl mid:text-[5.5rem] sm:text-[7rem] md:text-[8rem] lg:text-[10rem] font-bold w-fit"
+  style={{ lineHeight: ".9" }}
+>
+  <div className="line-wrapper overflow-hidden">
+    <span className="inline-block">The</span>
+  </div>
+  <div className="line-wrapper overflow-hidden">
+    <span className="inline-block">Perfect</span>
+  </div>
+  <div className="line-wrapper overflow-hidden">
+    <span className="inline-block">Surgery</span>
+  </div>
+</h2>
 
-              <p className="text-[.8rem] mid:text-[.9rem] sm:text-[1.1rem] md:text-[1.4rem] lg:text-[1.8rem] mt-6 lg:mt-8 mb-8">
-                {myLang ? (
-                  <>
-                    A masterpiece of modern hip and
-                    <br />
-                    knee surgery.
-                  </>
-                ) : (
-                  <>
-                    Primer Centro Integral de Cirugía Robótica
-                    <br />
-                    en Cadera y Rodilla de Argentina.
-                  </>
-                )}
-              </p>
+<p className="text-[.8rem] mid:text-[.9rem] sm:text-[1.1rem] md:text-[1.4rem] lg:text-[1.8rem] mt-6 lg:mt-8 mb-8 w-fit">
+  <div className="line-wrapper overflow-hidden">
+    <span className="inline-block">
+      {myLang
+        ? "A masterpiece of modern hip and"
+        : "Primer Centro Integral de Cirugía Robótica"}
+    </span>
+  </div>
+  <div className="line-wrapper overflow-hidden">
+    <span className="inline-block">
+      {myLang
+        ? "knee surgery."
+        : "en Cadera y Rodilla de Argentina."}
+    </span>
+  </div>
+</p>
 
               <a
                 href="/contacto"

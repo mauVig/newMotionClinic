@@ -1,6 +1,8 @@
 .back{
-    background: url('/img/welcome-cell.webp') no-repeat center center;
-    background-size: cover;
+   background-image: url("/img/welcome.webp");
+  background-size: cover;
+  background-position: center;
+  position: relative;
 }
 @media( width > 768px){
     .back{
@@ -13,4 +15,17 @@
   opacity: 0;
   transform: translateY(60px);
   filter: blur(8px);
+}
+
+
+.line-wrapper {
+  overflow: hidden;
+  display: block;
+  line-height: 1.1;
+  padding-bottom: 0.1em; /* Evita cortes en el borde inferior */
+}
+
+.line-wrapper span {
+  display: inline-block;
+  will-change: transform;
 }
