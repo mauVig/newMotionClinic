@@ -105,36 +105,38 @@ useEffect(() => {
     <ParallaxProvider>
       <Parallax translateY={[-CSSEffect, CSSEffect]} className={st.back}>
         <div className="min-h-screen max-w-screen-2xl mx-auto w-full relative px-6 text-grey overflow-hidden">
-          {/* Mostrar texto solo cuando está todo listo */}
+
           {showContent && (
             <div
               ref={sectionRef}
               className="absolute bottom-[30%] sm:bottom-[27%] md:bottom-[26%] lg:bottom-[25%] xl:bottom-[20%]"
             >
-         <h2
-  className="text-7xl mid:text-[5.5rem] sm:text-[7rem] md:text-[8rem] lg:text-[10rem] font-bold w-fit"
-  style={{ lineHeight: ".9" }}
+       <h2
+  className="text-7xl mid:text-[5.5rem] sm:text-[7rem] md:text-[8rem] lg:text-[10rem] font-bold w-fit leading-[1.05]" // ⬅ más altura entre líneas
 >
-  <div className="line-wrapper overflow-hidden">
-    <span className="inline-block">The</span>
-  </div>
-  <div className="line-wrapper overflow-hidden">
-    <span className="inline-block">Perfect</span>
-  </div>
-  <div className="line-wrapper overflow-hidden">
-    <span className="inline-block">Surgery</span>
-  </div>
+  {["The", "Perfect", "Surgery"].map((word, i) => (
+    <div
+      key={i}
+      className="line-wrapper overflow-hidden"
+      style={{
+        display: "block",
+        padding: "0.25em 0", // ⬅ le da más espacio vertical
+      }}
+    >
+      <span className="inline-block">{word}</span>
+    </div>
+  ))}
 </h2>
 
-<p className="text-[.8rem] mid:text-[.9rem] sm:text-[1.1rem] md:text-[1.4rem] lg:text-[1.8rem] mt-6 lg:mt-8 mb-8 w-fit">
-  <div className="line-wrapper overflow-hidden">
+<p className="text-[.8rem] mid:text-[.9rem] sm:text-[1.1rem] md:text-[1.4rem] lg:text-[1.8rem] mt-6 lg:mt-8 mb-8 w-fit leading-[1.4]">
+  <div className="line-wrapper overflow-hidden" style={{ padding: "0.2em 0" }}>
     <span className="inline-block">
       {myLang
         ? "A masterpiece of modern hip and"
         : "Primer Centro Integral de Cirugía Robótica"}
     </span>
   </div>
-  <div className="line-wrapper overflow-hidden">
+  <div className="line-wrapper overflow-hidden" style={{ padding: "0.2em 0" }}>
     <span className="inline-block">
       {myLang
         ? "knee surgery."
@@ -142,6 +144,7 @@ useEffect(() => {
     </span>
   </div>
 </p>
+
 
               <a
                 href="/contacto"
