@@ -1,47 +1,77 @@
+import { useEffect, useRef, useState } from "react";
 import { MutatingDots } from "react-loader-spinner";
 import { useStore } from "@/store/storeGlobal.ts";
-import { useEffect, useState, useRef } from "react";
+import gsap from "gsap";
 
 export const Loading = () => {
-    const { loading, changeLoading } = useStore();
-    const [isVisible, setIsVisible] = useState(true);
-    const timeoutRef = useRef<number | null>(null);
+  const { loading, changeLoading } = useStore();
+  const [isVisible, setIsVisible] = useState(true);
+  const curtainRef = useRef(null);
+  const logoRef = useRef(null);
 
-    useEffect(() => {
-        if (loading) {
-            timeoutRef.current = setTimeout(() => {
-                setIsVisible(false);
-                changeLoading();
-            }, 2000);
-        }
+  useEffect(() => {
+    if (loading) {
+      // 🕐 Espera 2 segundos y arranca animación de salida
+      const timeout = setTimeout(() => {
+        const tl = gsap.timeline({
+          defaults: { ease: "power4.inOut" },
+          onComplete: () => {
+            setIsVisible(false);
+            changeLoading();
+          },
+        });
 
-        return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-        };
-    }, [loading]);
+        // Logo se eleva y desvanece
+        tl.to(logoRef.current, {
+          y: -80,
+          opacity: 0,
+          scale: 0.95,
+          duration: 0.8,
+        });
 
-    return (
-        <div
-            className={`fixed top-0 left-0 w-full h-full bg-backBlack z-[70] flex flex-col justify-center items-center transition-all duration-500 delay-300 ${
-                isVisible ? "opacity-100 visible" : "opacity-0 invisible"
-            }`}
-        >
-            <img src="/svg/logo.svg" alt="Logo de Motion clinic" className={`h-7 xs:h-10 mid:h-14 lx:h-20 transition-all duration-1000 ${
-                isVisible ? "sm:translate-y-0" : "sm:-translate-y-[26rem] sm:opacity-0 sm:scale-50 "
-            }`} />
-            <MutatingDots
-                visible={true}
-                height="100"
-                width="100"
-                color="#5b5bc4"
-                secondaryColor="#5b5bc4"
-                radius="14.5"
-                ariaLabel="mutating-dots-loading"
-            />
-        </div>
-    );
+        // Telón negro se levanta de abajo hacia arriba
+        tl.to(
+          curtainRef.current,
+          {
+            y: "-100%",
+            duration: 1.6,
+            ease: "power4.inOut",
+          },
+          "-=0.4"
+        );
+      }, 2000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [loading]);
+
+  // Si ya se ocultó, no renderiza nada
+  if (!isVisible) return null;
+
+  return (
+    <div
+      ref={curtainRef}
+      className="fixed top-0 left-0 w-full h-full bg-backBlack z-[9999] flex flex-col justify-center items-center overflow-hidden"
+    >
+      {/* Logo y dots, centrados */}
+      <div ref={logoRef} className="flex flex-col items-center gap-6">
+        <img
+          src="/svg/logo.svg"
+          alt="Logo de Motion Clinic"
+          className="h-7 xs:h-10 mid:h-14 lx:h-20"
+        />
+        <MutatingDots
+          visible={true}
+          height="100"
+          width="100"
+          color="#5b5bc4"
+          secondaryColor="#5b5bc4"
+          radius="14.5"
+          ariaLabel="mutating-dots-loading"
+        />
+      </div>
+    </div>
+  );
 };
 
 export default Loading;

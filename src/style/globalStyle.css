@@ -57,3 +57,8 @@ html{
   height: 12px;
 }
 
+.hero-content {
+  opacity: 0;
+  transform: translateY(60px);
+  filter: blur(8px);
+}
