@@ -120,7 +120,7 @@ useEffect(() => {
       className="line-wrapper overflow-hidden"
       style={{
         display: "block",
-        padding: "0.25em 0", // ⬅ le da más espacio vertical
+       //  padding: "0.25em 0", ⬅ le da más espacio vertical
       }}
     >
       <span className="inline-block">{word}</span>
