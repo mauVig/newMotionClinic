@@ -64,7 +64,7 @@ const CircleVideo: React.FC = () => {
         style={{ willChange: "clip-path, transform" }}
       >
         <video
-          src="/public\video\AndresVideo.mp4"
+          src="/public\video\upscaled.video.mp4"
           autoPlay
           muted
           loop

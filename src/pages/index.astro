@@ -1,7 +1,8 @@
 ---
-import Welcome from '@/components/Welcome.tsx';
+import Welcome from '@/components/Welcome/Welcome.tsx';
 import Layout from '@/layouts/Layout.astro';
-import Biography from '@/components/Biography';
+import Biography from '@/components/Biography/Biography.tsx';
+import Objective from '@/components/Objective/Objective.tsx';
 import Skills from '@/components/Skills.tsx';
 import TestifyWrapp from '@/components/testify/TestifyWrapp.astro';
 import TestifyVideos from '@/components/testify/TestifyVideos.tsx';
@@ -11,17 +12,20 @@ import Gallery from '@/components/gallery/Gallery';
 import NavBar from '@/components/NavBar.tsx';
 import Loading from '@/components/Loading.tsx';
 import Whatsapp from '@/components/Whatsapp';
+import MagneticCursor from "@/components/MagneticCursor.tsx";
 import Gallery2 from '@/components/gallery/Gallery2';
 
 ---
 
 <Loading client:only/>
 <Layout>
+<MagneticCursor client:only="react" />
 	<NavBar client:only tab="home"/>
 	<Welcome client:only/>
+	<Objective/>
 	<WrapChangeBack client:only/>
 	<Biography client:only/>
-	//<Gallery client:only />
+	<Gallery client:only />
 	<Gallery2 client:only />
 	<Skills client:only/>
 	<TestifyVideos client:only />
