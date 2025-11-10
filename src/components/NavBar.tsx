@@ -110,7 +110,7 @@ export const NavBar: FC<NavBarProps> = ({ tab }) => {
               <a
                 href="/contacto"
                 onClick={lestsTalk}
-                className={`transition-all duration-1000 
+                className={`transition-all duration-1000 magnetic
                   ${
                     !isMenuOpen
                       ? "hover:bg-grey hover:text-violet"

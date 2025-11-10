@@ -113,7 +113,7 @@ const Biography: React.FC = () => {
 
           <div>
             <main>
-              {/* 🔥 Nuevo stack con scroll */}
+
               <div className="mt-8">
                 <ProcessCards />
               </div>

@@ -1,104 +1,146 @@
+"use client";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-// import style from "../style/globalStyle.css";
+
 export default function MagneticCursor() {
-  const cursorRef = useRef<HTMLDivElement | null>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const followerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const cursor = cursorRef.current;
-    if (!cursor) return;
+    const follower = followerRef.current;
+    if (!cursor || !follower) return;
 
-    // configuración base del cursor
+    // Cursor base
     gsap.set(cursor, {
-      width: 14,
-      height: 14,
-      xPercent: -200,
-      yPercent: -200,
+      width: 8,
+      height: 8,
+      xPercent: -50,
+      yPercent: -50,
       position: "fixed",
-      pointerEvents: "none",
-      border: "1px solid white",
+      background: "white",
       borderRadius: "50%",
-      mixBlendMode: "difference",
+      pointerEvents: "none",
       zIndex: 99999,
+      mixBlendMode: "difference",
     });
 
-    // seguir el mouse suavemente
-    window.addEventListener("mousemove", (e) => {
-      gsap.to(cursor, {
-        duration: 5.2,
-        x: e.clientX,
-        y: e.clientY,
-        ease: "power3.out",
-      });
+    // Halo violeta translúcido
+    gsap.set(follower, {
+      width: 36,
+      height: 36,
+      xPercent: -50,
+      yPercent: -50,
+      position: "fixed",
+      background: "rgba(168, 85, 247, 0.25)",
+      borderRadius: "50%",
+      pointerEvents: "none",
+      zIndex: 99998,
+      mixBlendMode: "difference",
+      scale: 1,
     });
 
-    const targets = document.querySelectorAll(".magnetic");
+    const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    const mouse = { x: pos.x, y: pos.y };
+    const speed = 0.25;
+
+    const xSet = gsap.quickSetter(cursor, "x", "px");
+    const ySet = gsap.quickSetter(cursor, "y", "px");
+    const fxSet = gsap.quickSetter(follower, "x", "px");
+    const fySet = gsap.quickSetter(follower, "y", "px");
 
     const moveHandler = (e: MouseEvent) => {
-      const cursorPos = { x: e.clientX, y: e.clientY };
+      mouse.x = e.x;
+      mouse.y = e.y;
+    };
 
-      targets.forEach((target) => {
-        const rect = target.getBoundingClientRect();
-        const targetCenter = {
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2,
-        };
-        const distance = {
-          x: targetCenter.x - cursorPos.x,
-          y: targetCenter.y - cursorPos.y,
-        };
-        const angle = Math.atan2(distance.x, distance.y);
-        const hypotenuse = Math.sqrt(distance.x ** 2 + distance.y ** 2);
+    gsap.ticker.add(() => {
+      pos.x += (mouse.x - pos.x) * speed;
+      pos.y += (mouse.y - pos.y) * speed;
+      xSet(mouse.x);
+      ySet(mouse.y);
+      fxSet(pos.x);
+      fySet(pos.y);
+    });
 
-        const triggerDistance = rect.width * 0.8; // radio de atracción
+    window.addEventListener("mousemove", moveHandler);
 
-        if (hypotenuse < triggerDistance) {
-          // dentro del campo magnético
-          gsap.to(cursor, {
-            duration: 0.25,
-            x: targetCenter.x - (Math.sin(angle) * hypotenuse) / 2,
-            y: targetCenter.y - (Math.cos(angle) * hypotenuse) / 2,
-            width: rect.width * 0.9,
-            height: rect.height * 0.9,
-            ease: "power2.out",
-          });
+    // --- Efectos magnéticos globales ---
+    const moveIn = (e: MouseEvent) => {
+      const el = e.currentTarget as HTMLElement;
+      const rect = el.getBoundingClientRect();
+      const relX = e.clientX - (rect.left + rect.width / 2);
+      const relY = e.clientY - (rect.top + rect.height / 2);
 
-          // mover sutilmente el contenido del target
-          const textEl = target.querySelector(".text");
-          if (textEl) {
-            gsap.to(textEl, {
-              duration: 0.25,
-              x: -((Math.sin(angle) * hypotenuse) / 3),
-              y: -((Math.cos(angle) * hypotenuse) / 3),
-              ease: "power2.out",
-            });
-          }
-        } else {
-          // fuera del rango
-          gsap.to(cursor, {
-            duration: 0.3,
-            x: cursorPos.x,
-            y: cursorPos.y,
-            width: 14,
-            height: 14,
-            ease: "power3.out",
-          });
-          const textEl = target.querySelector(".text");
-          if (textEl) {
-            gsap.to(textEl, {
-              duration: 0.3,
-              x: 0,
-              y: 0,
-              ease: "power3.out",
-            });
-          }
-        }
+      // movimiento leve del elemento
+      gsap.to(el, {
+        x: relX * 0.25,
+        y: relY * 0.25,
+        duration: 0.4,
+        ease: "power3.out",
+      });
+
+      // agrandar el halo
+      gsap.to(follower, {
+        scale: 2.2,
+        duration: 0.4,
+        ease: "power3.out",
       });
     };
 
-    document.addEventListener("mousemove", moveHandler);
-    return () => document.removeEventListener("mousemove", moveHandler);
+    const moveOut = (e: MouseEvent) => {
+      const el = e.currentTarget as HTMLElement;
+
+      gsap.to(el, {
+        x: 0,
+        y: 0,
+        duration: 0.6,
+        ease: "elastic.out(1, 0.4)",
+      });
+
+      gsap.to(follower, {
+        scale: 1,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    };
+
+    // --- Observador: detecta todos los .magnetic ---
+    const handleMagneticElements = () => {
+      const magneticItems = document.querySelectorAll(".magnetic");
+      magneticItems.forEach((item) => {
+        if ((item as any)._hasMagneticListener) return;
+        (item as any)._hasMagneticListener = true;
+        item.addEventListener("mousemove", moveIn);
+        item.addEventListener("mouseleave", moveOut);
+      });
+    };
+
+    // Llamar al cargar
+    handleMagneticElements();
+
+    // Delay leve para esperar hidratación de Astro/React
+setTimeout(() => {
+  const observer = new MutationObserver(() => handleMagneticElements());
+  observer.observe(document.body, { childList: true, subtree: true });
+}, 1500);
+
+
+    // Y observar el DOM
+    const observer = new MutationObserver(() => handleMagneticElements());
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      window.removeEventListener("mousemove", moveHandler);
+      observer.disconnect();
+      gsap.ticker.remove(() => {});
+    };
   }, []);
 
-  return <div ref={cursorRef} className="cursor" />;
+  return (
+    <>
+      <div ref={cursorRef}></div>
+      <div ref={followerRef}></div>
+    </>
+  );
 }

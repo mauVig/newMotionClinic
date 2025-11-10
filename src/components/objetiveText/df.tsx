@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { useStore } from "@/store/storeGlobal.ts"; // 👈 Agregala acá
 import ShinyText from "./ShinyText.tsx";
 
 const Objective = () => {
@@ -10,15 +9,17 @@ const Objective = () => {
     // 🚫 No ejecutar en SSR
     if (typeof window === "undefined") return;
 
-    // ✅ Importar dinámicamente GSAP y ScrollTrigger
-    (async () => {
-      const gsapModule = await import("gsap");
-      const ScrollTriggerModule = await import("gsap/ScrollTrigger");
-
+    // ✅ Cargar GSAP de forma dinámica compatible con SSR
+    Promise.all([
+      import("gsap"),
+      import("gsap/ScrollTrigger"),
+    ]).then(([gsapModule, ScrollTriggerModule]) => {
+      // Esto asegura compatibilidad con cualquier empaquetador
       const gsap = gsapModule.gsap || gsapModule.default || gsapModule;
       const ScrollTrigger =
         ScrollTriggerModule.ScrollTrigger || ScrollTriggerModule.default;
 
+      // Registrar plugin correctamente
       gsap.registerPlugin(ScrollTrigger);
 
       const section = sectionRef.current;
@@ -27,6 +28,7 @@ const Objective = () => {
 
       const chars = textEl.querySelectorAll(".char");
 
+      // Estado inicial
       gsap.set(chars, { yPercent: 100, opacity: 0, filter: "blur(8px)" });
 
       const tl = gsap.timeline({
@@ -38,6 +40,7 @@ const Objective = () => {
           pin: true,
           anticipatePin: 1,
           pinSpacing: true,
+          invalidateOnRefresh: true,
         },
         defaults: { ease: "power3.out" },
       });
@@ -57,30 +60,31 @@ const Objective = () => {
         ease: "power2.inOut",
         stagger: { each: 0.04 },
       });
-    })();
+    });
   }, []);
 
   return (
     <section
       ref={sectionRef}
       id="reveal-section"
-      className="relative min-h-[120vh] flex flex-col items-center justify-center text-grey px-4 overflow-hidden"
+      className="relative min-h-[100vh] flex flex-col items-center justify-center text-grey px-4 overflow-hidden"
     >
       <div className="flex flex-col items-center justify-center text-center space-y-24 sm:space-y-32 md:space-y-40">
         <div className="max-w-4xl mx-auto">
           <ShinyText disabled={false} speed={1.5} />
         </div>
 
-        <div
-          ref={textRef}
-          className="overflow-hidden leading-[0.9] font-bold italic text-purple text-6xl sm:text-7xl md:text-8xl lg:text-[9rem] reddit-sans-text"
-        >
-          {"DO IT AGAIN.".split("").map((char, i) => (
-            <span key={i} className="char inline-block">
-              {char === " " ? "\u00A0" : char}
-            </span>
-          ))}
-        </div>
+       <div
+  ref={textRef}
+  className="overflow-hidden leading-[0.9] font-bold italic text-purple text-6xl sm:text-7xl md:text-8xl lg:text-[9rem] reddit-sans-text"
+>
+  {"DO IT AGAIN.".split("").map((char, i) => (
+    <span key={i} className="char inline-block">
+      {char === " " ? "\u00A0" : char}
+    </span>
+  ))}
+</div>
+
       </div>
     </section>
   );

@@ -1,28 +1,23 @@
-// src/scripts/scroll.js
 import Lenis from "@studio-freight/lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export function initGlobalScroll() {
+  if (typeof window === "undefined") return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
   const lenis = new Lenis({
-    duration: 1.6,
-    lerp: 0.1,
-    smooth: true,
-    wheelMultiplier: 0.8,
+    duration: 1.2,
+    easing: (t) => 1 - Math.pow(1 - t, 2.5),
+    smoothWheel: true,
+    smoothTouch: false,
+    touchMultiplier: 1.5,
   });
 
-  function raf(time) {
-    lenis.raf(time);
-    ScrollTrigger.update(); // 👈 sincroniza en el mismo frame
-    requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
 
-  // ✅ cuando ScrollTrigger refresca, sincroniza también Lenis
-  ScrollTrigger.addEventListener("refresh", () => lenis.update());
-  ScrollTrigger.defaults({ anticipatePin: 1 }); // 👈 anticipa el pin suavemente
-
-  console.log("✨ Lenis + ScrollTrigger running globally");
+  window.lenis = lenis;
 }

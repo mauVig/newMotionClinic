@@ -2,8 +2,8 @@ import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Experience from "./Experience.tsx";
-import Objective from "../objetiveText/Objective.tsx";
-import CircleVideo from "../objetiveText/CircleVideo";
+
+import CircleVideo from "./CircleVideo.tsx";
 import { FaVolumeMute } from "react-icons/fa";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -66,9 +66,8 @@ const WrapChangeBack: React.FC = () => {
       {/* Top gradient fade (for smooth transition with previous section) */}
       <div className="absolute -top-[149px] left-0 right-0 h-[150px] bg-gradient-to-t from-[#131313] to-transparent -mb-1 pointer-events-none" />
 
-      <Objective />
       <Experience />
-      <CircleVideo />
+      {/* <CircleVideo /> */}
 
       <h1 className="font-bold text-center mt-28 text-[#1a1a1a] text-[clamp(1.2rem,3vw,2rem)] md:text-[clamp(3rem,8vw,4.5rem)]">
         DR ANDRES <br className="mid:hidden" /> ANANIA

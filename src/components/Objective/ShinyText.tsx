@@ -1,17 +1,17 @@
 import { useEffect, useRef, Fragment } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useStore } from "@/store/storeGlobal.ts";
 
+gsap.registerPlugin(ScrollTrigger);
 
-;
-
-export const ShinyText = ({ disabled = false, className = "" }) => {
+export const ShinyText = ({ className = "" }) => {
   const { myLang } = useStore();
   const sectionRef = useRef<HTMLDivElement>(null);
   const wordsRef = useRef<(HTMLSpanElement | null)[]>([]);
 
-  const START_COLOR = "#6e6e6ea4";
-  const END_COLOR = "#cfb1fb";
+  const BASE_COLOR = "#a1a1a1";     // gris claro base
+  const HIGHLIGHT_COLOR = "#cfb1fb"; // violeta brillante
 
   const getFullText = () =>
     myLang
@@ -21,55 +21,55 @@ export const ShinyText = ({ disabled = false, className = "" }) => {
   const words = getFullText().split(" ");
 
   useEffect(() => {
-    if (disabled || !sectionRef.current) return;
     const section = sectionRef.current;
     const spans = wordsRef.current.filter(Boolean);
+    if (!section || !spans.length) return;
 
+    // estado inicial visible
     gsap.set(spans, {
-      color: START_COLOR,
-      filter: "blur(6px)",
-      opacity: 0.2,
+      color: BASE_COLOR,
+      opacity: 0.7,
+      filter: "blur(0px)",
     });
 
+    // timeline del highlight suave
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top 90%",
-        end: "bottom top", // 👈 se estira el recorrido total
-        scrub: 2.5,        // 👈 lerp largo
-        anticipatePin: 1,
+        start: "top 80%",
+        end: "bottom 20%",
+        scrub: 1.5,
       },
     });
 
     tl.to(spans, {
-      color: END_COLOR,
+      color: HIGHLIGHT_COLOR,
       opacity: 1,
-      filter: "blur(0px)",
       stagger: {
-        each: 0.25, // 👈 palabra por palabra más lento
-        ease: "power2.out",
+        each: 0.05,
+        ease: "none",
       },
-      duration: 2.4, // más tiempo en cada bloque
-      ease: "power3.out",
+      duration: 2,
+      ease: "none",
     });
 
     return () => {
       tl.kill();
       ScrollTrigger.getAll().forEach((st) => st.kill());
     };
-  }, [disabled, myLang]);
+  }, [myLang]);
 
   return (
     <div
       ref={sectionRef}
-      className={`inline-block text-center text-[#6e6e6ea4] max-w-screen-lg ${className}`}
+      className={`inline-block text-center max-w-screen-lg ${className}`}
     >
-      <p className="text-center block text-xl sm:text-2xl lg:text-4xl leading-relaxed">
-        {words.map((word, index) => (
-          <Fragment key={index}>
+      <p className="text-center block text-xl sm:text-2xl lg:text-4xl leading-relaxed font-light">
+        {words.map((word, i) => (
+          <Fragment key={i}>
             <span
-              ref={(el) => (wordsRef.current[index] = el)}
-              className="inline-block will-change-transform"
+              ref={(el) => (wordsRef.current[i] = el)}
+              className="inline-block transition-colors duration-300"
             >
               {word}
             </span>{" "}
