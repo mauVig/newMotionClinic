@@ -17,6 +17,10 @@
   filter: blur(8px);
 }
 
+.content
+{
+  color:white;
+}
 
 .line-wrapper {
   overflow: hidden;

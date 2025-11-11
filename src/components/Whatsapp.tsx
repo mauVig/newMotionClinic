@@ -8,7 +8,7 @@ export const Whatsapp = () => {
         className="magnetic flex items-center gap-2 px-5 py-2.5 rounded-full
                    bg-[#e8e8e8] text-[#5b5bc4] font-medium shadow-lg
                    hover:bg-[#5b5bc4] hover:text-white hover:shadow-xl
-                   transition-all duration-500 ease-out"
+                   transition-all duration-500 ease-out hover:text-white"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -13,7 +13,7 @@ const Experience: React.FC = () => {
   const { myLang } = useStore();
   const [numberFlowValue, setNumberFlowValue] = useState(0);
 
-  const calcYearsOfExperience = () => new Date().getFullYear() - 2009;
+  const calcYearsOfExperience = () => new Date().getFullYear() - 2004; // → +20 años
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -22,7 +22,7 @@ const Experience: React.FC = () => {
     if (!section || !text || imgs.length === 0) return;
 
     const ctx = gsap.context(() => {
-      // 🔹 Aparece el texto con fade/slide
+      // 🔹 Fade in del texto
       gsap.fromTo(
         text,
         { opacity: 0, y: 60 },
@@ -39,24 +39,23 @@ const Experience: React.FC = () => {
         }
       );
 
-      // 🔹 Mantener el texto fijo mientras se mueven las imágenes
-    ScrollTrigger.create({
-  trigger: section,
-  start: "top top",
-  end: "bottom top", // cuando la sección termina, se libera el pin
-  pin: text,
-  pinSpacing: false, // evita agregar espacio extra
-  scrub: true,
-});
+      // 🔹 Texto fijo en el centro mientras scroll
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom top",
+        pin: text,
+        pinSpacing: true,
+        scrub: true,
+      });
 
-
-      // 🔹 Timeline de imágenes en movimiento (por detrás)
+      // 🔹 Movimiento de imágenes con scroll
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=200%",
-          scrub: 1.2,
+          end: "+=250%",
+          scrub: 1.5,
         },
       });
 
@@ -64,13 +63,13 @@ const Experience: React.FC = () => {
         const dir = i % 2 === 0 ? 1 : -1;
         tl.fromTo(
           img,
-          { yPercent: dir * -40, opacity: 0 },
+          { yPercent: dir * -60, opacity: i < 2 ? 1 : 0 },
           {
-            yPercent: dir * 40,
+            yPercent: dir * 60,
             opacity: 1,
-            ease: "none",
+            ease: "power1.out",
           },
-          0
+          i * 0.1
         );
       });
     });
@@ -82,68 +81,56 @@ const Experience: React.FC = () => {
     <section
       ref={sectionRef}
       id="experience"
-      className="relative w-full h-[300vh] overflow-hidden bg-[#f8f8f8]"
+      className="relative w-full h-[300vh] overflow-hidden text-white"
     >
-      {/* 🩶 Texto fijo y centrado */}
+      {/* TEXTO CENTRAL */}
       <div
         ref={textRef}
         className="absolute inset-0 flex flex-col items-center justify-center text-center z-30 px-6"
       >
         <h2
-          className="text-5xl mid:text-6xl sm:text-7xl md:text-8xl lx:text-9xl font-bold text-[#222]"
-          style={{ lineHeight: 0.82 }}
+          className="font-extrabold uppercase tracking-tight leading-[0.9]
+                     text-[clamp(2.5rem,10vw,8rem)]"
         >
-          <NumberFlow
-            value={numberFlowValue}
-            transformTiming={{ duration: 2000, easing: "ease-in-out" }}
-          />
-          {myLang ? (
-            <span>
-              {" "}
-              Years of <br />
-              experience
-            </span>
-          ) : (
-            <span>
-              {" "}
-              Años de <br />
-              experiencia
-            </span>
-          )}
+          +{numberFlowValue}{" "}
+          {myLang ? "Years of" : "Años de"} <br />
+          <span className="text-[#4b64ff]">
+            {myLang ? "Experience" : "Experiencia"}
+          </span>
         </h2>
 
-        <p className="mt-6 max-w-[420px] text-xs sm:text-sm mid:text-base text-[#444]">
+        <p className="mt-6 max-w-[520px] text-sm sm:text-base md:text-lg text-gray-300">
           {!myLang
-            ? "Logramos resultados funcionales y personalizados, específicamente diseñados para cada paciente. Cada persona es única."
-            : "We achieve functional and personalized results, specifically designed for each patient. Each person is unique."}
+            ? "Mi objetivo es lograr resultados funcionales, armónicos y personalizados, específicamente diseñados para cada paciente."
+            : "My goal is to achieve functional, harmonious and personalized results, specifically designed for each patient."}
         </p>
       </div>
 
-      {/* 🌫️ Imágenes que se mueven detrás */}
+      {/* IMÁGENES FLOTANTES */}
       <div className="absolute inset-0 z-10">
         <img
           ref={(el) => el && (imgRefs.current[0] = el)}
           src="/img/clinic-cell.jpg"
-          alt=""
-          className="absolute top-10 right-10 h-32 sm:h-52 opacity-0"
+          alt="surgery"
+          className="absolute top-[10%] left-[15%] h-[22vh] w-auto rounded-lg object-cover opacity-0"
         />
         <img
           ref={(el) => el && (imgRefs.current[1] = el)}
           src="/img/clinic2-cell.jpg"
-          alt=""
-          className="absolute top-20 left-10 h-36 sm:h-56 opacity-0"
+          alt="patient"
+          className="absolute top-[20%] right-[15%] h-[25vh] w-auto rounded-lg object-cover opacity-0"
         />
         <img
           ref={(el) => el && (imgRefs.current[2] = el)}
           src="/img/clinic3-cell.jpg"
-          alt=""
-          className="absolute bottom-24 right-16 h-28 sm:h-48 opacity-0"
+          alt="team"
+          className="absolute bottom-[20%] left-[20%] h-[26vh] w-auto rounded-lg object-cover opacity-0"
         />
         <img
           ref={(el) => el && (imgRefs.current[3] = el)}
           src="/img/clinic4-cell.jpg"
-          alt=""
-          className="absolute bottom-10 left-12 h-36 sm:h-60 opacity-0"
+          alt="operation"
+          className="absolute bottom-[10%] right-[18%] h-[28vh] w-auto rounded-lg object-cover opacity-0"
         />
       </div>
     </section>

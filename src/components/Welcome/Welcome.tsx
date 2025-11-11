@@ -163,6 +163,7 @@ export const Welcome = () => {
     <section
       className="relative flex items-center justify-start w-full min-h-screen overflow-hidden px-[clamp(2rem,6vw,6rem)]"
       style={{
+        color: "#e8e8e8",
         backgroundColor: imageLoaded ? "transparent" : "#000",
       }}
     >
@@ -194,9 +195,10 @@ export const Welcome = () => {
       {showContent && (
         <div
           ref={sectionRef}
-          className="relative z-[3] text-left text-white max-w-[70rem]"
+          className="content relative z-[3] text-left text-white max-w-[70rem]"
         >
-          <h2 className="text-[clamp(2rem,8vw,8rem)] font-bold leading-[1.05] tracking-[-0.02em] mb-[clamp(1rem,2vh,2.5rem)]">
+          <h2 className="text-[clamp(2rem,8vw,8rem)] font-bold leading-[1.05] tracking-[-0.02em] mb-[clamp(1rem,2vh,2.5rem)] 
+    color: white;">
             {["The", "Perfect", "Surgery"].map((word, i) => (
               <div key={i} className="line-wrapper overflow-hidden block">
                 <span className="inline-block">{word}</span>
@@ -204,7 +206,8 @@ export const Welcome = () => {
             ))}
           </h2>
 
-          <p className="text-white/80 text-[clamp(1rem,2vw,1.8rem)] leading-[1.5] mb-[clamp(2rem,5vh,3rem)] font-light max-w-[35rem] mr-auto">
+          <p className="text-white/80 text-[clamp(1rem,2vw,1.8rem)] leading-[1.5] mb-[clamp(2rem,5vh,3rem)] font-light max-w-[35rem] mr-auto 
+    color: white;">
             <div className="line-wrapper overflow-hidden">
               <span className="inline-block">
                 {myLang
