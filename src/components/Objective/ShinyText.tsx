@@ -1,87 +1,78 @@
 "use client";
-import { useEffect, useRef, Fragment } from "react";
+import { useEffect, useRef } from "react";
+import { useStore } from "@/store/storeGlobal.ts";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useStore } from "@/store/storeGlobal.ts";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const ShinyText = ({ className = "" }) => {
   const { myLang } = useStore();
   const sectionRef = useRef<HTMLDivElement>(null);
-  const wordsRef = useRef<(HTMLSpanElement | null)[]>([]);
+  const textRef = useRef<HTMLHeadingElement>(null);
 
-  const BASE_COLOR = "#a1a1a1"; // gris claro base
-  const HIGHLIGHT_COLOR = "#cfb1fb"; // violeta brillante
-
-  const getFullText = () =>
+  const getText = () =>
     myLang
       ? "Our goal is to help you regain your quality of life. We are here to help you continue doing what you love and keep trying to improve yourself. With years of experience and the most advanced techniques, we make sure that your surgery is a success and your recovery is as fast as possible."
       : "Nuestro objetivo es ayudarte a recuperar tu calidad de vida. Estamos acá para que sigas haciendo lo que más te gusta y sigas intentando superarte. Con años de experiencia y las técnicas más avanzadas, nos aseguramos que tu cirugía sea un éxito y tu recuperación sea lo más rápida posible.";
 
-  const words = getFullText().split(" ");
-
   useEffect(() => {
-    const section = sectionRef.current;
-    const spans = wordsRef.current.filter(Boolean);
-    if (!section || spans.length === 0) return;
+    if (typeof window === "undefined") return;
 
-    // 🔹 limpiar triggers previos ANTES de crear nuevos
-    ScrollTrigger.getAll().forEach((st) => st.kill());
-    gsap.killTweensOf(spans);
+    let ctx: gsap.Context;
 
-    // 🔹 estado inicial
-    gsap.set(spans, {
-      color: BASE_COLOR,
-      opacity: 0.7,
-      filter: "blur(0px)",
-    });
+    (async () => {
+      const { SplitText } = await import("gsap/SplitText");
+      gsap.registerPlugin(SplitText);
 
-    // 🔹 timeline del highlight suave
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top 80%",
-        end: "bottom 20%",
-        scrub: 1.5,
-        // markers: true,
-      },
-      defaults: { ease: "none" },
-    });
+      const section = sectionRef.current;
+      const textEl = textRef.current;
+      if (!section || !textEl) return;
 
-    tl.to(spans, {
-      color: HIGHLIGHT_COLOR,
-      opacity: 1,
-      stagger: { each: 0.05 },
-      duration: 2,
-    });
+      ctx = gsap.context(() => {
+        // limpiar splits previos
+        ScrollTrigger.getAll().forEach((st) => st.kill());
+        const split = new SplitText(textEl, { type: "lines" });
 
-    // cleanup
-    return () => {
-      tl.kill();
-      ScrollTrigger.getAll().forEach((st) => st.kill());
-    };
-  }, [myLang]); // 👈 se vuelve a correr cada vez que cambia el idioma
+        split.lines.forEach((line) => {
+          gsap.set(line, {
+            backgroundImage: `linear-gradient(to right, #ffffff 50%, #444 50%)`,
+            backgroundSize: "200% 100%",
+            backgroundPositionX: "100%",
+            color: "transparent",
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+          });
+
+          gsap.to(line, {
+            backgroundPositionX: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: line,
+              start: "top center",
+              end: "bottom center",
+              scrub: 0.6,
+              // markers: true,
+            },
+          });
+        });
+      }, section);
+    })();
+
+    return () => ctx?.revert();
+  }, [myLang]);
 
   return (
     <div
       ref={sectionRef}
-      className={`inline-block text-center max-w-screen-lg ${className}`}
+      className={`max-w-screen-lg mx-auto text-center ${className}`}
     >
-      <p className="text-center block text-xl sm:text-2xl lg:text-4xl leading-relaxed font-light">
-        {words.map((word, i) => (
-          <Fragment key={`${myLang}-${i}`}>
-            <span
-              ref={(el) => {
-                wordsRef.current[i] = el;
-              }}
-              className="inline-block transition-colors duration-300"
-            >
-              {word}
-            </span>{" "}
-          </Fragment>
-        ))}
-      </p>
+      <h1
+        ref={textRef}
+        className="text-xl sm:text-2xl lg:text-4xl leading-relaxed font-light whitespace-pre-line"
+      >
+        {getText()}
+      </h1>
     </div>
   );
 };

@@ -1,25 +1,45 @@
-import { create } from 'zustand'
-
+import { create } from "zustand";
 
 interface StoreState {
-    myLang: boolean;
-    loading: boolean;
-    changeLanguage: () => void;
-    getLanguage: () => boolean;
-    changeLoading: () => void;
-    getLoading: () => boolean;
-    myFocus: () => void;
+  myLang: boolean;
+  loading: boolean;
+  changeLanguage: () => void;
+  getLanguage: () => boolean;
+  changeLoading: () => void;
+  getLoading: () => boolean;
+  myFocus: () => void;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
-    myLang: false,
-    loading: true,
-    changeLanguage: () => set((state: { myLang: boolean }) => ({ myLang: !state.myLang })),
-    getLanguage: () => get().myLang,
-    changeLoading: () => set((state: { loading: boolean }) => ({ loading: !state.loading })),
-    getLoading: () => get().loading,
-    myFocus: () => { 
-        const username = document.getElementById('username') as HTMLInputElement;
-        username.focus();
+  // 🔹 Cargamos el idioma guardado (si existe)
+  myLang:
+    typeof window !== "undefined"
+      ? localStorage.getItem("myLang") === "true"
+      : false,
+
+  loading: true,
+
+  // 🔹 Cambiar idioma y refreshear la página
+  changeLanguage: () => {
+    const current = get().myLang;
+    const newLang = !current;
+    set({ myLang: newLang });
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("myLang", String(newLang)); // 🧠 guardamos
+      window.location.reload(); // 🔁 recargamos la web
     }
-}))
+  },
+
+  getLanguage: () => get().myLang,
+
+  changeLoading: () =>
+    set((state) => ({ loading: !state.loading })),
+
+  getLoading: () => get().loading,
+
+  myFocus: () => {
+    const username = document.getElementById("username") as HTMLInputElement;
+    username?.focus();
+  },
+}));

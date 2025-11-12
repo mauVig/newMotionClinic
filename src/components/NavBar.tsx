@@ -29,7 +29,6 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
   const { changeLanguage, myLang, myFocus, loading } = useStore();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [lang, setLang] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const headerRef = useRef<HTMLElement | null>(null);
@@ -45,7 +44,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     );
   }, []);
 
-  // --- inicialización
+  // --- inicialización de menú
   useEffect(() => {
     if (!menuRef.current) return;
     const menu = menuRef.current;
@@ -59,77 +58,74 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     isInitializedRef.current = true;
   }, []);
 
-  // --- animación open/close
-  const animateMenu = useCallback(
-    (open: boolean) => {
-      if (!menuRef.current) return;
-      const menu = menuRef.current;
-      const links = menu.querySelectorAll(".menu-link");
+  // --- animación open/close menú
+  const animateMenu = useCallback((open: boolean) => {
+    if (!menuRef.current) return;
+    const menu = menuRef.current;
+    const links = menu.querySelectorAll(".menu-link");
 
-      setIsAnimating(true);
+    setIsAnimating(true);
 
-      if (open) {
-        const tl = gsap.timeline({
-          defaults: { ease: "power3.out" },
-          onComplete: () => setIsAnimating(false),
-        });
+    if (open) {
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        onComplete: () => setIsAnimating(false),
+      });
 
-        tl.to(menu, {
-          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-          duration: 1.3,
+      tl.to(menu, {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+        duration: 1.3,
+        ease: "hop",
+        onStart: () => (menu.style.pointerEvents = "all"),
+      }).to(
+        links,
+        {
+          y: 0,
+          opacity: 1,
+          stagger: 0.12,
+          duration: 1,
+        },
+        "-=0.4"
+      );
+    } else {
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.inOut" },
+        onComplete: () => {
+          menu.style.pointerEvents = "none";
+          gsap.set(menu, {
+            clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
+          });
+          gsap.set(links, { y: 50, opacity: 0 });
+          setIsAnimating(false);
+        },
+      });
+      tl.to(links, { y: 20, opacity: 0, stagger: -0.08, duration: 0.4 }).to(
+        menu,
+        {
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+          duration: 1,
           ease: "hop",
-          onStart: () => (menu.style.pointerEvents = "all"),
-        }).to(
-          links,
-          {
-            y: 0,
-            opacity: 1,
-            stagger: 0.12,
-            duration: 1,
-          },
-          "-=0.4"
-        );
-      } else {
-        const tl = gsap.timeline({
-          defaults: { ease: "power3.inOut" },
-          onComplete: () => {
-            menu.style.pointerEvents = "none";
-            gsap.set(menu, {
-              clipPath:
-                "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-            });
-            gsap.set(links, { y: 50, opacity: 0 });
-            setIsAnimating(false);
-          },
-        });
-        tl.to(links, { y: 20, opacity: 0, stagger: -0.08, duration: 0.4 }).to(
-          menu,
-          {
-            clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
-            duration: 1,
-            ease: "hop",
-          },
-          "-=0.2"
-        );
-      }
-    },
-    []
-  );
+        },
+        "-=0.2"
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (isInitializedRef.current) animateMenu(isMenuOpen);
   }, [isMenuOpen, animateMenu]);
 
-  // --- funciones varias
+  // --- toggle menu
   const toggleMenu = useCallback(() => {
     if (!isAnimating) setIsMenuOpen((prev) => !prev);
   }, [isAnimating]);
 
+  // --- cambio idioma
   const setLanguage = () => {
-    setLang(!lang);
-    changeLanguage();
+    changeLanguage(); // ya guarda en localStorage y refreshea
   };
 
+  // --- enfocar contacto
   const lestsTalk = () => {
     if (isMenuOpen) toggleMenu();
     let count = 0;
@@ -208,7 +204,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
             >
               <span
                 className={`px-1 transition-all ${
-                  lang ? "bg-violet text-black rounded" : ""
+                  myLang ? "bg-violet text-black rounded" : ""
                 }`}
               >
                 EN
@@ -216,7 +212,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
               <span>|</span>
               <span
                 className={`px-1 transition-all ${
-                  !lang ? "bg-violet text-black rounded" : ""
+                  !myLang ? "bg-violet text-black rounded" : ""
                 }`}
               >
                 ES
@@ -251,7 +247,6 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
         ref={menuRef}
         className="fixed top-0 left-0 z-40 h-screen w-full bg-[#0a0a0a] text-violet overflow-hidden pointer-events-none"
       >
-        {/* BG VIDEO */}
         <div className="absolute inset-0 video-wrapper">
           <video
             src="/video.mp4"
@@ -263,7 +258,6 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
           />
         </div>
 
-        {/* MENU CONTENT */}
         <div
           ref={linksRef}
           className="relative z-10 flex flex-col items-end justify-end h-full p-8 md:p-20 text-right"
