@@ -14,11 +14,11 @@ const Experience: React.FC = () => {
   const [years, setYears] = useState(0);
 
   const calcYears = () => new Date().getFullYear() - 2009;
+useEffect(() => {
+  const section = sectionRef.current;
+  if (!section) return;
 
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
+  const init = () => {
     const ctx = gsap.context(() => {
       // --- Texto principal
       gsap.fromTo(
@@ -39,7 +39,7 @@ const Experience: React.FC = () => {
         }
       );
 
-      // --- Parallax imágenes (sin blur, visibilidad inmediata)
+      // --- Parallax imágenes
       imgRefs.current.forEach((img, i) => {
         if (!img) return;
         const dir = i % 2 === 0 ? 1 : -1;
@@ -67,12 +67,22 @@ const Experience: React.FC = () => {
         onEnter: () => setYears(calcYears()),
         onLeaveBack: () => setYears(0),
       });
-
-      ScrollTrigger.refresh();
     }, section);
 
+    ScrollTrigger.refresh();
     return () => ctx.revert();
-  }, []);
+  };
+
+  // Esperá al evento 'load' y un pequeño delay
+  window.addEventListener("load", () => {
+    setTimeout(init, 300);
+  });
+
+  return () => {
+    window.removeEventListener("load", init);
+  };
+}, []);
+
 
   return (
     <section
@@ -91,7 +101,7 @@ const Experience: React.FC = () => {
   "
   style={{ color: "#fff" }}
 >
-  +<NumberFlow value={years} />{" "}
+  +16
   {myLang ? (
     <>
       <span className="block">Years of</span>

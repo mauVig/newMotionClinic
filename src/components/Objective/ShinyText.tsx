@@ -1,10 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useStore } from "@/store/storeGlobal.ts";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export const ShinyText = ({ className = "" }) => {
   const { myLang } = useStore();
@@ -18,45 +14,67 @@ export const ShinyText = ({ className = "" }) => {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-
-    let ctx: gsap.Context;
+    let ctx: gsap.Context | null = null;
 
     (async () => {
-      const { SplitText } = await import("gsap/SplitText");
-      gsap.registerPlugin(SplitText);
+      // 🔹 Import dinámico y seguro
+      const gsapModule = await import("gsap");
+      const scrollTriggerModule = await import("gsap/ScrollTrigger");
+      const splitTextModule = await import("gsap/SplitText");
+
+      const gsap = gsapModule.gsap || gsapModule.default || gsapModule;
+      const ScrollTrigger =
+        scrollTriggerModule.ScrollTrigger || scrollTriggerModule.default;
+      const SplitText =
+        splitTextModule.SplitText || splitTextModule.default;
+
+      gsap.registerPlugin(ScrollTrigger, SplitText);
 
       const section = sectionRef.current;
       const textEl = textRef.current;
       if (!section || !textEl) return;
 
-      ctx = gsap.context(() => {
-        // limpiar splits previos
-        ScrollTrigger.getAll().forEach((st) => st.kill());
-        const split = new SplitText(textEl, { type: "lines" });
+      // ✅ Esperar a que todo el DOM esté listo y renderizado
+      const startAnimation = () => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            ctx = gsap.context(() => {
+              // Crear splits
+              const split = new SplitText(textEl, { type: "lines" });
 
-        split.lines.forEach((line) => {
-          gsap.set(line, {
-            backgroundImage: `linear-gradient(to right, #ffffff 50%, #444 50%)`,
-            backgroundSize: "200% 100%",
-            backgroundPositionX: "100%",
-            color: "transparent",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-          });
+              split.lines.forEach((line: HTMLElement) => {
+                gsap.set(line, {
+                  backgroundImage:
+                    "linear-gradient(to right, #ffffff 50%, #444 50%)",
+                  backgroundSize: "200% 100%",
+                  backgroundPositionX: "100%",
+                  color: "transparent",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                });
 
-          gsap.to(line, {
-            backgroundPositionX: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: line,
-              start: "top center",
-              end: "bottom center",
-              scrub: 2.6,
-              // markers: true,
-            },
+                gsap.to(line, {
+                  backgroundPositionX: 0,
+                  ease: "none",
+                  scrollTrigger: {
+                    trigger: line,
+                    start: "top center",
+                    end: "bottom center",
+                    scrub: 2.6,
+                    // markers: true,
+                  },
+                });
+              });
+            }, section);
           });
         });
-      }, section);
+      };
+
+      if (document.readyState === "complete") {
+        startAnimation();
+      } else {
+        window.addEventListener("load", startAnimation, { once: true });
+      }
     })();
 
     return () => ctx?.revert();

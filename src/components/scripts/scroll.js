@@ -1,19 +1,19 @@
-// src/scripts/scroll.js
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import gsap from "gsap";
+import Lenis from "@studio-freight/lenis";
+
 export function initGlobalScroll() {
-  console.log("🌍 initGlobalScroll ejecutado");
+  const lenis = new Lenis({ smooth: true, lerp: 0.1 });
 
-  import("lenis").then(({ default: Lenis }) => {
-    const lenis = new Lenis({
-      smooth: true,
-      lerp: 0.08,
-    });
+  lenis.on("scroll", ScrollTrigger.update);
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+  });
+  gsap.ticker.lagSmoothing(0);
 
-    requestAnimationFrame(raf);
-    console.log("✅ Lenis activo");
+  // 🔹 Esperá a que todo se monte y recalculá
+  window.addEventListener("load", () => {
+    setTimeout(() => ScrollTrigger.refresh(), 500);
   });
 }

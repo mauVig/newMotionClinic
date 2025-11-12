@@ -1,25 +1,29 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/store/storeGlobal.ts";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export const Welcome = () => {
   const { myLang, loading } = useStore();
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const bgRef = useRef<HTMLDivElement | null>(null);
+
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const [bgImage, setBgImage] = useState<string>("");
 
-  // 🔹 Carga de imagen con fallback
+
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const isMobile = window.innerWidth < 1024;
+    const src = isMobile ? "/img/welcome-cell.webp" : "/img/welcome.webp";
+    setBgImage(src);
+
     const img = new Image();
-    img.src = isMobile ? "/img/welcome-cell.webp" : "/img/welcome.webp";
+    img.src = src;
     img.onload = () => setImageLoaded(true);
     const fallback = setTimeout(() => setImageLoaded(true), 2500);
+
     return () => clearTimeout(fallback);
   }, []);
 
@@ -27,138 +31,171 @@ export const Welcome = () => {
     if (!loading && imageLoaded) setShowContent(true);
   }, [loading, imageLoaded]);
 
-  // 🔹 Animación de entrada del texto y botón
+
   useEffect(() => {
     if (!showContent || !sectionRef.current) return;
-    const el = sectionRef.current;
-    const lines = el.querySelectorAll(".line-wrapper span");
-    const button = el.querySelector("a");
 
-    gsap.set(lines, { yPercent: 100, opacity: 0, scale: 1.05, filter: "blur(8px)" });
-    gsap.set(button, { scale: 0.8, opacity: 0, y: 20 });
+    (async () => {
+      const gsapModule = await import("gsap");
+      const gsap = gsapModule.gsap || gsapModule.default;
 
-    const tl = gsap.timeline({
-      defaults: { ease: "power4.out", duration: 1.2 },
-      delay: 0.3,
-    });
+      const el = sectionRef.current;
+      const lines = el.querySelectorAll(".line-wrapper span");
+      const button = el.querySelector("a");
 
-    tl.to(lines, {
-      yPercent: 0,
-      opacity: 1,
-      scale: 1,
-      filter: "blur(0px)",
-      stagger: 0.12,
-    }).to(
-      button,
-      {
-        y: 0,
-        scale: 1,
+      gsap.set(lines, {
+        yPercent: 100,
+        opacity: 0,
+        scale: 1.05,
+        filter: "blur(8px)",
+      });
+      gsap.set(button, { scale: 0.8, opacity: 0, y: 20 });
+
+      const tl = gsap.timeline({
+        defaults: { ease: "power4.out", duration: 1.2 },
+        delay: 0.3,
+      });
+
+      tl.to(lines, {
+        yPercent: 0,
         opacity: 1,
-        duration: 1,
-        ease: "back.out(1.7)",
-      },
-      "-=0.5"
-    );
+        scale: 1,
+        filter: "blur(0px)",
+        stagger: 0.12,
+      }).to(
+        button,
+        {
+          y: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 1,
+          ease: "back.out(1.7)",
+        },
+        "-=0.5"
+      );
+    })();
   }, [showContent]);
 
-  // 🔹 Movimiento sutil del fondo con el mouse
+  
   useEffect(() => {
     if (!showContent || !bgRef.current) return;
 
-    const bg = bgRef.current;
-    bg.style.backgroundPosition = "50% 50%";
+    (async () => {
+      const gsapModule = await import("gsap");
+      const gsap = gsapModule.gsap || gsapModule.default;
 
-    let targetX = 50,
-      targetY = 50;
-    let currentX = 50,
-      currentY = 50;
+      const bg = bgRef.current;
+      bg.style.backgroundPosition = "50% 50%";
 
-    const handleMove = (e: MouseEvent) => {
-      const { innerWidth, innerHeight } = window;
-      const xNorm = (e.clientX / innerWidth - 0.5) * 2;
-      const yNorm = (e.clientY / innerHeight - 0.5) * 2;
-      targetX = 50 + xNorm * 2.5;
-      targetY = 50 - yNorm * 2.5;
-    };
+      let targetX = 50,
+        targetY = 50;
+      let currentX = 50,
+        currentY = 50;
 
-    const update = () => {
-      currentX += (targetX - currentX) * 0.05;
-      currentY += (targetY - currentY) * 0.05;
-      bg.style.backgroundPosition = `${currentX}% ${currentY}%`;
-    };
+      const handleMove = (e: MouseEvent) => {
+        const { innerWidth, innerHeight } = window;
+        const xNorm = (e.clientX / innerWidth - 0.5) * 2;
+        const yNorm = (e.clientY / innerHeight - 0.5) * 2;
+        targetX = 50 + xNorm * 2.5;
+        targetY = 50 - yNorm * 2.5;
+      };
 
-    gsap.ticker.add(update);
-    window.addEventListener("mousemove", handleMove);
-    return () => {
-      window.removeEventListener("mousemove", handleMove);
-      gsap.ticker.remove(update);
-    };
+      const update = () => {
+        currentX += (targetX - currentX) * 0.05;
+        currentY += (targetY - currentY) * 0.05;
+        bg.style.backgroundPosition = `${currentX}% ${currentY}%`;
+      };
+
+      gsap.ticker.add(update);
+      window.addEventListener("mousemove", handleMove);
+
+      return () => {
+        window.removeEventListener("mousemove", handleMove);
+        gsap.ticker.remove(update);
+      };
+    })();
   }, [showContent]);
 
-  // 🔹 Zoom leve del fondo en scroll
+
   useEffect(() => {
-    if (!bgRef.current) return;
-    gsap.fromTo(
-      bgRef.current,
-      { scale: 1 },
-      {
-        scale: 1.05,
-        ease: "none",
-        scrollTrigger: {
-          trigger: bgRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      }
-    );
+    if (!bgRef.current || !showContent) return;
+
+    (async () => {
+      const gsapModule = await import("gsap");
+      const scrollTriggerModule = await import("gsap/ScrollTrigger");
+
+      const gsap = gsapModule.gsap || gsapModule.default;
+      const ScrollTrigger =
+        scrollTriggerModule.ScrollTrigger || scrollTriggerModule.default;
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.fromTo(
+        bgRef.current,
+        { scale: 1 },
+        {
+          scale: 1.05,
+          ease: "none",
+          scrollTrigger: {
+            trigger: bgRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        }
+      );
+    })();
   }, [showContent]);
 
-  // 🔹 Efecto magnético del botón
+ 
   useEffect(() => {
-    const btn = document.querySelector(".magnetic");
-    if (!btn) return;
+    (async () => {
+      const gsapModule = await import("gsap");
+      const gsap = gsapModule.gsap || gsapModule.default;
 
-    const strength = 40;
-    const easing = 0.15;
-    let x = 0,
-      y = 0,
-      targetX = 0,
-      targetY = 0;
+      const btn = document.querySelector(".magnetic");
+      if (!btn) return;
 
-    const handleMove = (e: MouseEvent) => {
-      const rect = (btn as HTMLElement).getBoundingClientRect();
-      const relX = e.clientX - (rect.left + rect.width / 2);
-      const relY = e.clientY - (rect.top + rect.height / 2);
+      const easing = 0.15;
+      let x = 0,
+        y = 0,
+        targetX = 0,
+        targetY = 0;
 
-      const distance = Math.sqrt(relX ** 2 + relY ** 2);
-      const radius = rect.width * 0.8;
-      const force = Math.max(0, 1 - distance / radius);
+      const handleMove = (e: MouseEvent) => {
+        const rect = (btn as HTMLElement).getBoundingClientRect();
+        const relX = e.clientX - (rect.left + rect.width / 2);
+        const relY = e.clientY - (rect.top + rect.height / 2);
 
-      targetX = relX * force;
-      targetY = relY * force;
-    };
+        const distance = Math.sqrt(relX ** 2 + relY ** 2);
+        const radius = rect.width * 0.8;
+        const force = Math.max(0, 1 - distance / radius);
 
-    const handleLeave = () => {
-      targetX = 0;
-      targetY = 0;
-    };
+        targetX = relX * force;
+        targetY = relY * force;
+      };
 
-    const animate = () => {
-      x += (targetX - x) * easing;
-      y += (targetY - y) * easing;
-      gsap.set(btn, { x, y });
-    };
+      const handleLeave = () => {
+        targetX = 0;
+        targetY = 0;
+      };
 
-    gsap.ticker.add(animate);
-    window.addEventListener("mousemove", handleMove);
-    btn.addEventListener("mouseleave", handleLeave);
+      const animate = () => {
+        x += (targetX - x) * easing;
+        y += (targetY - y) * easing;
+        gsap.set(btn, { x, y });
+      };
 
-    return () => {
-      window.removeEventListener("mousemove", handleMove);
-      btn.removeEventListener("mouseleave", handleLeave);
-      gsap.ticker.remove(animate);
-    };
+      gsap.ticker.add(animate);
+      window.addEventListener("mousemove", handleMove);
+      btn.addEventListener("mouseleave", handleLeave);
+
+      return () => {
+        window.removeEventListener("mousemove", handleMove);
+        btn.removeEventListener("mouseleave", handleLeave);
+        gsap.ticker.remove(animate);
+      };
+    })();
   }, []);
 
   return (
@@ -169,25 +206,22 @@ export const Welcome = () => {
         backgroundColor: imageLoaded ? "transparent" : "#000",
       }}
     >
-      {/* 🔹 Fondo */}
+ 
       <div
         ref={bgRef}
         className="absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
         style={{
-          backgroundImage: `url(${
-            window.innerWidth < 1024
-              ? "/img/welcome-cell.webp"
-              : "/img/welcome.webp"
-          })`,
+          backgroundImage: bgImage ? `url(${bgImage})` : "none", 
           transformOrigin: "center center",
         }}
       />
 
-      {/* 🔹 Overlay */}
+     
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `linear-gradient(to top, rgba(0,0,0,0.8) 15%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)`,
+          background:
+            "linear-gradient(to top, rgba(0,0,0,0.8) 15%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)",
         }}
       />
 
@@ -205,7 +239,6 @@ export const Welcome = () => {
             ))}
           </h2>
 
-          {/* ❌ El <p> ya no contiene <div>, corregido */}
           <div className="text-white/80 text-[clamp(1rem,2vw,1.8rem)] leading-[1.5] mb-[clamp(2rem,5vh,3rem)] font-light max-w-[35rem] mr-auto">
             <div className="line-wrapper overflow-hidden">
               <span className="inline-block">
@@ -223,7 +256,6 @@ export const Welcome = () => {
             </div>
           </div>
 
-          {/* 🔹 Botón magnético */}
           <a
             href="/contacto"
             className="magnetic relative inline-flex items-center justify-center

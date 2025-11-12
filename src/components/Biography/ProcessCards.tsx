@@ -1,143 +1,144 @@
 "use client";
-import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import styles from "./ProcessCards.module.css";
-import { useStore } from "@/store/storeGlobal";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ProcessCards: React.FC = () => {
-  const { myLang } = useStore();
-  const container = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+const ProcessCards = () => {
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const cardsData = [
+  const processCardsData = [
     {
       index: "01",
-      title: myLang ? "Patient Commitment" : "Compromiso con el Paciente",
-      description: myLang
-        ? "Excellent care combining innovation and personalized attention."
-        : "Atención de excelencia combinando vanguardia y cuidado personalizado.",
+      title: "Especialiacion médica",
+      description:
+        "Soy Andrés Anania, médico traumatólogo, subespecializado en las afeciones de la cadera y rodilla",
     },
     {
       index: "02",
-      title: myLang ? "Medical Specialization" : "Especialización Médica",
-      description: myLang
-        ? "Orthopedic surgeon specialized in hip and knee."
-        : "Traumatólogo subespecializado en cadera y rodilla.",
+      title: "Inovacion Médica",
+      description:
+        "Mi formación incluye un ",
     },
     {
       index: "03",
-      title: myLang ? "Academic Training" : "Formación Académica",
-      description: myLang
-        ? "AVP Fellowship (HSS, NY). Executive programs at Harvard/Stanford."
-        : "Fellowship AVP (HSS, NY). Programas ejecutivos en Harvard/Stanford.",
+      title: "Compromiso con el paciente",
+      description:
+        "Trabajamos en la intersección entre diseño y técnica. Cada detalle se resuelve con precisión, coherencia y cuidado material.",
     },
     {
       index: "04",
-      title: myLang ? "Medical Innovation" : "Innovación Médica",
-      description: myLang
-        ? "Experience in medical innovation and new technologies."
-        : "Trayectoria en innovación médica y nuevas tecnologías.",
+      title: "Formación Académica",
+      description:
+        "Creemos en una arquitectura atemporal, humana y sostenible. Nuestro objetivo es crear espacios que trasciendan y generen valor duradero.",
     },
   ];
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 1024);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+  useLayoutEffect(() => {
+    let ctx: gsap.Context | null = null;
+
+    function initAnimations() {
+      const container = rootRef.current;
+      if (!container) return;
+
+      ctx = gsap.context(() => {
+        const cards = gsap.utils.toArray<HTMLElement>(".process-card");
+        if (!cards.length) return;
+
+        // 🔹 Crear pin + efecto de profundidad
+        cards.forEach((card, index) => {
+          // Pin de cada card (excepto la última)
+          if (index < cards.length - 1) {
+            ScrollTrigger.create({
+              trigger: card,
+              start: "top top",
+              endTrigger: cards[cards.length - 1],
+              end: "top top",
+              pin: true,
+              pinSpacing: false,
+              id: `pin-${index}`,
+            });
+          }
+
+          // Transición al pasar a la siguiente card
+          if (index < cards.length - 1) {
+            ScrollTrigger.create({
+              trigger: cards[index + 1],
+              start: "top bottom",
+              end: "top top",
+              onUpdate: (self) => {
+                const progress = self.progress;
+                const scale = 1 - progress * 0.25;
+                const rotation = (index % 2 === 0 ? 4 : -4) * progress;
+                const opacity = 1 - progress * 0.5;
+                const blur = progress * 5;
+
+                gsap.set(card, {
+                  scale,
+                  rotation,
+                  opacity,
+                  filter: `blur(${blur}px)`,
+                });
+              },
+            });
+          }
+        });
+
+        // 🔹 Refrescar ScrollTrigger después del layout final
+        setTimeout(() => ScrollTrigger.refresh(), 300);
+      }, container);
+    }
+
+    // ✅ Esperar carga completa antes de iniciar GSAP
+    const safeInit = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          initAnimations();
+        });
+      });
+    };
+
+    if (document.readyState === "complete") {
+      safeInit();
+    } else {
+      window.addEventListener("load", safeInit, { once: true });
+    }
+
+    // 🔹 Limpieza local (no global)
+    return () => {
+      ctx?.revert(); // solo revierte lo creado dentro del context
+    };
   }, []);
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const cards = gsap.utils.toArray<HTMLElement>(`.${styles.card}`);
-      ScrollTrigger.getAll().forEach((st) => st.kill());
-
-      if (!isMobile) {
-        // 🖥️ DESKTOP — centrado y horizontal
-        gsap.set(cards, {
-          xPercent: (i) => i * 5,
-          zIndex: (i) => cards.length - i,
-          scale: (i) => 1 - i * 0.04,
-          opacity: 1,
-        });
-
-        const tl = gsap.timeline({
-          defaults: { ease: "power2.inOut", duration: 1.2 },
-          scrollTrigger: {
-            trigger: container.current,
-            start: "top center+=10%",
-            end: "+=400%",
-            pin: true,
-            scrub: 1.3,
-            pinSpacing: true,
-          },
-        });
-
-        cards.forEach((card, i) => {
-          tl.to(
-            card,
-            {
-              xPercent: `-=${60 + i * 10}`,
-              scale: `-=${0.08}`,
-              opacity: 0.3,
-            },
-            i * 0.6
-          );
-        });
-      } else {
-        // 📱 MOBILE — cada card se pinea brevemente (tipo storytelling)
-        cards.forEach((card, i) => {
-          gsap.fromTo(
-            card,
-            { autoAlpha: 0, yPercent: 20 },
-            {
-              autoAlpha: 1,
-              yPercent: 0,
-              duration: 1,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: card,
-                start: "top center+=15%",
-                end: "bottom center-=15%",
-                pin: true,
-                pinSpacing: false,
-                scrub: true,
-                onLeave: () =>
-                  gsap.to(card, {
-                    autoAlpha: 0,
-                    yPercent: -20,
-                    duration: 0.8,
-                    ease: "power1.inOut",
-                  }),
-              },
-            }
-          );
-        });
-      }
-
-      ScrollTrigger.refresh();
-    }, container);
-
-    return () => ctx.revert();
-  }, [myLang, isMobile]);
-
   return (
-    <section ref={container} className={styles.wrapper}>
-      <div className={styles.cards}>
-        {cardsData.map((c) => (
-          <article key={c.index} className={styles.card}>
-            <div className={styles.inner}>
-              <span className={styles.index}>{c.index}</span>
-              <h3 className={styles.title}>{c.title}</h3>
-              <p className={styles.description}>{c.description}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
+    <div
+      ref={rootRef}
+      className="relative w-full bg-black overflow-hidden select-none"
+    >
+      {processCardsData.map((card, i) => (
+        <div
+          key={i}
+          className="process-card relative w-full h-screen flex flex-col justify-center items-center text-center bg-[#f5f5f5] text-black px-6 transition-transform duration-300 will-change-transform shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+          style={{ borderRadius: "1rem" }}
+        >
+          {/* número grande de fondo */}
+          <div className="absolute top-6 left-6 text-black/10 font-extrabold text-[10vw] select-none leading-none">
+            {card.index}
+          </div>
+
+          {/* contenido */}
+          <div className="z-10 max-w-[700px]">
+            <h2 className="uppercase text-[2rem] sm:text-[2.8rem] md:text-[3.5rem] font-bold mb-4 tracking-tight">
+              {card.title}
+            </h2>
+            <p className="text-[1rem] sm:text-[1.1rem] md:text-[1.25rem] text-gray-700 leading-relaxed">
+              {card.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 

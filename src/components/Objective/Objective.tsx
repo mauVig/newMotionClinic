@@ -41,6 +41,7 @@ const Objective = () => {
         defaults: { ease: "power3.out" },
       });
 
+      // Entrada
       tl.to(chars, {
         yPercent: 0,
         opacity: 1,
@@ -49,12 +50,22 @@ const Objective = () => {
         duration: 1.8,
       });
 
+      // Salida
       tl.to(chars, {
         opacity: 0.25,
         yPercent: -10,
         duration: 1.4,
         ease: "power2.inOut",
         stagger: { each: 0.04 },
+      });
+
+      // ✅ Sincroniza todo el ScrollTrigger después del load
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          if (window.ScrollTrigger) {
+            window.ScrollTrigger.refresh();
+          }
+        }, 300);
       });
     })();
   }, []);
@@ -63,9 +74,11 @@ const Objective = () => {
     <section
       ref={sectionRef}
       id="reveal-section"
-      className="relative min-h-[120vh] flex flex-col items-center justify-center px-4 overflow-hidden bg-[#111] text-white will-change-transform"
+      className="relative min-h-[120vh] flex flex-col items-center justify-center px-4 
+                 overflow-hidden bg-[#111] text-white will-change-transform"
     >
-      <div className="flex flex-col items-center justify-center text-center space-y-24 sm:space-y-32 md:space-y-40">
+      <div className="flex flex-col items-center justify-center text-center 
+                      space-y-24 sm:space-y-32 md:space-y-40">
         <div className="max-w-4xl mx-auto">
           <ShinyText disabled={false} speed={1.5} />
         </div>
