@@ -1,0 +1,122 @@
+.biographySection {
+  position: relative;
+  width: 100%;
+    background: #181818;
+  color: #fff;
+  overflow: hidden;
+}
+
+.bioHeader {
+  text-align: left;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  margin-bottom: 25vh
+}
+
+
+.kicker {
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.title {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.paragraph {
+  font-size: 1.1rem;
+  max-width: 600px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+
+.biographySection {
+  position: relative;
+  width: 100%;
+  background: #000;
+  color: #fff;
+  overflow: hidden;
+  padding: 15vh 0;
+}
+
+.bioHeader {
+  text-align: left;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  margin-bottom: 20vh;
+}
+
+.kicker {
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+
+.title {
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.paragraph {
+  font-size: 1.1rem;
+  max-width: 600px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+
+/* ---- Logos Grid ---- */
+.logosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 2.5rem 1.5rem;
+  justify-items: center;
+  align-items: center;
+  text-align: center;
+  margin: 12vh auto 15vh auto;
+  max-width: 950px;
+}
+
+.logoItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+.logoItem img {
+  height: 7rem;
+  margin-bottom: 1rem;
+  transition: transform 0.6s ease;
+  filter: brightness(0.9);
+}
+
+.logoItem:hover img {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.logoItem p {
+  white-space: pre-line;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+/* 🔹 Responsive */
+@media (max-width: 768px) {
+  .logosGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin: 10vh auto;
+  }
+}

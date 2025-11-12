@@ -1,118 +1,144 @@
-// "use client";
-// import React, { useEffect } from "react";
-// import "./ProcessCards.css";
-// import { gsap } from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
+"use client";
+import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import styles from "./ProcessCards.module.css";
+import { useStore } from "@/store/storeGlobal";
 
-// gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger);
 
-// interface ProcessCard {
-//   index: string;
-//   title: string;
-//   image: string;
-//   description: string;
-// }
+const ProcessCards: React.FC = () => {
+  const { myLang } = useStore();
+  const container = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-// const processCardsData: ProcessCard[] = [
-//   {
-//     index: "01",
-//     title: "Trayectoria",
-//     image: "https://picsum.photos/800/400?random=1",
-//     description:
-//       "Más de 20 años de experiencia en cirugía ortopédica y traumatología avanzada.",
-//   },
-//   {
-//     index: "02",
-//     title: "Innovación",
-//     image: "https://picsum.photos/800/400?random=2",
-//     description:
-//       "Pionero en el uso de tecnología robótica MAKO para procedimientos de alta precisión.",
-//   },
-//   {
-//     index: "03",
-//     title: "Compromiso",
-//     image: "https://picsum.photos/800/400?random=3",
-//     description:
-//       "Enfoque humano y personalizado, priorizando la recuperación funcional de cada paciente.",
-//   },
-//   {
-//     index: "04",
-//     title: "Visión",
-//     image: "https://picsum.photos/800/400?random=4",
-//     description:
-//       "Avanzar hacia una cirugía más inteligente, menos invasiva y plenamente adaptada a cada cuerpo.",
-//   },
-// ];
+  const cardsData = [
+    {
+      index: "01",
+      title: myLang ? "Patient Commitment" : "Compromiso con el Paciente",
+      description: myLang
+        ? "Excellent care combining innovation and personalized attention."
+        : "Atención de excelencia combinando vanguardia y cuidado personalizado.",
+    },
+    {
+      index: "02",
+      title: myLang ? "Medical Specialization" : "Especialización Médica",
+      description: myLang
+        ? "Orthopedic surgeon specialized in hip and knee."
+        : "Traumatólogo subespecializado en cadera y rodilla.",
+    },
+    {
+      index: "03",
+      title: myLang ? "Academic Training" : "Formación Académica",
+      description: myLang
+        ? "AVP Fellowship (HSS, NY). Executive programs at Harvard/Stanford."
+        : "Fellowship AVP (HSS, NY). Programas ejecutivos en Harvard/Stanford.",
+    },
+    {
+      index: "04",
+      title: myLang ? "Medical Innovation" : "Innovación Médica",
+      description: myLang
+        ? "Experience in medical innovation and new technologies."
+        : "Trayectoria en innovación médica y nuevas tecnologías.",
+    },
+  ];
 
-// const ProcessCards: React.FC = () => {
-//   useEffect(() => {
-//     const cards = gsap.utils.toArray<HTMLElement>(".process-card");
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
-//     cards.forEach((card, index) => {
-//       // Pin de cada card (excepto la última)
-//       if (index < cards.length - 1) {
-//         ScrollTrigger.create({
-//           trigger: card,
-//           start: "top top",
-//           endTrigger: cards[cards.length - 1],
-//           end: "top top",
-//           pin: true,
-//           pinSpacing: false,
-//         });
-//       }
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const cards = gsap.utils.toArray<HTMLElement>(`.${styles.card}`);
+      ScrollTrigger.getAll().forEach((st) => st.kill());
 
-//       // Escala y rotación entre cards
-//       if (index < cards.length - 1) {
-//         ScrollTrigger.create({
-//           trigger: cards[index + 1],
-//           start: "top bottom",
-//           end: "top top",
-//           onUpdate: (self) => {
-//             const progress = self.progress;
-//             const scale = 1 - progress * 0.25;
-//             const rotation = (index % 2 === 0 ? 5 : -5) * progress;
+      if (!isMobile) {
+        // 🖥️ DESKTOP — centrado y horizontal
+        gsap.set(cards, {
+          xPercent: (i) => i * 5,
+          zIndex: (i) => cards.length - i,
+          scale: (i) => 1 - i * 0.04,
+          opacity: 1,
+        });
 
-//             gsap.set(card, {
-//               scale,
-//               rotation,
-//               "--after-opacity": progress,
-//             });
-//           },
-//         });
-//       }
-//     });
+        const tl = gsap.timeline({
+          defaults: { ease: "power2.inOut", duration: 1.2 },
+          scrollTrigger: {
+            trigger: container.current,
+            start: "top center+=10%",
+            end: "+=400%",
+            pin: true,
+            scrub: 1.3,
+            pinSpacing: true,
+          },
+        });
 
-//     // Recalcular cuando todo está montado
-//     setTimeout(() => ScrollTrigger.refresh(), 500);
+        cards.forEach((card, i) => {
+          tl.to(
+            card,
+            {
+              xPercent: `-=${60 + i * 10}`,
+              scale: `-=${0.08}`,
+              opacity: 0.3,
+            },
+            i * 0.6
+          );
+        });
+      } else {
+        // 📱 MOBILE — cada card se pinea brevemente (tipo storytelling)
+        cards.forEach((card, i) => {
+          gsap.fromTo(
+            card,
+            { autoAlpha: 0, yPercent: 20 },
+            {
+              autoAlpha: 1,
+              yPercent: 0,
+              duration: 1,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top center+=15%",
+                end: "bottom center-=15%",
+                pin: true,
+                pinSpacing: false,
+                scrub: true,
+                onLeave: () =>
+                  gsap.to(card, {
+                    autoAlpha: 0,
+                    yPercent: -20,
+                    duration: 0.8,
+                    ease: "power1.inOut",
+                  }),
+              },
+            }
+          );
+        });
+      }
 
-//     return () => ScrollTrigger.getAll().forEach((t) => t.kill());
-//   }, []);
+      ScrollTrigger.refresh();
+    }, container);
 
-//   return (
-//     <div className="process-cards">
-//       {processCardsData.map((c, i) => (
-//         <div key={i} className="process-card">
-//           <div className="process-card-index">
-//             <h1>{c.index}</h1>
-//           </div>
+    return () => ctx.revert();
+  }, [myLang, isMobile]);
 
-//           <div className="process-card-content">
-//             <div className="process-card-content-wrapper">
-//               <h2 className="process-card-header">{c.title}</h2>
+  return (
+    <section ref={container} className={styles.wrapper}>
+      <div className={styles.cards}>
+        {cardsData.map((c) => (
+          <article key={c.index} className={styles.card}>
+            <div className={styles.inner}>
+              <span className={styles.index}>{c.index}</span>
+              <h3 className={styles.title}>{c.title}</h3>
+              <p className={styles.description}>{c.description}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+};
 
-//               <div className="process-card-img">
-//                 <img src={c.image} alt={c.title} />
-//               </div>
-
-//               <div className="process-card-copy">
-//                 <p>{c.description}</p>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       ))}
-//     </div>
-//   );
-// };
-
-// export default ProcessCards;
+export default ProcessCards;

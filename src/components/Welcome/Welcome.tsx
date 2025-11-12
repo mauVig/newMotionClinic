@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/store/storeGlobal.ts";
 import gsap from "gsap";
@@ -12,6 +13,7 @@ export const Welcome = () => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showContent, setShowContent] = useState(false);
 
+  // 🔹 Carga de imagen con fallback
   useEffect(() => {
     const isMobile = window.innerWidth < 1024;
     const img = new Image();
@@ -25,44 +27,44 @@ export const Welcome = () => {
     if (!loading && imageLoaded) setShowContent(true);
   }, [loading, imageLoaded]);
 
-  // Animación de entrada
+  // 🔹 Animación de entrada del texto y botón
   useEffect(() => {
-    if (showContent && sectionRef.current) {
-      const el = sectionRef.current;
-      const lines = el.querySelectorAll(".line-wrapper span");
-      const button = el.querySelector("a");
+    if (!showContent || !sectionRef.current) return;
+    const el = sectionRef.current;
+    const lines = el.querySelectorAll(".line-wrapper span");
+    const button = el.querySelector("a");
 
-      gsap.set(lines, { yPercent: 100, opacity: 0, scale: 1.05, filter: "blur(8px)" });
-      gsap.set(button, { scale: 0.8, opacity: 0, y: 20 });
+    gsap.set(lines, { yPercent: 100, opacity: 0, scale: 1.05, filter: "blur(8px)" });
+    gsap.set(button, { scale: 0.8, opacity: 0, y: 20 });
 
-      const tl = gsap.timeline({
-        defaults: { ease: "power4.out", duration: 1.2 },
-        delay: 0.3,
-      });
+    const tl = gsap.timeline({
+      defaults: { ease: "power4.out", duration: 1.2 },
+      delay: 0.3,
+    });
 
-      tl.to(lines, {
-        yPercent: 0,
-        opacity: 1,
+    tl.to(lines, {
+      yPercent: 0,
+      opacity: 1,
+      scale: 1,
+      filter: "blur(0px)",
+      stagger: 0.12,
+    }).to(
+      button,
+      {
+        y: 0,
         scale: 1,
-        filter: "blur(0px)",
-        stagger: 0.12,
-      })
-        .to(
-          button,
-          {
-            y: 0,
-            scale: 1,
-            opacity: 1,
-            duration: 1,
-            ease: "back.out(1.7)",
-          },
-          "-=0.5"
-        );
-    }
+        opacity: 1,
+        duration: 1,
+        ease: "back.out(1.7)",
+      },
+      "-=0.5"
+    );
   }, [showContent]);
 
+  // 🔹 Movimiento sutil del fondo con el mouse
   useEffect(() => {
     if (!showContent || !bgRef.current) return;
+
     const bg = bgRef.current;
     bg.style.backgroundPosition = "50% 50%";
 
@@ -93,9 +95,9 @@ export const Welcome = () => {
     };
   }, [showContent]);
 
+  // 🔹 Zoom leve del fondo en scroll
   useEffect(() => {
     if (!bgRef.current) return;
-
     gsap.fromTo(
       bgRef.current,
       { scale: 1 },
@@ -112,7 +114,7 @@ export const Welcome = () => {
     );
   }, [showContent]);
 
-  // Efecto magnético del botón
+  // 🔹 Efecto magnético del botón
   useEffect(() => {
     const btn = document.querySelector(".magnetic");
     if (!btn) return;
@@ -167,7 +169,7 @@ export const Welcome = () => {
         backgroundColor: imageLoaded ? "transparent" : "#000",
       }}
     >
-      {/* Fondo */}
+      {/* 🔹 Fondo */}
       <div
         ref={bgRef}
         className="absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
@@ -179,26 +181,23 @@ export const Welcome = () => {
           })`,
           transformOrigin: "center center",
         }}
-      ></div>
+      />
 
-      {/* Overlay */}
+      {/* 🔹 Overlay */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `
-            linear-gradient(to right, rgba(0,0,0,0.8) 15%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)
-          `,
+          background: `linear-gradient(to top, rgba(0,0,0,0.8) 15%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)`,
         }}
-      ></div>
+      />
 
-      {/* Contenido */}
+      {/* 🔹 Contenido */}
       {showContent && (
         <div
           ref={sectionRef}
           className="content relative z-[3] text-left text-white max-w-[70rem]"
         >
-          <h2 className="text-[clamp(2rem,8vw,8rem)] font-bold leading-[1.05] tracking-[-0.02em] mb-[clamp(1rem,2vh,2.5rem)] 
-    color: white;">
+          <h2 className="text-[clamp(2rem,8vw,8rem)] font-bold leading-[1.05] tracking-[-0.02em] mb-[clamp(1rem,2vh,2.5rem)]">
             {["The", "Perfect", "Surgery"].map((word, i) => (
               <div key={i} className="line-wrapper overflow-hidden block">
                 <span className="inline-block">{word}</span>
@@ -206,8 +205,8 @@ export const Welcome = () => {
             ))}
           </h2>
 
-          <p className="text-white/80 text-[clamp(1rem,2vw,1.8rem)] leading-[1.5] mb-[clamp(2rem,5vh,3rem)] font-light max-w-[35rem] mr-auto 
-    color: white;">
+          {/* ❌ El <p> ya no contiene <div>, corregido */}
+          <div className="text-white/80 text-[clamp(1rem,2vw,1.8rem)] leading-[1.5] mb-[clamp(2rem,5vh,3rem)] font-light max-w-[35rem] mr-auto">
             <div className="line-wrapper overflow-hidden">
               <span className="inline-block">
                 {myLang
@@ -222,8 +221,9 @@ export const Welcome = () => {
                   : "en Cadera y Rodilla de Argentina."}
               </span>
             </div>
-          </p>
+          </div>
 
+          {/* 🔹 Botón magnético */}
           <a
             href="/contacto"
             className="magnetic relative inline-flex items-center justify-center
@@ -242,7 +242,7 @@ export const Welcome = () => {
               className="absolute inset-0 bg-gradient-to-r from-[#a855f7] to-[#ec4899]
                          opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out
                          rounded-[0.7rem]"
-            ></span>
+            />
           </a>
         </div>
       )}

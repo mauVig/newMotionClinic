@@ -1,0 +1,55 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background: #111;
+}
+
+.cards {
+  position: relative;
+  width: 100%;
+  max-width: 950px;
+  height: 75vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  background: #181818;
+  border: 1px solid #333;
+  color: white;
+  border-radius: 16px;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  will-change: transform, opacity;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+}
+
+/* 🔹 Mobile: vertical pin scroll storytelling */
+@media (max-width: 1024px) {
+  .cards {
+    flex-direction: column;
+    gap: 4rem;
+    height: auto;
+  }
+
+  .card {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateY(10%);
+  }
+}

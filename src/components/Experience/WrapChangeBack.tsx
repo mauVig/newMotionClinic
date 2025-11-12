@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Experience from "./Experience.tsx";
 
-import CircleVideo from "./CircleVideo.tsx";
+import CircleVideo from "../CircleVideo/CircleVideo.tsx";
 import { FaVolumeMute } from "react-icons/fa";
 
 gsap.registerPlugin(ScrollTrigger);

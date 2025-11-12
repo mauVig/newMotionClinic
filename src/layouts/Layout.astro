@@ -7,32 +7,33 @@ import { initGlobalScroll } from "../scripts/scroll.js";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
     <title>Motion Clinic</title>
-    <meta
-      name="description"
-      content="El Primer Centro Integral en Cirugía Robótica de Cadera y Rodilla de Argentina. Liderado por el Dr. Andrés Anania"
-    />
-    <link rel="icon" href="/favicon.ico" />
-
-    <!-- Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id={import.meta.env.PUBLIC_ANALYTICS_ID}"
-    ></script>
-    <script define:vars={{ analyticsId: import.meta.env.PUBLIC_ANALYTICS_ID }}>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag("js", new Date());
-      gtag("config", analyticsId);
-    </script>
   </head>
 
   <body>
     <slot />
-  </body>
- <script type="module">
-    import { initGlobalScroll } from "/src/scripts/scroll.js";
-    initGlobalScroll();
+    <script is:inline>
+    console.log("💥 Layout ejecutándose correctamente en cliente");
   </script>
+  </body>
+<script is:inline>
+  console.log("🧠 Script global embebido en Layout cargó");
+
+  window.addEventListener("DOMContentLoaded", async () => {
+    console.log("🌍 DOMContentLoaded disparado");
+    try {
+      const module = await import("/src/components/scripts/scroll.js"); // ✅ ruta corregida
+      console.log("✅ scroll.js importado correctamente", module);
+      if (module.initGlobalScroll) {
+        module.initGlobalScroll();
+        console.log("🚀 initGlobalScroll() ejecutado");
+      } else {
+        console.warn("⚠️ No se encontró initGlobalScroll");
+      }
+    } catch (err) {
+      console.error("❌ Error al importar scroll.js", err);
+    }
+  });
+</script>
+
 </html>

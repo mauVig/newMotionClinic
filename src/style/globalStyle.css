@@ -6,7 +6,11 @@
   font-weight: 100 900;
   src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-normal.woff2) format('woff2-variations');
 }
-
+:root {
+  --violet: #5b25d4;
+  --grey: #e6e6e6;
+  --black: #0a0a0a;
+}
 @font-face {
   font-family: 'Reddit Sans';
   font-style: italic;
@@ -15,6 +19,10 @@
   src: url(https://cdn.jsdelivr.net/fontsource/fonts/reddit-sans@latest/latin-700-italic.woff2) format('woff2'),
        url(https://cdn.jsdelivr.net/fontsource/fonts/reddit-sans@latest/latin-700-italic.woff) format('woff');
 }
+.filter-violet {
+  filter: invert(42%) sepia(75%) saturate(740%) hue-rotate(235deg)
+    brightness(95%) contrast(98%);
+}
 
 * {
   font-family: "Inter", sans-serif;
@@ -22,9 +30,9 @@
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-  background-color: black;
+html,
+body {
+  background-color: #111111 !important;
 }
 
 .reddit-sans-text {
@@ -44,6 +52,19 @@ html {
   justify-content: center;
   align-items: center;
 }
+/* Hover luminoso tipo Awwwards */
+.menu-link:hover span,
+.menu-link:hover svg {
+  text-shadow: 0 0 10px #5b25d4, 0 0 20px #5b25d4, 0 0 30px #5b25d4;
+  filter: drop-shadow(0 0 6px #5b25d4);
+}
+
+/* Filtro violeta para SVG base */
+.filter-violet {
+  filter: invert(42%) sepia(75%) saturate(740%) hue-rotate(235deg)
+    brightness(95%) contrast(98%);
+}
+
 
 .swiper-slide img {
   display: block;

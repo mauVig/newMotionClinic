@@ -19,7 +19,7 @@
 
 
 .line-wrapper {
-  overflow: hidden;
+  /* overflow: hidden; */
   display: block;
   line-height: 1.1;
   padding-bottom: 0.1em; /* Evita cortes en el borde inferior */

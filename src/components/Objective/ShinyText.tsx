@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, Fragment } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,7 +11,7 @@ export const ShinyText = ({ className = "" }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const wordsRef = useRef<(HTMLSpanElement | null)[]>([]);
 
-  const BASE_COLOR = "#a1a1a1";     // gris claro base
+  const BASE_COLOR = "#a1a1a1"; // gris claro base
   const HIGHLIGHT_COLOR = "#cfb1fb"; // violeta brillante
 
   const getFullText = () =>
@@ -23,41 +24,44 @@ export const ShinyText = ({ className = "" }) => {
   useEffect(() => {
     const section = sectionRef.current;
     const spans = wordsRef.current.filter(Boolean);
-    if (!section || !spans.length) return;
+    if (!section || spans.length === 0) return;
 
-    // estado inicial visible
+    // 🔹 limpiar triggers previos ANTES de crear nuevos
+    ScrollTrigger.getAll().forEach((st) => st.kill());
+    gsap.killTweensOf(spans);
+
+    // 🔹 estado inicial
     gsap.set(spans, {
       color: BASE_COLOR,
       opacity: 0.7,
       filter: "blur(0px)",
     });
 
-    // timeline del highlight suave
+    // 🔹 timeline del highlight suave
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
         start: "top 80%",
         end: "bottom 20%",
         scrub: 1.5,
+        // markers: true,
       },
+      defaults: { ease: "none" },
     });
 
     tl.to(spans, {
       color: HIGHLIGHT_COLOR,
       opacity: 1,
-      stagger: {
-        each: 0.05,
-        ease: "none",
-      },
+      stagger: { each: 0.05 },
       duration: 2,
-      ease: "none",
     });
 
+    // cleanup
     return () => {
       tl.kill();
       ScrollTrigger.getAll().forEach((st) => st.kill());
     };
-  }, [myLang]);
+  }, [myLang]); // 👈 se vuelve a correr cada vez que cambia el idioma
 
   return (
     <div
@@ -66,9 +70,11 @@ export const ShinyText = ({ className = "" }) => {
     >
       <p className="text-center block text-xl sm:text-2xl lg:text-4xl leading-relaxed font-light">
         {words.map((word, i) => (
-          <Fragment key={i}>
+          <Fragment key={`${myLang}-${i}`}>
             <span
-              ref={(el) => (wordsRef.current[i] = el)}
+              ref={(el) => {
+                wordsRef.current[i] = el;
+              }}
               className="inline-block transition-colors duration-300"
             >
               {word}
