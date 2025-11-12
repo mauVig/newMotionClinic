@@ -4,8 +4,6 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import NumberFlow from "@number-flow/react";
 import { useStore } from "@/store/storeGlobal.ts";
-import CircleVideo from "../CircleVideo/CircleVideo";
-
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,55 +20,55 @@ const Experience: React.FC = () => {
     if (!section) return;
 
     const ctx = gsap.context(() => {
-      // --- Animar aparición del texto
+      // --- Texto principal
       gsap.fromTo(
         ".experience-text",
-        { autoAlpha: 0, yPercent: 20 },
+        { autoAlpha: 0, yPercent: 20, filter: "blur(6px)" },
         {
           autoAlpha: 1,
           yPercent: 0,
-          duration: 1.4,
+          filter: "blur(0px)",
+          duration: 1.2,
           ease: "power3.out",
           scrollTrigger: {
             trigger: section,
-            start: "top 90%",
-            end: "top 70%",
-            scrub: false,
+            start: "top 85%",
+            end: "top 65%",
             once: true,
           },
         }
       );
 
-      // --- Parallax + fade-in imágenes
+      // --- Parallax imágenes (sin blur, visibilidad inmediata)
       imgRefs.current.forEach((img, i) => {
         if (!img) return;
         const dir = i % 2 === 0 ? 1 : -1;
         gsap.fromTo(
           img,
-          { yPercent: dir * -20, autoAlpha: 0 },
+          { yPercent: dir * -10, opacity: 0.6 },
           {
-            yPercent: dir * 20,
-            autoAlpha: 1,
+            yPercent: dir * 10,
+            opacity: 1,
             ease: "none",
             scrollTrigger: {
               trigger: section,
-              start: "top 70%",
+              start: "top bottom",
               end: "bottom top",
-              scrub: 1.3,
-              markers: false,
+              scrub: 1.1,
             },
           }
         );
       });
 
-      // --- Número dinámico
+      // --- Contador dinámico
       ScrollTrigger.create({
         trigger: section,
         start: "top 80%",
-        end: "bottom 30%",
         onEnter: () => setYears(calcYears()),
         onLeaveBack: () => setYears(0),
       });
+
+      ScrollTrigger.refresh();
     }, section);
 
     return () => ctx.revert();
@@ -80,35 +78,46 @@ const Experience: React.FC = () => {
     <section
       ref={sectionRef}
       id="experience"
-      className="relative w-full min-h-[200vh] bg-[#111] text-white overflow-visible"
+      className="relative w-full min-h-[220vh] bg-[#111] text-white overflow-visible"
     >
       {/* --- Texto sticky --- */}
-      <div className="sticky top-0 flex flex-col items-center justify-center text-center h-[100vh] z-20 text-white">
-        <div className="experience-text">
-          <h2
-            className="font-bold text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-white"
-            style={{
-              lineHeight: 0.85,
-              color: "#ffffff", // fuerza blanco puro
-            }}
-          >
-            +<NumberFlow value={years} />{" "}
-            {myLang ? (
-              <>
-                Years of <br /> experience
-              </>
-            ) : (
-              <>
-                Años de <br /> experiencia
-              </>
-            )}
-          </h2>
+      <div className="sticky top-0 flex flex-col items-center justify-center text-center h-[100vh] px-6 z-20">
+        <div className="experience-text max-w-[700px] mx-auto">
+       <h2
+  className="
+    font-bold text-white text-center leading-[0.95]
+    text-[3rem] sm:text-[4rem] md:text-[5.5rem] lg:text-[7rem] xl:text-[8rem]
+    tracking-tight uppercase
+  "
+  style={{ color: "#fff" }}
+>
+  +<NumberFlow value={years} />{" "}
+  {myLang ? (
+    <>
+      <span className="block">Years of</span>
+      <span
+        className="block text-[#cfb1fb] italic"
+        style={{ fontWeight: 700 }}
+      >
+        Experience
+      </span>
+    </>
+  ) : (
+    <>
+      <span className="block">Años de</span>
+      <span
+        className="block text-[#cfb1fb] italic"
+        style={{ fontWeight: 700 }}
+      >
+        Experiencia
+      </span>
+    </>
+  )}
+</h2>
+
           <p
-            className="mt-6 max-w-md text-xs sm:text-sm"
-            style={{
-              opacity: 1,
-              color: "#ffffff",
-            }}
+            className="mt-8 text-sm sm:text-base md:text-lg leading-relaxed text-[#e1e1e1]"
+            style={{ color: "#e1e1e1" }}
           >
             {myLang
               ? "We achieve functional and personalized results, specifically designed for each patient."
@@ -117,40 +126,41 @@ const Experience: React.FC = () => {
         </div>
       </div>
 
-      {/* --- Imágenes --- */}
-      <img
-        ref={(el) => {
-          imgRefs.current[0] = el;
-        }}
-        src="/img/clinic-cell.jpg"
-        alt=""
-        className="absolute top-[25vh] right-8 h-40 sm:h-52 lg:h-64 rounded-md opacity-0"
-      />
-      <img
-        ref={(el) => {
-          imgRefs.current[1] = el;
-        }}
-        src="/img/clinic2-cell.jpg"
-        alt=""
-        className="magnetic absolute top-[70vh] left-8 h-40 sm:h-52 lg:h-64 rounded-md opacity-0"
-      />
-      <img
-        ref={(el) => {
-          imgRefs.current[2] = el;
-        }}
-        src="/img/clinic3-cell.jpg"
-        alt=""
-        className="absolute bottom-[35vh] right-8 h-36 sm:h-44 lg:h-56 rounded-md opacity-0"
-      />
-      <img
-        ref={(el) => {
-          imgRefs.current[3] = el;
-        }}
-        src="/img/clinic4-cell.jpg"
-        alt=""
-        className="absolute bottom-[5vh] left-8 h-40 sm:h-52 lg:h-64 rounded-md opacity-0"
-      />
-
+      {/* --- Imágenes visibles --- */}
+      <div className="absolute inset-0 z-10 overflow-visible">
+        <img
+          ref={(el) => {
+            imgRefs.current[0] = el;
+          }}
+          src="/img/clinic-cell.jpg"
+          alt="Clinic 1"
+          className="absolute top-[12vh] right-[6vw] w-[45vw] min-w-[180px] max-w-[320px] rounded-xl opacity-80 object-cover shadow-lg"
+        />
+        <img
+          ref={(el) => {
+            imgRefs.current[1] = el;
+          }}
+          src="/img/clinic2-cell.jpg"
+          alt="Clinic 2"
+          className="absolute top-[55vh] left-[8vw] w-[45vw] min-w-[180px] max-w-[320px] rounded-xl opacity-80 object-cover shadow-lg"
+        />
+        <img
+          ref={(el) => {
+            imgRefs.current[2] = el;
+          }}
+          src="/img/clinic3-cell.jpg"
+          alt="Clinic 3"
+          className="absolute bottom-[30vh] right-[10vw] w-[45vw] min-w-[180px] max-w-[320px] rounded-xl opacity-80 object-cover shadow-lg"
+        />
+        <img
+          ref={(el) => {
+            imgRefs.current[3] = el;
+          }}
+          src="/img/clinic4-cell.jpg"
+          alt="Clinic 4"
+          className="absolute bottom-[5vh] left-[12vw] w-[45vw] min-w-[180px] max-w-[320px] rounded-xl opacity-80 object-cover shadow-lg"
+        />
+      </div>
     </section>
   );
 };

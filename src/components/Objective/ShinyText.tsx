@@ -51,7 +51,7 @@ export const ShinyText = ({ className = "" }) => {
               trigger: line,
               start: "top center",
               end: "bottom center",
-              scrub: 0.6,
+              scrub: 2.6,
               // markers: true,
             },
           });

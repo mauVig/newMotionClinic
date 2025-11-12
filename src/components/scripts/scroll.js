@@ -2,7 +2,6 @@
 export function initGlobalScroll() {
   console.log("🌍 initGlobalScroll ejecutado");
 
-  // Ejemplo: activar Lenis + ScrollTrigger global
   import("lenis").then(({ default: Lenis }) => {
     const lenis = new Lenis({
       smooth: true,
