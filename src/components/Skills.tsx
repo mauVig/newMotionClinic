@@ -1,181 +1,171 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { skillsData, type Skill } from '@/data/GlobalData';
-import { useStore } from '@/store/storeGlobal';
+"use client";
+
+import React, { useRef, useLayoutEffect } from "react";
+import { gsap } from "gsap";
+import { skillsData, type Skill } from "@/data/GlobalData";
+import { useStore } from "@/store/storeGlobal";
 
 const Skills: React.FC = () => {
-  const [viewStates, setViewStates] = useState<{ [key: string]: boolean }>({});
-  const [flashStates, setFlashStates] = useState<{ [key: string]: boolean }>({});
-  const titleRefs = useRef<(HTMLHeadingElement | null)[]>([]);
-  const h2Ref = useRef<HTMLHeadingElement>(null);
   const { myLang } = useStore();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const toggleView = (skillTitle: string) => {
-    setViewStates(prev => ({
-      ...prev,
-      [skillTitle]: !prev[skillTitle]
-    }));
-  };
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      skillsData.forEach((_, i) => {
+        const header = itemRefs.current[i];
+        const content = contentRefs.current[i];
+        const title = header?.querySelector("h3");
+        const plus = header?.querySelector("svg");
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const title = entry.target.getAttribute('data-title');
-          if (!title) return;
+        if (!header || !content || !title || !plus) return;
 
-          if (entry.isIntersecting) {
-            setFlashStates(prev => ({ ...prev, [title]: true }));
-
-            setTimeout(() => {
-              setFlashStates(prev => ({ ...prev, [title]: false }));
-            }, 1400);
-          }
+        header.addEventListener("mouseenter", () => {
+          if (content.classList.contains("open")) return;
+          gsap.to(title, { x: 36, color: "#a78bff", duration: 0.5, ease: "power3.out" });
         });
-      },
-      {
-        root: null,
-        rootMargin: '-20% 0px',
-        threshold: [0.8]
-      }
-    );
 
-    titleRefs.current.forEach(ref => {
-      if (ref) observer.observe(ref);
-    });
+        header.addEventListener("mouseleave", () => {
+          if (content.classList.contains("open")) return;
+          gsap.to(title, { x: 0, color: "#666666", duration: 0.6, ease: "power3.out" });
+        });
 
-    return () => observer.disconnect();
-  }, []);
+        header.addEventListener("click", () => {
+          const isOpen = content.classList.contains("open");
 
-  useEffect(() => {
-    const h2Observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("fade-in");
+          if (isOpen) {
+            gsap.to(content, {
+              height: 0,
+              opacity: 0,
+              marginTop: 0,
+              duration: 1.1,
+              ease: "power4.inOut",
+              onComplete: () => {
+                content.classList.remove("open");
+                content.style.height = "0px";
+                content.style.marginTop = "0px";
+              },
+            });
+
+            gsap.to([title, plus], {
+              x: 0,
+              y: 0,
+              scale: 1,
+              rotation: 0,
+              color: "#666666",
+              duration: 1.1,
+              ease: "power4.out",
+              stagger: 0.05,
+            });
           } else {
-            entry.target.classList.remove("fade-in");
+            content.classList.add("open");
+            const targetHeight = content.scrollHeight;
+
+            gsap.fromTo(
+              content,
+              { height: 0, opacity: 0, marginTop: 0 },
+              {
+                height: targetHeight,
+                opacity: 1,
+                marginTop: 96,
+                duration: 1.3,
+                ease: "power4.out",
+                onComplete: () => (content.style.height = "auto"),
+              }
+            );
+
+            gsap.to(title, {
+              y: 36,
+              x: 24,
+              scale: 1.18,
+              color: "#e8e8e8",
+              duration: 1.2,
+              ease: "power4.out",
+            });
+
+            gsap.to(plus, { rotation: 45, duration: 0.9, ease: "power3.out" });
           }
         });
-      },
-      { threshold: 0.1 }
-    );
+      });
+    }, containerRef);
 
-    if (h2Ref.current) {
-      h2Observer.observe(h2Ref.current);
-    }
-
-    return () => {
-      if (h2Ref.current) {
-        h2Observer.unobserve(h2Ref.current);
-      }
-      h2Observer.disconnect();
-    };
-  }, []);
+    return () => ctx.revert();
+  }, [myLang]);
 
   return (
-    <section className="bg-backBlack text-[#666666] px-6 pb-36 relative z-10" id='skills'>
-      <div className='max-w-screen-2xl mx-auto'>
-        <h2 ref={h2Ref} className='text-4xl mid:text-6xl xsm:text-7xl mb-32 pt-32 text-violet font-bold fade-element -ml-1'>{ myLang ? 'Skills':'Tratamientos' }</h2>
-        {skillsData.map((skill:Skill, i) => (
-          <div
-            className={`mt-8 hover:cursor-pointer pt-8 group ${
-              i !== 0 ? 'border-t-[.5px] border-[#666666]' : ''
-            }`}
-            key={i}
-          >
-            <div className='flex justify-between items-center' onClick={() => toggleView(typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title)}>
-              <h3
-                ref={el => { titleRefs.current[i] = el; }}
-                data-title={typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title}
-                className={`
-                  text-lg mid:text-4xl
-                  font-bold
-                  cursor-pointer
-                  group-hover:text-grey
-                  transition-all
-                  duration-300
-                  ${flashStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title] ? 'text-[#e8e8e8] font-bold' : ''}
-                  ${viewStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title] ? 'text-[#e8e8e8]' : 'text-[#666666] hover:text-purple'}
-                `}
-              >
-                {typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title}
-              </h3>
-              <div className={`
-                relative p-4 xs:p-6 rounded-full border-2 transition-all duration-500 h-4 w-4
-                ${flashStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title] ? 'border-[#e8e8e8]' : ''}
-                ${viewStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title] ? 'border-[#e8e8e8]' : 'border-[#666666] group-hover:border-grey'}
-              `}>
+    <section ref={containerRef} id="skills" className="bg-backBlack text-[#666666] px-6 py-40 relative z-10">
+      <div className="max-w-screen-2xl mx-auto">
+        <h2 className="text-4xl mid:text-6xl xsm:text-7xl mb-40 text-violet font-bold -ml-1">
+          {myLang ? "Skills" : "Tratamientos"}
+        </h2>
+
+        <div className="space-y-20">
+          {skillsData.map((skill, i) => {
+            const titleText =
+              typeof skill.title === "object"
+                ? myLang
+                  ? skill.title.en
+                  : skill.title.es
+                : skill.title;
+
+            const descText =
+              typeof skill.description === "object"
+                ? myLang
+                  ? skill.description.en
+                  : skill.description.es
+                : skill.description;
+
+            return (
+              <div key={i} className={`${i !== 0 ? "border-t border-[#666666]/30 pt-20" : ""}`}>
                 <div
-                  className={`
-                    absolute
-                    left-1/2
-                    top-1/2
-                    -translate-x-[2px]
-                    -translate-y-1/2
-                    w-[10px]
-                    h-[2px]
-                    transition-all
-                    duration-500
-                    origin-[100%_50%]
-                    ${flashStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title] ? 'bg-[#e8e8e8]' : ''}
-                    ${viewStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title]
-                      ? 'rotate-45 bg-[#e8e8e8] opacity-70'
-                      : '-rotate-45 bg-[#666666] group-hover:bg-grey'
-                    }
-                  `}
-                />
+                  ref={(el) => (itemRefs.current[i] = el)}
+                  className="flex justify-between items-center cursor-pointer select-none group"
+                >
+                  <h3 className="text-lg mid:text-4xl font-bold will-change-transform origin-left">
+                    {titleText}
+                  </h3>
+
+                  <svg
+                    className="w-11 h-11 will-change-transform text-[#666666] group-hover:text-[#a78bff] transition-colors duration-500"
+                    viewBox="0 0 40 40"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <line x1="8" y1="20" x2="32" y2="20" strokeLinecap="round" />
+                    <line x1="20" y1="8" x2="20" y2="32" strokeLinecap="round" />
+                  </svg>
+                </div>
+
                 <div
-                  className={`
-                    absolute
-                    left-1/2
-                    top-1/2
-                    -translate-x-[8px]
-                    -translate-y-1/2
-                    w-[12px]
-                    h-[2px]
-                    transition-all
-                    duration-500
-                    origin-[0%_50%]
-                    ${flashStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title] ? 'bg-[#e8e8e8]' : ''}
-                    ${viewStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title]
-                      ? '-rotate-45 bg-[#e8e8e8] -translate-x-2 opacity-70'
-                      : 'rotate-45 bg-[#666666] group-hover:bg-grey'
-                    }
-                  `}
-                />
-              </div>
-            </div>
-            <div
-              className={`
-                transition-all duration-1000 ease-in-out
-                overflow-hidden text-grey flex justify-start
-                ${viewStates[typeof skill.title === 'object' ? (myLang ? skill.title.en : skill.title.es) : skill.title] ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}
-              `}
-            >
-              <div className="mt-4 w-full flex flex-col xl:flex-row justify-start  gap-4">
-                <img src={skill.img} className='xl:w-1/3 w-full object-contain max-h-96 xl:max-h-fit' alt={myLang ? skill.description.en : skill.description.es} />
-                <div className='flex items-center xl:w-1/2 w-full'>
-                  <p
-                    className="leading-6 md:leading-8 text-sm mid:text-xl xl:pl-8 w-full mt-4 mb-8"
-                    dangerouslySetInnerHTML={{ __html: typeof skill.description === 'object' ? (myLang ? skill.description.en : skill.description.es) : skill.description }}
-                  />
+                  ref={(el) => (contentRefs.current[i] = el)}
+                  className="overflow-hidden"
+                  style={{ height: 0, opacity: 0 }}
+                >
+                  <div className="pt-24 pb-16">
+                    <div className="grid xl:grid-cols-2 gap-20">
+                      <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#111]/80 to-[#0a0a0a]/90 backdrop-blur-xl shadow-2xl border border-white/5">
+                        <img
+                          src={skill.img}
+                          alt={titleText}
+                          className="w-full h-auto object-cover"
+                        />
+                      </div>
+                      <div className="flex items-center">
+                        <p
+                          className="text-[#e8e8e8]/95 text-base mid:text-xl leading-10 tracking-wider font-light"
+                          dangerouslySetInnerHTML={{ __html: descText }}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        ))}
+            );
+          })}
+        </div>
       </div>
-      <style>{`
-        .fade-element {
-          opacity: 0;
-          transform: translateX(-100px);
-          transition: all 0.8s ease-out;
-        }
-        .fade-in {
-          opacity: 1;
-          transform: translateX(0);
-        }
-      `}</style>
     </section>
   );
 };

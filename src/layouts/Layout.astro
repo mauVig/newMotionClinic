@@ -12,41 +12,16 @@ import { initGlobalScroll } from "../scripts/scroll.js";
 
   <body>
     <slot />
-    <script is:inline>
-    console.log("💥 Layout ejecutándose correctamente en cliente");
-  </script>
- <script is:inline>
-      (function () {
-        // Flag global para saber si ya se disparó
-        window.__SITE_READY__ = false;
 
-        function fireReady() {
-          if (window.__SITE_READY__) return;
-          window.__SITE_READY__ = true;
-          // Doble rAF asegura layout final estable
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              window.dispatchEvent(new Event('site:ready'));
-            });
-          });
-        }
 
-        // Esperar fonts y onload (img/css)
-        Promise.resolve(document.fonts && document.fonts.ready)
-          .catch(() => {}) // por si el browser no soporta document.fonts
-          .finally(() => {
-            if (document.readyState === 'complete') {
-              fireReady();
-            } else {
-              window.addEventListener('load', fireReady, { once: true });
-            }
-          });
-
-        // Fallback duro por si algo raro retrasa
-        setTimeout(fireReady, 2500);
-      })();
-    </script>
   </body>
+<script is:inline>
+  window.addEventListener("load", () => {
+    import("/src/scripts/scroll-init.js").then(m => {
+      m.initScrollSystem();
+    });
+  });
+</script>
 
 
 

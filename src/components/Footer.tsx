@@ -1,102 +1,120 @@
 import React from 'react';
 import { useStore } from "@/store/storeGlobal.ts";
 
-
 interface FooterProps {
-  contacto?: 'yes' | 'no'; 
+  contacto?: 'yes' | 'no';
 }
 
-const Footer: React.FC<FooterProps> = ({ contacto }) => {
-  const { myLang } = useStore();   
+const Footer: React.FC<FooterProps> = ({ contacto = "no" }) => {
+  const { myLang, myFocus } = useStore();
   const year = new Date().getFullYear();
-  const yearString = year.toString();
-  const formattedYear = yearString.slice(0, 2) + ' ' + yearString.slice(2);
-  const { myFocus } = useStore();
 
-  const hanlerButton = () => {
+  const handleClick = () => {
     if (contacto === "no") {
       window.location.href = '/contacto';
-    } else {  
+    } else {
       myFocus();
     }
   };
 
   return (
-    <footer
-      id="myFooter"
-      className="bg-black relative z-50 bg-[radial-gradient(ellipse_60%_90%_at_90%_10%,rgba(120,119,198,0.3),rgba(255,255,255,0))] text-grey pt-32 px-6 pb-6"
-    >
-      <div className="grid mid:grid-cols-2 lx:grid-cols-4 gap-y-12 xl:gap-y-0 ">
-        <img src='/svg/logo.svg' alt="Logo de Motion Clinic" className="w-[300px]" />
-        <div className="flex mid:justify-center">
-          <div className="text-xs flex justify-between w-28">
-            <span>BS AS</span>
-            <span>{formattedYear}</span>
+    <footer className="relative z-50 overflow-hidden bg-white text-white py-24 lg:py-32">
+      {/* Background gradient sutil */}
+      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-black/90 to-black pointer-events-none" />
+      
+      <div className="relative max-w-7xl mx-auto px-8 grid grid-cols-12 gap-12 lg:gap-20">
+        {/* Logo */}
+        <div className="col-span-12 md:col-span-4 flex items-center">
+          <img 
+            src='/svg/logo.svg' 
+            alt="Motion Clinic" 
+            className="w-[260px] md:w-[320px] hover:opacity-80 transition-opacity duration-500"
+          />
+        </div>
+
+        {/* Year + Location */}
+        <div className="col-span-12 md:col-span-4 flex items-center justify-start md:justify-center">
+          <div className="font-medium tracking-widest text-zinc-500 uppercase text-sm">
+            <span>Buenos Aires</span>
+            <span className="mx-4 text-zinc-700">·</span>
+            <span>{year}</span>
           </div>
         </div>
-        <div className="flex justify-between w-44">
-          <div className="flex items-end text-sm">
-            <a target='_blank' href="https://www.linkedin.com/in/andres-anania?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app">Linkedin</a>
-          </div>
-          <div className="flex items-end text-sm">
-            <a target='_blank' href="https://www.instagram.com/motionclinic.ba?igsh=MTZzZzF4NXZpMDQzcQ%3D%3D&utm_source=qr">Instagram</a>
-          </div>
-        </div>
-        <div className='flex flex-col items-center gap-4 '>
-          <button className=" py-2 bg-grey text-black rounded-full text-2xl truncate buttom flex justify-center items-center gap-2 w-[90%] xl:w-[350px]" onClick={hanlerButton}>
-            <svg height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <g>
-                <path d="M3 5H21V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V5Z" stroke="#292929" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M3 5L12 14L21 5" stroke="#292929" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </g>
-            </svg>
-            <span className="font-semibold">
-            {myLang ? 'Contact' : 'Contacto'}</span>
-          </button>
-            <a
-            href="https://api.whatsapp.com/send?phone=5491139266548&text=Hola%20doctor%20me%20gustaria%20hablar%20con%20usted"
-            className="py-2 bg-grey text-black rounded-full text-2xl truncate buttom flex justify-center items-center gap-2 w-[90%] xl:w-[350px]"
+
+        {/* Socials */}
+        <div className="col-span-12 md:col-span-4 flex gap-12 justify-center md:justify-end text-sm">
+          <a
+            href="https://www.linkedin.com/in/andres-anania"
             target="_blank"
             rel="noopener noreferrer"
-            >
-             <svg height="30px"  version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 308 308" >
-                <g id="XMLID_468_">
-                  <path id="XMLID_469_" d="M227.904,176.981c-0.6-0.288-23.054-11.345-27.044-12.781c-1.629-0.585-3.374-1.156-5.23-1.156
-                    c-3.032,0-5.579,1.511-7.563,4.479c-2.243,3.334-9.033,11.271-11.131,13.642c-0.274,0.313-0.648,0.687-0.872,0.687
-                    c-0.201,0-3.676-1.431-4.728-1.888c-24.087-10.463-42.37-35.624-44.877-39.867c-0.358-0.61-0.373-0.887-0.376-0.887
-                    c0.088-0.323,0.898-1.135,1.316-1.554c1.223-1.21,2.548-2.805,3.83-4.348c0.607-0.731,1.215-1.463,1.812-2.153
-                    c1.86-2.164,2.688-3.844,3.648-5.79l0.503-1.011c2.344-4.657,0.342-8.587-0.305-9.856c-0.531-1.062-10.012-23.944-11.02-26.348
-                    c-2.424-5.801-5.627-8.502-10.078-8.502c-0.413,0,0,0-1.732,0.073c-2.109,0.089-13.594,1.601-18.672,4.802
-                    c-5.385,3.395-14.495,14.217-14.495,33.249c0,17.129,10.87,33.302,15.537,39.453c0.116,0.155,0.329,0.47,0.638,0.922
-                    c17.873,26.102,40.154,45.446,62.741,54.469c21.745,8.686,32.042,9.69,37.896,9.69c0.001,0,0.001,0,0.001,0
-                    c2.46,0,4.429-0.193,6.166-0.364l1.102-0.105c7.512-0.666,24.02-9.22,27.775-19.655c2.958-8.219,3.738-17.199,1.77-20.458
-                    C233.168,179.508,230.845,178.393,227.904,176.981z"/>
-                  <path id="XMLID_470_" d="M156.734,0C73.318,0,5.454,67.354,5.454,150.143c0,26.777,7.166,52.988,20.741,75.928L0.212,302.716
-                    c-0.484,1.429-0.124,3.009,0.933,4.085C1.908,307.58,2.943,308,4,308c0.405,0,0.813-0.061,1.211-0.188l79.92-25.396
-                    c21.87,11.685,46.588,17.853,71.604,17.853C240.143,300.27,308,232.923,308,150.143C308,67.354,240.143,0,156.734,0z
-                    M156.734,268.994c-23.539,0-46.338-6.797-65.936-19.657c-0.659-0.433-1.424-0.655-2.194-0.655c-0.407,0-0.815,0.062-1.212,0.188
-                    l-40.035,12.726l12.924-38.129c0.418-1.234,0.209-2.595-0.561-3.647c-14.924-20.392-22.813-44.485-22.813-69.677
-                    c0-65.543,53.754-118.867,119.826-118.867c66.064,0,119.812,53.324,119.812,118.867
-                    C276.546,215.678,222.799,268.994,156.734,268.994z"/>
-                </g>
+            className="relative magnetic overflow-hidden group"
+          >
+            <span className="relative z-10 tracking-wider">LinkedIn</span>
+            <div className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+          </a>
+          <a
+            href="https://www.instagram.com/motionclinic.ba"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative magnetic overflow-hidden group"
+          >
+            <span className="relative z-10 tracking-wider">Instagram</span>
+            <div className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+          </a>
+        </div>
+
+    
+        <div className="col-span-12 lg:col-span-8 xl:col-span-6 flex flex-col gap-5">
+      
+          <button
+            onClick={handleClick}
+            className="magnetic group relative w-full lg:w-auto px-12 py-6 border border-white/20 rounded-full overflow-hidden
+                       bg-white/0 hover:bg-white/5 backdrop-blur-xl
+                       transition-all duration-700 hover:border-white/60"
+          >
+            <span className="magnetic relative z-10 flex items-center justify-center gap-4 text-lg font-medium tracking-wider">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M3 5H21V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V5Z"/>
+                <path d="M3 5L12 14L21 5"/>
               </svg>
-            <span className="font-semibold">Whatsapp</span>
-            </a>
+              {myLang ? 'Contact' : 'Contacto'}
+            </span>
+
+            <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 bg-white/10 scale-0 group-hover:scale-150 transition-transform duration-1000 origin-center rounded-full" />
+            </div>
+            <div className="pointer-events-none absolute -inset-px rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 blur-xl transition duration-1000" />
+          </button>
+
+          {/* Botón WhatsApp */}
+          <a
+            href="https://api.whatsapp.com/send?phone=5491139266548&text=Hola%20doctor"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="magnetic group relative w-full lg:w-auto px-12 py-6 border border-emerald-500/30 rounded-full overflow-hidden
+                       bg-emerald-500/5 hover:bg-emerald-500/10 backdrop-blur-xl
+                       transition-all duration-700 hover:border-emerald-400/60"
+          >
+            <span className="magnetic relative z-10 flex items-center justify-center gap-4 text-lg font-medium tracking-wider text-emerald-400">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.438 0 .03 5.418.03 11.987c0 2.085.545 4.119 1.582 5.904L0 24l6.304-1.654c1.737.967 3.71 1.479 5.683 1.479 6.562 0 11.91-5.348 11.91-11.937.002-3.187-1.276-6.182-3.59-8.429"/>
+              </svg>
+              WhatsApp
+            </span>
+
+            {/* Glow verde magnético */}
+            <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 bg-emerald-500/20 scale-0 group-hover:scale-150 transition-transform duration-1000 origin-center rounded-full blur-xl" />
+            </div>
+          </a>
         </div>
       </div>
-      <style>{`
-        .buttom {
-          box-shadow: inset -1px 2px 5px 5px rgba(0, 0, 0, 0.45);
-          transition: all 0.8s;
-        }
-        .buttom:hover {
-          box-shadow: inset -1px 2px 5px 5px rgba(0, 0, 0, 0.3);
-          background: #b1b1db;
-        }
-        .buttom:active {
-          box-shadow: inset -2px 3px 6px 6px rgba(0, 0, 0, 0.45);
-        }
-      `}</style>
+
+      {/* Línea sutil al final */}
+      <div className="mt-24 border-t border-white/10" />
+      <p className="text-center text-xs text-zinc-600 pt-8 tracking-widest">
+        © {year} MOTION CLINIC. ALL RIGHTS RESERVED.
+      </p>
     </footer>
   );
 };

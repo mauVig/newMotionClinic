@@ -80,7 +80,7 @@ const Objective = () => {
       <div className="flex flex-col items-center justify-center text-center 
                       space-y-24 sm:space-y-32 md:space-y-40">
         <div className="max-w-4xl mx-auto">
-          <ShinyText disabled={false} speed={1.5} />
+          <ShinyText disabled={false} speed={0.5} />
         </div>
 
         <div
