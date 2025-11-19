@@ -231,7 +231,7 @@ export const Welcome = () => {
           ref={sectionRef}
           className="content relative z-[3] text-left text-white max-w-[70rem]"
         >
-          <h2 className="text-[clamp(2rem,8vw,8rem)] font-bold leading-[1.05] tracking-[-0.02em] mb-[clamp(1rem,2vh,2.5rem)]">
+          <h2 className="text-[clamp(2rem,8vw,8rem)] font-bold leading-[1.15] tracking-[-0.02em] mb-[clamp(1rem,2vh,2.5rem)]">
             {["The", "Perfect", "Surgery"].map((word, i) => (
               <div key={i} className="line-wrapper overflow-hidden block">
                 <span className="inline-block">{word}</span>

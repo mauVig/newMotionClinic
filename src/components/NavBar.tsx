@@ -40,9 +40,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
   const linksRef = useRef<HTMLDivElement | null>(null);
   const isInitializedRef = useRef(false);
 
-  // ========================================================
-  // CUSTOM EASING
-  // ========================================================
+  
   useLayoutEffect(() => {
     gsap.registerPlugin(CustomEase);
     CustomEase.create(
@@ -51,9 +49,6 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     );
   }, []);
 
-  // ========================================================
-  // INITIAL MENU STATE
-  // ========================================================
   useEffect(() => {
     if (!menuRef.current) return;
     const menu = menuRef.current;
@@ -72,18 +67,12 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     isInitializedRef.current = true;
   }, []);
 
-  // ========================================================
-  // TOGGLE MENU
-  // ========================================================
   const toggleMenu = useCallback(() => {
     if (!isAnimating) {
       setIsMenuOpen((prev) => !prev);
     }
   }, [isAnimating]);
 
-  // ========================================================
-  // OPEN/CLOSE ANIMATION
-  // ========================================================
   const animateMenu = useCallback((open: boolean) => {
     if (!menuRef.current) return;
 
@@ -157,16 +146,10 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     if (isInitializedRef.current) animateMenu(isMenuOpen);
   }, [isMenuOpen, animateMenu]);
 
-  // ========================================================
-  // BLOCK PAGE SCROLL WHEN MENU OPEN
-  // ========================================================
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "";
   }, [isMenuOpen]);
 
-  // ========================================================
-  // SCRAMBLE LOTTERY ON HOVER
-  // ========================================================
   useEffect(() => {
     const container = menuRef.current;
     if (!container) return;
@@ -196,9 +179,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     });
   }, []);
 
-  // ========================================================
-  // UNDERLINE ANIMATION WITH GSAP
-  // ========================================================
+  
   useEffect(() => {
     const container = menuRef.current;
     if (!container) return;
@@ -226,9 +207,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     });
   }, []);
 
-  // ========================================================
-  // ICON PARALLAX ON HOVER
-  // ========================================================
+  
   useEffect(() => {
     const container = menuRef.current;
     if (!container) return;
@@ -262,9 +241,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     });
   }, []);
 
-  // ========================================================
-  // HEADER INTRO
-  // ========================================================
+  
   useEffect(() => {
     if (loading || !headerRef.current) return;
 
@@ -282,18 +259,12 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     );
   }, [loading]);
 
-  // ========================================================
-  // RETURN JSX
-  // ========================================================
+  
   return (
     <>
-      {/* ===================================================== */}
-      {/* ========================= HEADER ===================== */}
-      {/* ===================================================== */}
-
       <header
         ref={headerRef}
-        className={`fixed top-0 z-50 w-full transition-all duration-300 ${
+        className={`fixed top-0 z-[999999] w-full transition-all duration-300 ${
           scrollDirection === "down" && !isMenuOpen
             ? "-translate-y-[105%]"
             : "translate-y-0"
@@ -304,7 +275,6 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
             !isAtTop ? "backdrop-blur-sm bg-black/10" : ""
           }`}
         >
-          {/* CONTACT BTN LEFT */}
           <div className="w-44 hidden sm:flex justify-start text-white magnetic">
             {tab === "home" && (
               <a
@@ -316,8 +286,10 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
                 className="
                   transition-all duration-700 
                   px-4 py-1 rounded-full 
-                  bg-violet text-black
-                  hover:bg-black hover:text-white
+                  bg-violet text-white
+                  hover:bg-white hover:text-violet
+                  hover:bg-white hover:text-black
+                  z-[999999999999]
                 "
               >
                 {myLang ? "CONTACT" : "CONTACTO"}
@@ -325,7 +297,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
             )}
           </div>
 
-          {/* LOGO */}
+  
           <div className="w-44 flex justify-center">
             <a href="#">
               <img
@@ -336,16 +308,16 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
             </a>
           </div>
 
-          {/* LANGUAGE + MENU */}
+
           <div className="w-44 flex justify-end items-center gap-6">
-            {/* Language */}
+
             <div
               className="flex gap-2 cursor-pointer text-violet"
               onClick={changeLanguage}
             >
               <span
                 className={`px-1 transition-all ${
-                  myLang ? "bg-violet text-black rounded" : ""
+                  myLang ? "bg-violet text-white rounded" : ""
                 }`}
               >
                 EN
@@ -353,29 +325,29 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
               <span>|</span>
               <span
                 className={`px-1 transition-all ${
-                  !myLang ? "bg-violet text-black rounded" : ""
+                  !myLang ? "bg-violet text-white rounded" : ""
                 }`}
               >
                 ES
               </span>
             </div>
 
-            {/* Burger / Close */}
+
             <div
               onClick={toggleMenu}
-              className="cursor-pointer relative w-10 h-4"
+              className="cursor-pointer magnetic relative w-10 h-4"
             >
               <img
                 src="/svg/hambur.svg"
                 alt="Open menu"
-                className={`absolute top-0 left-0 transition-all duration-300 filter-violet ${
+                className={`magnetic absolute top-0 left-0 transition-all duration-300 filter-violet ${
                   isMenuOpen ? "opacity-0 rotate-180" : "opacity-100"
                 }`}
               />
               <img
                 src="/svg/hambur-close.svg"
                 alt="Close menu"
-                className={`absolute top-0 left-0 transition-all duration-300 filter-violet ${
+                className={`absolute violet  top-0 left-0 transition-all duration-300  ${
                   isMenuOpen ? "opacity-100" : "opacity-0 -rotate-180"
                 }`}
               />
@@ -383,10 +355,6 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
           </div>
         </div>
       </header>
-
-      {/* ========================================================= */}
-      {/* ====================== AWWARDS MENU ===================== */}
-      {/* ========================================================= */}
 
       <div
         ref={menuRef}
@@ -400,18 +368,15 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
         "
         style={{ backgroundColor: "#ffffff" }}
       >
-        {/* White Layer */}
-        <div className="absolute inset-0 bg-white z-0" />
 
-        {/* Grain */}
+        <div className="absolute inset-0 bg-white z-0" />
         <div
           className="absolute inset-0 opacity-[0.08] mix-blend-multiply pointer-events-none z-10"
           style={{ background: "url('/svg/grain.png')" }}
         />
 
-        {/* Close Button + Contact */}
         <div className="absolute top-0 right-0 z-30 flex items-center gap-6 p-6">
-          <a
+          {/* <a
             href="/contacto"
             onClick={() => {
               toggleMenu();
@@ -423,24 +388,24 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
               bg-black text-white 
               hover:bg-neutral-800
               transition-all duration-300
+            
             "
           >
             {myLang ? "CONTACT" : "CONTACTO"}
           </a>
+ */}
 
-          {/* Close icon */}
-          <div
+          {/* <div
             onClick={toggleMenu}
             className="cursor-pointer group w-8 h-8 flex items-center justify-center"
           >
             <div className="relative w-6 h-6">
-              <span className="absolute left-0 top-1/2 w-6 h-[2px] bg-black rotate-45 group-hover:rotate-90 transition-all duration-300"></span>
+              <span className="absolute left-0 top-1/2 w-6 h-[2px] bg-black rotate-45 group-hover:rotate-180 transition-all duration-300"></span>
               <span className="absolute left-0 top-1/2 w-6 h-[2px] bg-black -rotate-45 group-hover:-rotate-90 transition-all duration-300"></span>
             </div>
-          </div>
+          </div> */}
         </div>
 
-        {/* MENU CONTENT */}
         <div
           ref={linksRef}
           className="

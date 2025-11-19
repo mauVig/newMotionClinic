@@ -30,6 +30,7 @@ export default {
 			purple: '#cfb1fb',
 			backBlack: '#131313',
 			black: '#000000',
+			white: '#ffffff',
 		}
 	},
 	plugins: [],
