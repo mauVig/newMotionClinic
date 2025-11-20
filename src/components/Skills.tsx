@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useRef, useLayoutEffect } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { skillsData, type Skill } from "@/data/GlobalData";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { skillsData } from "@/data/GlobalData";
 import { useStore } from "@/store/storeGlobal";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Skills: React.FC = () => {
   const { myLang } = useStore();
@@ -13,6 +16,65 @@ const Skills: React.FC = () => {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      // ============================================================
+      // ✨ ENTRADA CINEMÁTICA DEL TÍTULO
+      // ============================================================
+      const title = container.querySelector("h2");
+
+      if (title) {
+        gsap.fromTo(
+          title,
+          { autoAlpha: 0, y: 40, filter: "blur(12px)" },
+          {
+            autoAlpha: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 1.4,
+            ease: "power4.out",
+            scrollTrigger: {
+              trigger: container,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // ============================================================
+      // ✨ ENTRADA CINEMÁTICA DE CADA DROPDOWN (HEADER)
+      // ============================================================
+      const headers = itemRefs.current.filter(Boolean);
+
+      if (headers.length > 0) {
+        gsap.fromTo(
+          headers,
+          {
+            autoAlpha: 0,
+            y: 30,
+            filter: "blur(14px)",
+          },
+          {
+            autoAlpha: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 1.4,
+            ease: "power4.out",
+            stagger: 0.15,
+            scrollTrigger: {
+              trigger: container,
+              start: "top 80%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // ============================================================
+      // 🟣 LÓGICA DE HOVER + ACCORDION COMO TENÍAS
+      // ============================================================
       skillsData.forEach((_, i) => {
         const header = itemRefs.current[i];
         const content = contentRefs.current[i];
@@ -23,12 +85,22 @@ const Skills: React.FC = () => {
 
         header.addEventListener("mouseenter", () => {
           if (content.classList.contains("open")) return;
-          gsap.to(title, { x: 36, color: "#a78bff", duration: 0.5, ease: "power3.out" });
+          gsap.to(title, {
+            x: 36,
+            color: "#a78bff",
+            duration: 0.5,
+            ease: "power3.out",
+          });
         });
 
         header.addEventListener("mouseleave", () => {
           if (content.classList.contains("open")) return;
-          gsap.to(title, { x: 0, color: "#666666", duration: 0.6, ease: "power3.out" });
+          gsap.to(title, {
+            x: 0,
+            color: "#666666",
+            duration: 0.6,
+            ease: "power3.out",
+          });
         });
 
         header.addEventListener("click", () => {
@@ -84,7 +156,11 @@ const Skills: React.FC = () => {
               ease: "power4.out",
             });
 
-            gsap.to(plus, { rotation: 45, duration: 0.9, ease: "power3.out" });
+            gsap.to(plus, {
+              rotation: 45,
+              duration: 0.9,
+              ease: "power3.out",
+            });
           }
         });
       });
@@ -94,9 +170,13 @@ const Skills: React.FC = () => {
   }, [myLang]);
 
   return (
-    <section ref={containerRef} id="skills" className="bg-backBlack text-[#666666] px-6 py-40 relative z-10">
+    <section
+      ref={containerRef}
+      id="skills"
+      className="bg-backBlack text-[#666666] px-6 py-40 relative z-10"
+    >
       <div className="max-w-screen-2xl mx-auto">
-        <h2 className="text-4xl mid:text-6xl xsm:text-7xl mb-40 text-violet font-bold -ml-1">
+        <h2 className="text-4xl mid:text-6xl xsm:text-7xl mb-40 text-[#cfb1fb] font-bold -ml-1">
           {myLang ? "Skills" : "Tratamientos"}
         </h2>
 
@@ -117,7 +197,11 @@ const Skills: React.FC = () => {
                 : skill.description;
 
             return (
-              <div key={i} className={`${i !== 0 ? "border-t border-[#666666]/30 pt-20" : ""}`}>
+              <div
+                key={i}
+                className={`${i !== 0 ? "border-t border-[#666666]/30 pt-20" : ""}`}
+              >
+                {/* HEADER */}
                 <div
                   ref={(el) => (itemRefs.current[i] = el)}
                   className="flex justify-between items-center cursor-pointer select-none group"
@@ -127,7 +211,7 @@ const Skills: React.FC = () => {
                   </h3>
 
                   <svg
-                    className="w-11 h-11 will-change-transform text-[#666666] group-hover:text-[#a78bff] transition-colors duration-500"
+                    className="w-11 h-11 will-change-transform text-[#666666] group-hover:text-white/10 transition-colors duration-500"
                     viewBox="0 0 40 40"
                     fill="none"
                     stroke="currentColor"
@@ -138,6 +222,7 @@ const Skills: React.FC = () => {
                   </svg>
                 </div>
 
+                {/* CONTENT */}
                 <div
                   ref={(el) => (contentRefs.current[i] = el)}
                   className="overflow-hidden"
@@ -152,6 +237,7 @@ const Skills: React.FC = () => {
                           className="w-full h-auto object-cover"
                         />
                       </div>
+
                       <div className="flex items-center">
                         <p
                           className="text-[#e8e8e8]/95 text-base mid:text-xl leading-10 tracking-wider font-light"

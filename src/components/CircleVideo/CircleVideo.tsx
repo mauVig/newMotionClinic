@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// CORRECTO: Registrar plugin solo en el cliente
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -14,81 +13,65 @@ const CircleVideo: React.FC = () => {
   const circleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Doble check por si acaso
-    if (typeof window === "undefined") return;
-    if (!ScrollTrigger) return;
-
     const section = sectionRef.current;
     const circle = circleRef.current;
+
     if (!section || !circle) return;
 
-    // Estado inicial del círculo
+    // ----------------------------
+    // ESTADO INICIAL — FIXED SIEMPRE
+    // ----------------------------
     gsap.set(circle, {
-      position: "fixed",        // ← fixed para que no se mueva con el scroll
+      position: "fixed",      // 🔥 CLAVE: SIEMPRE FIJO EN VIEWPORT
       top: "50%",
       left: "50%",
       xPercent: -50,
       yPercent: -50,
-      width: "20vw",
-      height: "20vw",
-      minWidth: "240px",
-      minHeight: "240px",
+      width: "22vw",
+      height: "22vw",
+      minWidth: "200px",
+      minHeight: "200px",
       borderRadius: "50%",
-      overflow: "hidden",
+      backgroundColor: "#ffffff",
       scale: 0.8,
-      opacity: 1,
       zIndex: 50,
       pointerEvents: "none",
-      transformOrigin: "center center",
     });
 
-    // Timeline del círculo mágico
-    const tl = gsap.timeline({
+    // ----------------------------
+    // PIN + ANIMACIÓN SUAVE
+    // ----------------------------
+    gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1,
+        start: "top top",
+        end: "bottom+=160% top",
+        scrub: 1.5,
         pin: true,
         anticipatePin: 1,
-        // markers: true,
-      },
+      }
+    })
+    .to(circle, {
+      scale: 6.5,
+      backgroundColor: "#000",
+      ease: "power3.inOut",
+      duration: 1.6,
     });
 
-    tl.to(circle, {
-      scale: 8,
-      width: "100vw",
-      height: "100vw",
-      duration: 1,
-      ease: "power2.inOut",
-    });
-
-    return () => {
-      tl.kill();
-      ScrollTrigger.getAll().forEach(st => st.kill());
-    };
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen bg-black overflow-hidden"
+      className="
+        relative 
+        w-full 
+        h-[260vh]  
+        bg-[#111]
+        overflow-hidden
+      "
     >
-      {/* Círculo con video */}
-      <div ref={circleRef} className="will-change-transform">
-        <video
-          src="/video/upscaled.video.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover"
-          style={{ transform: "translateZ(0)" }} // fuerza GPU
-        />
-      </div>
-
-      {/* Overlay opcional para más drama */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/60 pointer-events-none z-10" />
+      <div ref={circleRef} className="will-change-transform"></div>
     </section>
   );
 };

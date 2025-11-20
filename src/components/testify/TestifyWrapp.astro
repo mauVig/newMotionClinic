@@ -2,9 +2,10 @@
 import ClinicTestify from "./ClinicTestify.tsx";
 import SlideTestify from "./SlideTestify.tsx";
 ---
-<div class="bg-[#cccccc]">
-    <section class="xl:grid grid-cols-2">
-        <ClinicTestify client:only />
-        <SlideTestify client:only />
-    </section>
+
+<div >
+  <section class="xl:grid grid-cols-2 gap-12 items-start px-6 py-20">
+    <ClinicTestify client:only />
+    <SlideTestify client:only />
+  </section>
 </div>

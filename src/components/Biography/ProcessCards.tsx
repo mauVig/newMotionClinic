@@ -46,9 +46,8 @@ const ProcessCards = () => {
         const cards = gsap.utils.toArray<HTMLElement>(".process-card");
         if (!cards.length) return;
 
-        // 🔹 Crear pin + efecto de profundidad
         cards.forEach((card, index) => {
-          // Pin de cada card (excepto la última)
+
           if (index < cards.length - 1) {
             ScrollTrigger.create({
               trigger: card,
@@ -61,7 +60,7 @@ const ProcessCards = () => {
             });
           }
 
-          // Transición al pasar a la siguiente card
+ 
           if (index < cards.length - 1) {
             ScrollTrigger.create({
               trigger: cards[index + 1],
@@ -85,12 +84,12 @@ const ProcessCards = () => {
           }
         });
 
-        // 🔹 Refrescar ScrollTrigger después del layout final
+
         setTimeout(() => ScrollTrigger.refresh(), 300);
       }, container);
     }
 
-    // ✅ Esperar carga completa antes de iniciar GSAP
+
     const safeInit = () => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -105,34 +104,34 @@ const ProcessCards = () => {
       window.addEventListener("load", safeInit, { once: true });
     }
 
-    // 🔹 Limpieza local (no global)
+
     return () => {
-      ctx?.revert(); // solo revierte lo creado dentro del context
+      ctx?.revert();
     };
   }, []);
 
   return (
     <div
       ref={rootRef}
-      className="relative w-full bg-black overflow-hidden select-none"
+      className="relative w-full overflow-hidden select-none"
     >
       {processCardsData.map((card, i) => (
         <div
           key={i}
-          className="process-card relative w-full h-screen flex flex-col justify-center items-center text-center bg-[#f5f5f5] text-black px-6 transition-transform duration-300 will-change-transform shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+          className="process-card relative w-full h-screen flex flex-col justify-center items-center text-center bg-[#272727] text-black px-6 transition-transform duration-300 will-change-transform shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
           style={{ borderRadius: "1rem" }}
         >
-          {/* número grande de fondo */}
-          <div className="absolute top-6 left-6 text-black/10 font-extrabold text-[10vw] select-none leading-none">
+     
+          <div className="absolute top-6 left-6 text-[#cfb1fb] font-extrabold text-[10vw] select-none leading-none">
             {card.index}
           </div>
 
-          {/* contenido */}
+ 
           <div className="z-10 max-w-[700px]">
-            <h2 className="uppercase text-[2rem] sm:text-[2.8rem] md:text-[3.5rem] font-bold mb-4 tracking-tight">
+            <h2 className="uppercase text-[2rem] sm:text-[2.8rem] md:text-[3.5rem] font-bold text-white mb-4 tracking-tight">
               {card.title}
             </h2>
-            <p className="text-[1rem] sm:text-[1.1rem] md:text-[1.25rem] text-gray-700 leading-relaxed">
+            <p className="text-[1rem] sm:text-[1.1rem] md:text-[1.25rem] text-[#cfb1fb] leading-relaxed">
               {card.description}
             </p>
           </div>

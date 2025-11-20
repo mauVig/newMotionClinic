@@ -17,32 +17,28 @@ import Gallery2 from '@/components/gallery/Gallery2';
 import CircleVideo from '@/components/CircleVideo/CircleVIdeo';
 
 ---
+<Loading client:only />
 
-<Loading client:only/>
 <Layout>
-<MagneticCursor client:only="react" />
-	<NavBar client:only tab="home"/>
-		<Welcome client:load />
-		<Objective client:only="react" />
-		<Experience client:only="react" />
-		<Biography client:only="react" />
-		<Skills client:only="react" />
+  <MagneticCursor client:only="react" />
 
-		<Gallery client:only />
-		<Gallery2 client:only />
-		
-	
-	<!-- 
+  <NavBar client:only tab="home" />
 
 
+  <Welcome client:visible />
+  <Objective client:visible />
 
 
-	<Gallery client:only />
-	
-	<Skills client:only/>
-	<TestifyVideos client:only />
-	<TestifyWrapp />
-	-->
-	<Footer client:only contacto="no"/>
-	<Whatsapp client:only />
+  <Experience client:visible />
+  <Biography client:visible />
+
+
+  <Skills client:only />
+
+  <TestifyWrapp />
+  <!-- <Gallery client:only /> -->
+  <!-- <Gallery2 client:only /> -->
+
+  <Footer client:only contacto="no"/>
+  <Whatsapp client:only />
 </Layout>

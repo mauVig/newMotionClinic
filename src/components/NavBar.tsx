@@ -366,13 +366,21 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
           pointer-events-none
           flex flex-col
         "
-        style={{ backgroundColor: "#ffffff" }}
+        style={{
+
+          background: "rgba(172, 172, 172, 0.82)",
+
+          backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
+   
+          boxShadow: "0 0 60px rgba(17, 17, 17, 0.45)",
+        }}
       >
 
-        <div className="absolute inset-0 bg-white z-0" />
+        <div className="absolute inset-0  z-0" />
         <div
-          className="absolute inset-0 opacity-[0.08] mix-blend-multiply pointer-events-none z-10"
-          style={{ background: "url('/svg/grain.png')" }}
+          className="absolute inset-0 opacity-[0.08]  pointer-events-none z-10"
+          // style={{ background: "url('/svg/grain.png')" }}
         />
 
         <div className="absolute top-0 right-0 z-30 flex items-center gap-6 p-6">
@@ -413,6 +421,8 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
             flex flex-col justify-center 
             h-full 
             px-10 md:px-28
+             text-white     
+            fill-white
             will-change-transform will-change-opacity
           "
         >
@@ -453,7 +463,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
                     className="
                       absolute left-0 bottom-[-6px] 
                       w-full h-[2px] 
-                      bg-black 
+              
                       scale-x-0 
                       origin-left 
                       underline-anim

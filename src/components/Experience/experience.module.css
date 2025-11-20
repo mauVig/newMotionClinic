@@ -1,7 +1,7 @@
 .section {
   position: relative;
   width: 100%;
-  height: 450vh; /* suficiente recorrido, pero entra directo */
+  height: 250vh; /* suficiente recorrido, pero entra directo */
   background: #0d0d0e;
   overflow: hidden;
   display: flex;

@@ -1,17 +1,17 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/store/storeGlobal.ts";
+import FractalGlassBackground from "./FractalGlassBackground"; // ⬅️ nuevo import
 
 export const Welcome = () => {
   const { myLang, loading } = useStore();
   const sectionRef = useRef<HTMLDivElement | null>(null);
-  const bgRef = useRef<HTMLDivElement | null>(null);
 
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [bgImage, setBgImage] = useState<string>("");
 
-
+  // 🔹 Elijo imagen según viewport y la precargo
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -27,11 +27,12 @@ export const Welcome = () => {
     return () => clearTimeout(fallback);
   }, []);
 
+  // 🔹 Cuando termina el loading global + imagen cargada, muestro contenido
   useEffect(() => {
     if (!loading && imageLoaded) setShowContent(true);
   }, [loading, imageLoaded]);
 
-
+  // 🔹 Animación de líneas + botón (igual que antes)
   useEffect(() => {
     if (!showContent || !sectionRef.current) return;
 
@@ -76,78 +77,7 @@ export const Welcome = () => {
     })();
   }, [showContent]);
 
-  
-  useEffect(() => {
-    if (!showContent || !bgRef.current) return;
-
-    (async () => {
-      const gsapModule = await import("gsap");
-      const gsap = gsapModule.gsap || gsapModule.default;
-
-      const bg = bgRef.current;
-      bg.style.backgroundPosition = "50% 50%";
-
-      let targetX = 50,
-        targetY = 50;
-      let currentX = 50,
-        currentY = 50;
-
-      const handleMove = (e: MouseEvent) => {
-        const { innerWidth, innerHeight } = window;
-        const xNorm = (e.clientX / innerWidth - 0.5) * 2;
-        const yNorm = (e.clientY / innerHeight - 0.5) * 2;
-        targetX = 50 + xNorm * 2.5;
-        targetY = 50 - yNorm * 2.5;
-      };
-
-      const update = () => {
-        currentX += (targetX - currentX) * 0.05;
-        currentY += (targetY - currentY) * 0.05;
-        bg.style.backgroundPosition = `${currentX}% ${currentY}%`;
-      };
-
-      gsap.ticker.add(update);
-      window.addEventListener("mousemove", handleMove);
-
-      return () => {
-        window.removeEventListener("mousemove", handleMove);
-        gsap.ticker.remove(update);
-      };
-    })();
-  }, [showContent]);
-
-
-  useEffect(() => {
-    if (!bgRef.current || !showContent) return;
-
-    (async () => {
-      const gsapModule = await import("gsap");
-      const scrollTriggerModule = await import("gsap/ScrollTrigger");
-
-      const gsap = gsapModule.gsap || gsapModule.default;
-      const ScrollTrigger =
-        scrollTriggerModule.ScrollTrigger || scrollTriggerModule.default;
-
-      gsap.registerPlugin(ScrollTrigger);
-
-      gsap.fromTo(
-        bgRef.current,
-        { scale: 1 },
-        {
-          scale: 1.05,
-          ease: "none",
-          scrollTrigger: {
-            trigger: bgRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
-        }
-      );
-    })();
-  }, [showContent]);
-
- 
+  // 🔹 Botón magnético (igual que antes)
   useEffect(() => {
     (async () => {
       const gsapModule = await import("gsap");
@@ -200,25 +130,19 @@ export const Welcome = () => {
 
   return (
     <section
-      className="relative flex items-center justify-start w-full min-h-screen overflow-hidden px-[clamp(2rem,6vw,6rem)]"
+      className="relative flex items-center justify-start w-full min-h-screen overflow-hidden px-[clamp(2rem,6vw,6rem)] bg-black"
       style={{
         color: "#e8e8e8",
-        backgroundColor: imageLoaded ? "transparent" : "#000",
       }}
     >
- 
-      <div
-        ref={bgRef}
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat will-change-transform"
-        style={{
-          backgroundImage: bgImage ? `url(${bgImage})` : "none", 
-          transformOrigin: "center center",
-        }}
-      />
+      {/* 🔵 Fondo fractal con Three.js */}
+      <div className="absolute inset-0 z-[1]">
+        {bgImage && <FractalGlassBackground imageSrc={bgImage} />}
+      </div>
 
-     
+      {/* 🔹 Gradiente por encima del shader */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-[2]"
         style={{
           background:
             "linear-gradient(to top, rgba(0,0,0,0.8) 15%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)",
@@ -231,8 +155,8 @@ export const Welcome = () => {
           ref={sectionRef}
           className="content relative z-[3] text-left text-white max-w-[70rem]"
         >
-          <h2 className="text-[clamp(2rem,8vw,8rem)] font-bold leading-[1.15] tracking-[-0.02em] mb-[clamp(1rem,2vh,2.5rem)]">
-            {["The", "Perfect", "Surgery"].map((word, i) => (
+          <h2 className="text-[clamp(2rem,8vw,8rem)] font-bold leading-[1.25] tracking-[-0.02em] mb-[clamp(1rem,2vh,2.5rem)]">
+            {["The Perfect", "Surgery"].map((word, i) => (
               <div key={i} className="line-wrapper overflow-hidden block">
                 <span className="inline-block">{word}</span>
               </div>

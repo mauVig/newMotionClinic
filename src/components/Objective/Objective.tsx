@@ -54,12 +54,11 @@ const Objective = () => {
       tl.to(chars, {
         opacity: 0.25,
         yPercent: -10,
-        duration: 1.4,
+        duration: 4.4,
         ease: "power2.inOut",
         stagger: { each: 0.04 },
       });
-
-      // ✅ Sincroniza todo el ScrollTrigger después del load
+ad
       window.addEventListener("load", () => {
         setTimeout(() => {
           if (window.ScrollTrigger) {
@@ -80,13 +79,13 @@ const Objective = () => {
       <div className="flex flex-col items-center justify-center text-center 
                       space-y-24 sm:space-y-32 md:space-y-40">
         <div className="max-w-4xl mx-auto">
-          <ShinyText disabled={false} speed={0.5} />
+          <ShinyText disabled={false} speed={1.5} />
         </div>
 
         <div
           ref={textRef}
           className="overflow-hidden leading-[0.9] font-bold italic text-[#cfb1fb]
-                     text-6xl sm:text-7xl md:text-8xl lg:text-[9rem] reddit-sans-text"
+                     text-6xl text-color-[#111] sm:text-7xl md:text-8xl lg:text-[9rem] reddit-sans-text"
         >
           {"DO IT AGAIN".split("").map((char, i) => (
             <span key={i} className="char inline-block">

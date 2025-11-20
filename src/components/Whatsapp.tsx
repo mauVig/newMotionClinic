@@ -80,7 +80,7 @@ const Whatsapp = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-8 right-8 z-50 pointer-events-none">
+    <div className="fixed bottom-8 right-8 z-[999999] pointer-events-none">
       <a
         href="https://api.whatsapp.com/send?phone=5491139266548&text=Hola%20doctor%20me%20gustaria%20hablar%20con%20usted"
         target="_blank"
