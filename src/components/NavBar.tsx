@@ -54,15 +54,15 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     const menu = menuRef.current;
     const links = menu.querySelectorAll(".menu-link");
 
-    gsap.set(menu, {
-      clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-    });
+    // gsap.set(menu, {
+    //   clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
+    // });
 
-    gsap.set(links, {
-      y: 80,
-      opacity: 0,
-      filter: "blur(12px)",
-    });
+    // gsap.set(links, {
+    //   y: 80,
+    //   opacity: 0,
+    //   filter: "blur(12px)",
+    // });
 
     isInitializedRef.current = true;
   }, []);
@@ -97,11 +97,11 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
         ease: "hop",
       }).fromTo(
         links,
-        { y: 60, opacity: 0, filter: "blur(12px)" },
+        { y: 60, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          filter: "blur(0px)",
+     
           duration: 0.9,
           stagger: 0.1,
           ease: "power3.out",
@@ -118,7 +118,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
           gsap.set(links, {
             y: 80,
             opacity: 0,
-            filter: "blur(12px)",
+         
           });
           setIsAnimating(false);
         },
@@ -127,8 +127,8 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
       tl.to(links, {
         y: 40,
         opacity: 0,
-        filter: "blur(8px)",
-        stagger: -0.08,
+        // filter: "blur(8px)",
+        // stagger: -0.08,
         duration: 0.35,
       }).to(
         menu,
@@ -247,11 +247,11 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
 
     gsap.fromTo(
       headerRef.current,
-      { y: -80, opacity: 0, filter: "blur(6px)" },
+      { y: -80, opacity: 0 },
       {
         y: 0,
         opacity: 1,
-        filter: "blur(0px)",
+      
         duration: 1.2,
         ease: "power4.out",
         delay: 0.4,
@@ -340,7 +340,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
               <img
                 src="/svg/hambur.svg"
                 alt="Open menu"
-                className={`magnetic absolute top-0 left-0 transition-all duration-300 filter-violet ${
+                className={`magnetic absolute top-0 left-0 transition-all duration-300  ${
                   isMenuOpen ? "opacity-0 rotate-180" : "opacity-100"
                 }`}
               />

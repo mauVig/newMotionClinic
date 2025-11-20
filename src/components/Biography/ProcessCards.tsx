@@ -19,7 +19,7 @@ const ProcessCards = () => {
       index: "02",
       title: "Inovacion Médica",
       description:
-        "Mi formación incluye un ",
+        "Mi formación incluye un AVP Fellowship  en el Hospital for Special Surgery en Nueva York, un MBA en el IAE Buisness School, y programas ejecutivos en Hardbard Buisness School y Stanford sobre transformacion digital e inteligencia artificial aplicados a la salud ",
     },
     {
       index: "03",

@@ -53,26 +53,20 @@ export const SlideTestify: React.FC = () => {
   const splitInstancesRef = useRef<SplitText[]>([]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const update = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
+    const update = () => setIsMobile(window.innerWidth < 768);
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
   useLayoutEffect(() => {
-    if (typeof window === "undefined") return;
-
     const container = containerRef.current;
     const imagesWrapper = imagesWrapperRef.current;
+    if (!container || !imagesWrapper) return;
+
     const prevBtn = prevBtnRef.current;
     const nextBtn = nextBtnRef.current;
-
-    if (!container || !imagesWrapper || !prevBtn || !nextBtn) return;
+    if (!prevBtn || !nextBtn) return;
 
     const slides = SLIDES.map((s) => ({
       ...s,
@@ -80,56 +74,30 @@ export const SlideTestify: React.FC = () => {
     }));
 
     const ctx = gsap.context(() => {
-      const titleContainers =
-        Array.from(container.querySelectorAll(".slide-title-container"));
+      // Split text globally
+      const titleEl = container.querySelector(".active-title");
+      if (!titleEl) return;
 
-      splitInstancesRef.current.forEach((s) => s.revert());
-      splitInstancesRef.current = [];
-
-      titleContainers.forEach((slideEl) => {
-        const titleEl = slideEl.querySelector(".title");
-        if (!titleEl) return;
-
-        const split = new SplitText(titleEl, {
-          type: "words",
-          wordsClass: "word",
-        });
-
-        splitInstancesRef.current.push(split);
+      const split = new SplitText(titleEl, {
+        type: "words",
+        wordsClass: "word",
       });
 
-      const allWords = container.querySelectorAll(".word");
-      gsap.set(allWords, { opacity: 0, filter: "blur(50px)" });
+      splitInstancesRef.current.push(split);
 
-      const showWordsForIndex = (index: number) => {
-        const all = container.querySelectorAll(".word");
-        gsap.to(all, {
-          opacity: 0,
-          filter: "blur(60px)",
-          duration: 1.2,
-          ease: "power2.out",
-        });
+      gsap.set(".word", { opacity: 0, filter: "blur(40px)" });
 
-        const words =
-          titleContainers[index]?.querySelectorAll(".word") || [];
-
-        gsap.to(words, {
+      const animateTitle = () => {
+        gsap.to(".word", {
           opacity: 1,
           filter: "blur(0px)",
-          duration: 1.6,
+          duration: 1.5,
           ease: "power3.out",
           stagger: 0.06,
         });
-
-        titleContainers.forEach((el, i) => {
-          gsap.to(el, {
-            opacity: i === index ? 1 : 0.25,
-            duration: 0.8,
-          });
-        });
       };
 
-      showWordsForIndex(0);
+      animateTitle();
 
       const createImageContainer = (src: string) => {
         const wrapper = document.createElement("div");
@@ -144,16 +112,11 @@ export const SlideTestify: React.FC = () => {
         return { wrapper, img };
       };
 
+      // FIRST IMAGE
       const first = createImageContainer(slides[0].src);
       imagesWrapper.appendChild(first.wrapper);
 
-      gsap.set(first.wrapper, {
-        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-      });
-
-      const getSlideOffset = () =>
-        window.innerWidth < 1000 ? 100 : 500;
-
+      // NEXT SLIDE LOGIC
       const goToIndex = (nextIndex: number, direction: "left" | "right") => {
         if (isAnimatingRef.current) return;
         isAnimatingRef.current = true;
@@ -169,7 +132,7 @@ export const SlideTestify: React.FC = () => {
 
         imagesWrapper.appendChild(newWrapper);
 
-        const offset = getSlideOffset();
+        const offset = window.innerWidth < 900 ? 100 : 400;
 
         gsap.set(newImg, {
           x: direction === "left" ? -offset : offset,
@@ -177,14 +140,14 @@ export const SlideTestify: React.FC = () => {
 
         gsap.to(newImg, {
           x: 0,
-          duration: 1.5,
+          duration: 1.3,
           ease: "hop",
         });
 
         if (currentImg) {
           gsap.to(currentImg, {
             x: direction === "left" ? offset : -offset,
-            duration: 1.5,
+            duration: 1.3,
             ease: "hop",
           });
         }
@@ -199,7 +162,7 @@ export const SlideTestify: React.FC = () => {
           },
           {
             clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-            duration: 1.5,
+            duration: 1.3,
             ease: "hop",
             onComplete: () => {
               const imgs =
@@ -214,30 +177,43 @@ export const SlideTestify: React.FC = () => {
           }
         );
 
-        showWordsForIndex(nextIndex);
+        // UPDATE TITLE
+        const newTitle = slides[nextIndex].title;
+        const titleEl = container.querySelector(".active-title");
+        if (titleEl) {
+          titleEl.innerHTML = newTitle;
+
+          split.revert();
+          const newSplit = new SplitText(titleEl, {
+            type: "words",
+            wordsClass: "word",
+          });
+          splitInstancesRef.current.push(newSplit);
+
+          gsap.set(".word", {
+            opacity: 0,
+            filter: "blur(40px)",
+          });
+
+          animateTitle();
+        }
+
         currentIndexRef.current = nextIndex;
       };
 
-      const handleNext = () => {
-        const total = slides.length;
-        const nextIndex = (currentIndexRef.current + 1) % total;
-        goToIndex(nextIndex, "right");
-      };
-
-      const handlePrev = () => {
+      prevBtn.addEventListener("click", () => {
         const total = slides.length;
         const nextIndex =
           (currentIndexRef.current - 1 + total) % total;
         goToIndex(nextIndex, "left");
-      };
+      });
 
-      prevBtn.addEventListener("click", handlePrev);
-      nextBtn.addEventListener("click", handleNext);
-
-      return () => {
-        prevBtn.removeEventListener("click", handlePrev);
-        nextBtn.removeEventListener("click", handleNext);
-      };
+      nextBtn.addEventListener("click", () => {
+        const total = slides.length;
+        const nextIndex =
+          (currentIndexRef.current + 1) % total;
+        goToIndex(nextIndex, "right");
+      });
     }, containerRef);
 
     return () => {
@@ -251,71 +227,66 @@ export const SlideTestify: React.FC = () => {
     <section
       ref={containerRef}
       className="
-        motion-carousel
+        flex flex-col items-center
         relative w-full
-        bg-[#050509] 
         text-white
-        flex flex-col 
-        px-6 py-16 md:px-10
-        overflow-hidden
       "
     >
-      {/* IMAGEN */}
+      {/* SLIDER CON ANCHO LIMITADO */}
       <div
         className="
-          relative w-full
+          relative 
+          w-full max-w-[950px]
           h-[320px] sm:h-[420px] md:h-[520px] lg:h-[560px]
           rounded-3xl overflow-hidden
-          border border-white/8
-          bg-[#050509]
         "
       >
         <div ref={imagesWrapperRef} className="absolute inset-0 images-wrapper" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.16),_transparent_55%)] pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 pointer-events-none" />
       </div>
 
-      {/* TITULOS */}
-      <div className="mt-10 space-y-3">
-        {SLIDES.map((slide, i) => (
-          <div
-            key={i}
-            className="slide-title-container transition-opacity duration-500"
-          >
-            <h1
-              className="
-                title
-                text-2xl sm:text-3xl md:text-4xl
-                font-semibold tracking-tight
-                leading-tight
-              "
-            >
-              {slide.title}
-            </h1>
-          </div>
-        ))}
+      {/* TITULO ABSOLUTAMENTE POSICIONADO - MISMA ALTURA SIEMPRE */}
+      <div
+        className="
+          relative 
+          w-full max-w-[950px]
+          mt-6
+        "
+      >
+        <h1
+          className="
+            active-title
+            text-2xl sm:text-3xl md:text-4xl 
+            font-semibold 
+            tracking-tight 
+            leading-tight
+          "
+        >
+          Robotic Precision in Motion
+        </h1>
       </div>
 
       {/* CONTROLES */}
-      <div className="mt-8 flex items-center justify-between gap-4">
-        <div className="flex gap-3">
+      <div
+        className="
+          mt-6 
+          flex items-center justify-between 
+          w-full max-w-[950px]
+        "
+      >
+        <div className="flex gap-4">
           <button
             ref={prevBtnRef}
             className="
-              group relative w-10 h-10 rounded-full
+              group w-10 h-10 rounded-full
               border border-white/20
               flex items-center justify-center
               bg-white/5 hover:bg-white/10
-              overflow-hidden
-              transition-all duration-300
+              transition-all
             "
-            aria-label="Previous slide"
           >
-            <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <svg
-              xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="w-5 h-5 translate-x-[1px] group-hover:-translate-x-[1px] transition-transform duration-300"
+              className="w-5 h-5 translate-x-[1px] group-hover:-translate-x-[1px] transition-transform"
             >
               <path
                 d="M15 19l-7-7 7-7"
@@ -323,7 +294,6 @@ export const SlideTestify: React.FC = () => {
                 stroke="currentColor"
                 strokeWidth="1.7"
                 strokeLinecap="round"
-                strokeLinejoin="round"
               />
             </svg>
           </button>
@@ -331,20 +301,16 @@ export const SlideTestify: React.FC = () => {
           <button
             ref={nextBtnRef}
             className="
-              group relative w-10 h-10 rounded-full
+              group w-10 h-10 rounded-full
               border border-white/20
               flex items-center justify-center
               bg-white/5 hover:bg-white/10
-              overflow-hidden
-              transition-all duration-300
+              transition-all
             "
-            aria-label="Next slide"
           >
-            <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <svg
-              xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="w-5 h-5 -translate-x-[1px] group-hover:translate-x-[1px] transition-transform duration-300"
+              className="w-5 h-5 -translate-x-[1px] group-hover:translate-x-[1px] transition-transform"
             >
               <path
                 d="M9 5l7 7-7 7"
@@ -352,36 +318,15 @@ export const SlideTestify: React.FC = () => {
                 stroke="currentColor"
                 strokeWidth="1.7"
                 strokeLinecap="round"
-                strokeLinejoin="round"
               />
             </svg>
           </button>
         </div>
 
-        <p className="text-[0.65rem] sm:text-xs tracking-[0.18em] uppercase text-white/50">
+        <p className="text-xs tracking-[0.18em] text-white/50 uppercase">
           Motion Clinic · Gallery
         </p>
       </div>
-
-      <style>{`
-        .motion-carousel .slide-title-container {
-          opacity: 0.25;
-        }
-
-        .motion-carousel .slide-title-container:first-child {
-          opacity: 1;
-        }
-
-        .motion-carousel .img img {
-          filter: url("#blur-matrix");
-        }
-
-        @supports not (filter: url("#blur-matrix")) {
-          .motion-carousel .img img {
-            filter: none;
-          }
-        }
-      `}</style>
     </section>
   );
 };
