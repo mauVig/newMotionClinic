@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-// ⚙️ Configuración igual a la del ejemplo de Codegrid
+
 const config = {
   lerpFactor: 0.035,
   parallaxStrength: 0.1,
@@ -14,7 +14,7 @@ const config = {
   edgePadding: 0.1,
 };
 
-// 🧠 Shaders tal cual los robamos 😈
+
 const vertexShader = `
   varying vec2 vUv;
   void main() {

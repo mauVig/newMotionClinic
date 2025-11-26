@@ -37,8 +37,8 @@ useEffect(() => {
 
     split.lines.forEach((line: HTMLElement) => {
       gsap.set(line, {
-        backgroundImage:
-          "linear-gradient(to right, #5b5bc4 50%, #444 50%)",
+       backgroundImage: "linear-gradient(to right, #ffffff 50%, #444 50%)",
+
         backgroundSize: "200% 100%",
         backgroundPositionX: "100%",
         color: "transparent",
@@ -77,9 +77,20 @@ useEffect(() => {
       className={`max-w-screen-lg mx-auto text-center ${className}`}
     >
       <h1
-        ref={textRef}
-        className="text-xl sm:text-2xl lg:text-4xl leading-relaxed font-light whitespace-pre-line"
-      >
+  ref={textRef}
+  className="
+    text-lg 
+    sm:text-xl 
+    lg:text-2xl 
+    leading-relaxed 
+    font-light 
+    whitespace-pre-line
+    max-w-[680px] 
+    mx-auto 
+    text-center
+  "
+>
+
         {getText()}
       </h1>
     </div>

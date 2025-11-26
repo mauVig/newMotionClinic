@@ -26,7 +26,7 @@ const Objective = () => {
 
       const chars = textEl.querySelectorAll(".char");
 
-      gsap.set(chars, { yPercent: 100, opacity: 0, filter: "blur(8px)" });
+      gsap.set(chars, { yPercent: 100, opacity: 0, filter: "blur(8px)", color: "#5b5bc4" });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -74,19 +74,33 @@ ad
       ref={sectionRef}
       id="reveal-section"
       className="relative min-h-[120vh] flex flex-col items-center justify-center px-4 
-                 overflow-hidden bg-[#111] text-white will-change-transform"
+                 overflow-hidden bg-[#111]     text-[#5b5bc4] will-change-transform"
     >
       <div className="flex flex-col items-center justify-center text-center 
                       space-y-24 sm:space-y-32 md:space-y-40">
         <div className="max-w-4xl mx-auto">
           <ShinyText disabled={false} speed={1.5} />
         </div>
+<div
+  ref={textRef}
+  className="
+    overflow-hidden
+    leading-[0.9]
+    font-bold italic
+    text-[#5b5bc4]
 
-        <div
-          ref={textRef}
-          className="overflow-hidden leading-[0.9] font-bold italic text-[#cfb1fb]
-                     text-6xl text-color-[#111] sm:text-7xl md:text-8xl lg:text-[9rem] reddit-sans-text"
-        >
+    reddit-sans-text
+    max-w-[90vw] mx-auto
+    pr-[0.35em]        /* ← FIX MAGICO: evita que se corte la última letra */
+
+    text-5xl tracking-[-0.02em]
+    sm:text-6xl sm:tracking-tight
+    md:text-7xl
+    lg:text-[9rem]
+  "
+>
+
+
           {"DO IT AGAIN".split("").map((char, i) => (
             <span key={i} className="char inline-block">
               {char === " " ? "\u00A0" : char}

@@ -115,28 +115,85 @@ const ProcessCards = () => {
       ref={rootRef}
       className="relative w-full overflow-hidden select-none"
     >
-      {processCardsData.map((card, i) => (
-        <div
-          key={i}
-          className="process-card relative w-full h-screen flex flex-col justify-center items-center text-center bg-[#272727] text-black px-6 transition-transform duration-300 will-change-transform shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
-          style={{ borderRadius: "1rem" }}
-        >
-     
-          <div className="absolute top-6 left-6 text-[#cfb1fb] font-extrabold text-[10vw] select-none leading-none">
-            {card.index}
-          </div>
+    {processCardsData.map((card, i) => (
+  <div
+    key={i}
+    className="
+      process-card relative w-full h-screen 
+      flex flex-col justify-center items-center 
+      px-8 md:px-14 
+      bg-[#151515] 
+      text-white 
+      rounded-[2rem]
+      shadow-[0_20px_60px_rgba(0,0,0,0.4)]
+      overflow-hidden
+    "
+  >
+  
+    <div
+      className="
+        absolute top-10 left-10 
+        text-[#5b5bc4]
+        font-extrabold 
+        opacity-[1]
+        text-[22vw]
+        leading-none 
+        select-none
+        pointer-events-none
+      "
+    >
+      {card.index}
+    </div>
+
+    <div className="mb-10 flex items-center justify-center">
+      <div
+        className="
+          w-20 h-20 md:w-24 md:h-24 
+          flex items-center justify-center
+          bg-[#5b5bc41a]
+          border border-[#5b5bc440]
+          rounded-2xl shadow-[0_4px_16px_rgba(91,91,196,0.35)]
+          backdrop-blur-md
+        "
+      >
+        <img
+          src={`/svg/icon-${i + 1}.svg`}
+          className="w-10 h-10 opacity-90"
+        />
+      </div>
+    </div>
 
  
-          <div className="z-10 max-w-[700px]">
-            <h2 className="uppercase text-[2rem] sm:text-[2.8rem] md:text-[3.5rem] font-bold text-white mb-4 tracking-tight">
-              {card.title}
-            </h2>
-            <p className="text-[1rem] sm:text-[1.1rem] md:text-[1.25rem] text-[#cfb1fb] leading-relaxed">
-              {card.description}
-            </p>
-          </div>
-        </div>
-      ))}
+    <div className="z-10 max-w-[700px] text-center">
+      <h2
+        className="
+          text-white 
+          font-semibold 
+           text-[#d6bcfc]
+          uppercase 
+          tracking-tight
+          text-[1.8rem] sm:text-[2.3rem] md:text-[2.8rem]
+          mb-5
+        "
+      >
+        {card.title}
+      </h2>
+
+      <p
+        className="
+          text-[#e2dfff] 
+          font-light 
+          leading-relaxed
+          text-[1rem] sm:text-[1.15rem] md:text-[1.25rem]
+          opacity-85
+        "
+      >
+        {card.description}
+      </p>
+    </div>
+  </div>
+))}
+
     </div>
   );
 };

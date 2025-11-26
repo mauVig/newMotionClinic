@@ -46,55 +46,89 @@ const ClinicTestify = () => {
       ref={sectionRef}
       className="
         w-full 
-        px-6 md:px-10 
-        py-16 md:py-20
+        flex flex-col items-center
         bg-[#111]
         text-white
-        flex flex-col
+        py-[12vh]
       "
     >
-      <div ref={titleRef} className="max-w-[600px]">
-        <p className="text-sm tracking-wider mb-2 opacity-80">
-          Motion Clinic
-        </p>
+      {/* MISMO ANCHO QUE SLIDETESTIFY */}
+      <div className="w-full max-w-[950px] flex flex-col gap-8">
 
-        <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-[0.9] mb-10">
-          {myLang ? "Location" : "Ubicación"}
-        </h2>
-      </div>
+        {/* HEADER */}
+        <div ref={titleRef} className="flex flex-col gap-2">
+          <p className="text-sm tracking-[0.22em] text-white/60 uppercase">
+            Motion Clinic
+          </p>
 
-      <div ref={infoRef} className="space-y-6">
-        <div
-          className="
-            w-full max-w-[620px]
-            overflow-hidden rounded-3xl shadow-2xl
-            bg-[#1a1a1a] border border-white/10
-            backdrop-blur-xl
-          "
-        >
-          <iframe
-            className="w-full h-[380px] md:h-[500px]"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3285.5261873764753!2d-58.43667917068962!3d-34.56555015989195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb5b97072cbb1%3A0xfec53bcc88faa676!2sMaure%201608%2C%20C1426CUD%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1757915667649!5m2!1ses-419!2sar"
-            style={{ border: 0 }}
-            loading="lazy"
-          ></iframe>
+          <h2
+            className="
+              text-3xl sm:text-4xl md:text-5xl 
+              font-bold tracking-tight leading-[0.9]
+            "
+          >
+            {myLang ? "Location" : "Ubicación"}
+          </h2>
         </div>
 
-        <a
-          href="https://www.google.com/maps/place/Maure+1608,+C1426CUD+Cdad.+Aut%C3%B3noma+de+Buenos+Aires/"
-          target="_blank"
-          className="flex items-center gap-4 group cursor-pointer"
-        >
-          <img
-            src="/img/locationIcon.svg"
-            className="w-9 opacity-90 group-hover:opacity-100 transition duration-300"
-            alt="Location Icon"
-          />
+        {/* MAP + DIRECCIÓN */}
+        <div ref={infoRef} className="flex flex-col gap-4">
+          {/* MAPA — MISMOS PROPORCIONES QUE EL SLIDER */}
+          <div
+            className="
+              relative 
+              w-full 
+              h-[320px] sm:h-[420px] md:h-[520px] lg:h-[560px]
+              rounded-3xl overflow-hidden
+              bg-[#1a1a1a]
+              border border-white/10
+              shadow-[0_10px_40px_rgba(0,0,0,0.45)]
+              backdrop-blur-xl
+            "
+          >
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3285.5261873764753!2d-58.43667917068962!3d-34.56555015989195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb5b97072cbb1%3A0xfec53bcc88faa676!2sMaure%201608%2C%20C1426CUD%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1757915667649!5m2!1ses-419!2sar"
+              style={{ border: 0 }}
+              loading="lazy"
+            ></iframe>
+          </div>
 
-          <p className="text-lg font-medium leading-tight group-hover:underline decoration-white/60 underline-offset-4">
-            LA IMPRENTA <br /> Maure 1608, Piso 2.
-          </p>
-        </a>
+          {/* INFO DE DIRECCIÓN */}
+          <div
+            className="
+              flex flex-col sm:flex-row 
+              items-start sm:items-center 
+              justify-between
+              gap-4
+            "
+          >
+            <div>
+              <p className="text-sm sm:text-base font-medium">
+                Maure 1608
+              </p>
+              <p className="text-xs sm:text-sm text-white/60">
+                C1426CUD · Ciudad Autónoma de Buenos Aires · Argentina
+              </p>
+            </div>
+
+            <a
+              href="https://www.google.com/maps/place/Maure+1608,+C1426CUD+Cdad.+Aut%C3%B3noma+de+Buenos+Aires/"
+              target="_blank"
+              className="
+                text-xs sm:text-sm 
+                tracking-[0.18em] 
+                uppercase 
+                text-white/60 
+                hover:text-white
+                flex items-center gap-2
+              "
+            >
+              <span>{myLang ? "Open in Google Maps" : "Abrir en Google Maps"}</span>
+              <span className="text-lg translate-y-[-1px]">↗</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );

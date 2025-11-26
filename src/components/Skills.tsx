@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { skillsData } from "@/data/GlobalData";
@@ -10,173 +10,266 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Skills: React.FC = () => {
   const { myLang } = useStore();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const contentRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const contentRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  // ============================================================
+  // ScrollTrigger — entrada suave + cambio fondo body
+  // ============================================================
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const container = containerRef.current;
       if (!container) return;
 
-      // ============================================================
-      // ✨ ENTRADA CINEMÁTICA DEL TÍTULO
-      // ============================================================
+      ScrollTrigger.create({
+        trigger: container,
+        start: "top 80%",
+        onEnter: () =>
+          gsap.to("body", {
+            backgroundColor: "#ffffff",
+            duration: 0.7,
+            ease: "power2.out",
+          }),
+        onLeaveBack: () =>
+          gsap.to("body", {
+            backgroundColor: "#000000",
+            duration: 0.7,
+            ease: "power2.out",
+          }),
+      });
+
       const title = container.querySelector("h2");
-
-      if (title) {
-        gsap.fromTo(
-          title,
-          { autoAlpha: 0, y: 40, filter: "blur(12px)" },
-          {
-            autoAlpha: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 1.4,
-            ease: "power4.out",
-            scrollTrigger: {
-              trigger: container,
-              start: "top 85%",
-              once: true,
-            },
-          }
-        );
-      }
-
-      // ============================================================
-      // ✨ ENTRADA CINEMÁTICA DE CADA DROPDOWN (HEADER)
-      // ============================================================
       const headers = itemRefs.current.filter(Boolean);
 
-      if (headers.length > 0) {
-        gsap.fromTo(
-          headers,
-          {
-            autoAlpha: 0,
-            y: 30,
-            filter: "blur(14px)",
-          },
-          {
-            autoAlpha: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 1.4,
-            ease: "power4.out",
-            stagger: 0.15,
-            scrollTrigger: {
-              trigger: container,
-              start: "top 80%",
-              once: true,
-            },
-          }
-        );
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top 85%",
+          once: true,
+        },
+      });
+
+      if (title) {
+        tl.from(title, {
+          y: 40,
+          autoAlpha: 0,
+          duration: 0.9,
+          ease: "power3.out",
+        });
       }
 
-      // ============================================================
-      // 🟣 LÓGICA DE HOVER + ACCORDION COMO TENÍAS
-      // ============================================================
-      skillsData.forEach((_, i) => {
-        const header = itemRefs.current[i];
-        const content = contentRefs.current[i];
-        const title = header?.querySelector("h3");
-        const plus = header?.querySelector("svg");
-
-        if (!header || !content || !title || !plus) return;
-
-        header.addEventListener("mouseenter", () => {
-          if (content.classList.contains("open")) return;
-          gsap.to(title, {
-            x: 36,
-            color: "#a78bff",
-            duration: 0.5,
+      if (headers.length) {
+        tl.from(
+          headers,
+          {
+            y: 24,
+            autoAlpha: 0,
+            duration: 0.8,
+            stagger: 0.12,
             ease: "power3.out",
-          });
-        });
-
-        header.addEventListener("mouseleave", () => {
-          if (content.classList.contains("open")) return;
-          gsap.to(title, {
-            x: 0,
-            color: "#666666",
-            duration: 0.6,
-            ease: "power3.out",
-          });
-        });
-
-        header.addEventListener("click", () => {
-          const isOpen = content.classList.contains("open");
-
-          if (isOpen) {
-            gsap.to(content, {
-              height: 0,
-              opacity: 0,
-              marginTop: 0,
-              duration: 1.1,
-              ease: "power4.inOut",
-              onComplete: () => {
-                content.classList.remove("open");
-                content.style.height = "0px";
-                content.style.marginTop = "0px";
-              },
-            });
-
-            gsap.to([title, plus], {
-              x: 0,
-              y: 0,
-              scale: 1,
-              rotation: 0,
-              color: "#666666",
-              duration: 1.1,
-              ease: "power4.out",
-              stagger: 0.05,
-            });
-          } else {
-            content.classList.add("open");
-            const targetHeight = content.scrollHeight;
-
-            gsap.fromTo(
-              content,
-              { height: 0, opacity: 0, marginTop: 0 },
-              {
-                height: targetHeight,
-                opacity: 1,
-                marginTop: 96,
-                duration: 1.3,
-                ease: "power4.out",
-                onComplete: () => (content.style.height = "auto"),
-              }
-            );
-
-            gsap.to(title, {
-              y: 36,
-              x: 24,
-              scale: 1.18,
-              color: "#e8e8e8",
-              duration: 1.2,
-              ease: "power4.out",
-            });
-
-            gsap.to(plus, {
-              rotation: 45,
-              duration: 0.9,
-              ease: "power3.out",
-            });
-          }
-        });
-      });
+          },
+          "-=0.3"
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();
   }, [myLang]);
 
+  // ============================================================
+  // Hover header
+  // ============================================================
+  const handleMouseEnter = (index: number) => {
+    if (openIndex === index) return;
+
+    const header = itemRefs.current[index];
+    if (!header) return;
+
+    const title = header.querySelector("h3");
+    const plus = header.querySelector(".skills-plus");
+
+    if (title) {
+      gsap.to(title, {
+        x: 8,
+        color: "#444",
+        duration: 0.25,
+        ease: "power2.out",
+      });
+    }
+
+    if (plus) {
+      gsap.to(plus, {
+        scale: 1.12,
+        duration: 0.25,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  const handleMouseLeave = (index: number) => {
+    if (openIndex === index) return;
+
+    const header = itemRefs.current[index];
+    if (!header) return;
+
+    const title = header.querySelector("h3");
+    const plus = header.querySelector(".skills-plus");
+
+    if (title) {
+      gsap.to(title, {
+        x: 0,
+        color: "#111",
+        duration: 0.25,
+        ease: "power2.out",
+      });
+    }
+
+    if (plus) {
+      gsap.to(plus, {
+        scale: 1,
+        duration: 0.25,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  // ============================================================
+  // Accordion open / close
+  // ============================================================
+  const closeAccordion = (index: number) => {
+    const content = contentRefs.current[index];
+    const header = itemRefs.current[index];
+    if (!content || !header) return;
+
+    const title = header.querySelector("h3");
+    const plus = header.querySelector(".skills-plus");
+
+    gsap.to(content, {
+      height: 0,
+      opacity: 0,
+      marginTop: 0,
+      filter: "blur(4px)",
+      duration: 0.4,
+      ease: "power2.inOut",
+      onComplete: () => {
+        content.style.height = "0px";
+      },
+    });
+
+    if (title) {
+      gsap.to(title, {
+        x: 0,
+        color: "#111",
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
+
+    if (plus) {
+      gsap.to(plus, {
+        rotation: 0,
+        scale: 1,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  const openAccordion = (index: number) => {
+    const content = contentRefs.current[index];
+    const header = itemRefs.current[index];
+    if (!content || !header) return;
+
+    const title = header.querySelector("h3");
+    const plus = header.querySelector(".skills-plus");
+
+    // medir altura real
+    content.style.height = "auto";
+    const targetHeight = content.scrollHeight;
+    content.style.height = "0px";
+
+    gsap.to(content, {
+      height: targetHeight,
+      opacity: 1,
+      marginTop: 16,
+      filter: "blur(0px)",
+      duration: 0.45,
+      ease: "power2.out",
+      onComplete: () => {
+        content.style.height = "auto";
+      },
+    });
+
+    const inner = content.querySelectorAll(".skills-inner");
+    if (inner.length) {
+      gsap.fromTo(
+        inner,
+        { y: 10, autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.45,
+          ease: "power2.out",
+          stagger: 0.06,
+        }
+      );
+    }
+
+    if (title) {
+      gsap.to(title, {
+        x: 8,
+        color: "#111",
+        duration: 0.35,
+        ease: "power2.out",
+      });
+    }
+
+    if (plus) {
+      gsap.to(plus, {
+        rotation: 45,
+        scale: 1.15,
+        duration: 0.35,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  const handleToggle = (index: number) => {
+    if (openIndex !== null && openIndex !== index) {
+      closeAccordion(openIndex);
+    }
+
+    if (openIndex === index) {
+      closeAccordion(index);
+      setOpenIndex(null);
+    } else {
+      openAccordion(index);
+      setOpenIndex(index);
+    }
+  };
+
+  // ============================================================
+  // Render
+  // ============================================================
   return (
     <section
       ref={containerRef}
       id="skills"
-      className="bg-backBlack text-[#666666] px-6 py-40 relative z-10"
+      className="
+        w-full 
+        flex justify-center
+        bg-white 
+        py-[14vh] 
+        px-6
+        relative z-20 
+      "
     >
-      <div className="max-w-screen-2xl mx-auto">
-        <h2 className="text-4xl mid:text-6xl xsm:text-7xl mb-40 text-[#cfb1fb] font-bold -ml-1">
+      <div className="w-full max-w-[950px] mx-auto">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-20 text-[#111]">
           {myLang ? "Skills" : "Tratamientos"}
         </h2>
 
@@ -199,27 +292,56 @@ const Skills: React.FC = () => {
             return (
               <div
                 key={i}
-                className={`${i !== 0 ? "border-t border-[#666666]/30 pt-20" : ""}`}
+                className={i !== 0 ? "border-t border-black/10 pt-10" : ""}
               >
                 {/* HEADER */}
                 <div
                   ref={(el) => (itemRefs.current[i] = el)}
-                  className="flex justify-between items-center cursor-pointer select-none group"
+                  className="
+                    flex justify-between items-center 
+                    cursor-pointer group select-none
+                  "
+                  onClick={() => handleToggle(i)}
+                  onMouseEnter={() => handleMouseEnter(i)}
+                  onMouseLeave={() => handleMouseLeave(i)}
                 >
-                  <h3 className="text-lg mid:text-4xl font-bold will-change-transform origin-left">
+                  <h3 className="text-2xl md:text-3xl font-semibold text-[#111] transition-all">
                     {titleText}
                   </h3>
 
-                  <svg
-                    className="w-11 h-11 will-change-transform text-[#666666] group-hover:text-white/10 transition-colors duration-500"
-                    viewBox="0 0 40 40"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
+                  {/* ICONO + HECHO A MANO */}
+                  <span
+                    className="
+                      skills-plus
+                      relative
+                      w-9 h-9 
+                      flex-shrink-0
+                      transition-transform duration-300
+                    "
                   >
-                    <line x1="8" y1="20" x2="32" y2="20" strokeLinecap="round" />
-                    <line x1="20" y1="8" x2="20" y2="32" strokeLinecap="round" />
-                  </svg>
+                    {/* barra horizontal */}
+                    <span
+                      className="
+                        absolute 
+                        left-1/2 top-1/2
+                        -translate-x-1/2 -translate-y-1/2
+                        w-6 h-[2px]
+                        bg-black 
+                        rounded-full
+                      "
+                    />
+                    {/* barra vertical */}
+                    <span
+                      className="
+                        absolute 
+                        left-1/2 top-1/2
+                        -translate-x-1/2 -translate-y-1/2
+                        w-[2px] h-6
+                        bg-black 
+                        rounded-full
+                      "
+                    />
+                  </span>
                 </div>
 
                 {/* CONTENT */}
@@ -228,9 +350,10 @@ const Skills: React.FC = () => {
                   className="overflow-hidden"
                   style={{ height: 0, opacity: 0 }}
                 >
-                  <div className="pt-24 pb-16">
-                    <div className="grid xl:grid-cols-2 gap-20">
-                      <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#111]/80 to-[#0a0a0a]/90 backdrop-blur-xl shadow-2xl border border-white/5">
+                  <div className="pt-8 pb-4">
+                    <div className="grid md:grid-cols-2 gap-12">
+                      {/* IMG */}
+                      <div className="skills-inner overflow-hidden rounded-3xl bg-white shadow-xl border border-black/5">
                         <img
                           src={skill.img}
                           alt={titleText}
@@ -238,9 +361,15 @@ const Skills: React.FC = () => {
                         />
                       </div>
 
-                      <div className="flex items-center">
+                      {/* TEXT */}
+                      <div className="skills-inner flex items-center">
                         <p
-                          className="text-[#e8e8e8]/95 text-base mid:text-xl leading-10 tracking-wider font-light"
+                          className="
+                            text-[#111]/80 
+                            text-base sm:text-lg 
+                            leading-8 
+                            tracking-wide
+                          "
                           dangerouslySetInnerHTML={{ __html: descText }}
                         />
                       </div>

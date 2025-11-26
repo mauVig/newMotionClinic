@@ -78,33 +78,73 @@ const Biography: React.FC = () => {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      id="biography"
+   <section
+  ref={sectionRef}
+  id="biography"
+  className="
+    relative w-full
+    bg-[#111] text-white
+    flex flex-col items-center
+    px-6 
+    pt-[18vh] 
+    pb-[20vh]
+    overflow-hidden
+  "
+>
+  {/* HEADER */}
+  <div
+    ref={headerRef}
+    className="
+      max-w-[850px] mx-auto text-center
+      flex flex-col items-center justify-center
+      gap-6
+      pb-32
+    "
+  >
+    {/* MINI LABEL */}
+    <p
+      className={`
+        text-xs sm:text-sm tracking-[0.25em] uppercase 
+        ${myLang ? "text-[#b4afff]" : "text-[#b4afff]"}
+        opacity-80
+      `}
+    >
+      {myLang ? "Biography" : "Biografía"}
+    </p>
+
+    {/* NOMBRE */}
+    <h2
       className="
-        relative w-full min-h-[140vh]
-        bg-[#111] text-white
-        flex flex-col items-center
-        px-6 py-24
-        overflow-hidden
+        font-bold
+        leading-[0.9]
+        tracking-tight
+        text-[2.8rem] 
+        sm:text-[4.5rem] 
+        md:text-[5rem] 
+        lg:text-[6.3rem]
+        drop-shadow-[0_4px_18px_rgba(0,0,0,0.4)]
+        text-white
       "
     >
-   
-      <div ref={headerRef} className="max-w-[800px] text-center pb-16">
-        <p className={myLang ? "font-bold underline" : "text-[#5b25d4]"}>
-          {myLang ? "Biography" : "Biografía"}
-        </p>
+      Andrés Anania
+    </h2>
 
-        <h2
-          className="
-            uppercase tracking-tight leading-[0.95]
-            text-[2.5rem] sm:text-[4rem] md:text-[5rem] lg:text-[6rem]
-            font-bold text-white pb-10
-          "
-        >
-          Andrés Anania
-        </h2>
-      </div>
+    {/* SUBTITULO / DESCRIPCIÓN CORTA */}
+    <p
+      className="
+        text-base sm:text-lg md:text-xl
+        font-light
+        leading-relaxed 
+        max-w-[650px]
+        text-white/70
+        mt-4
+      "
+    >
+      {myLang
+        ? "Orthopedic surgeon specialized in advanced minimally invasive procedures with international accredited certifications."
+        : "Cirujano ortopedista especializado en procedimientos mínimamente invasivos con acreditaciones internacionales avanzadas."}
+    </p>
+  </div>
 
 
       <ProcessCards />
