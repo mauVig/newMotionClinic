@@ -182,7 +182,7 @@ const Experience: React.FC = () => {
         <div className="absolute inset-0 pointer-events-none z-10">
           <div
             ref={(el) => (imgRefs.current[0] = el)}
-            className="absolute top-[14vh] right-[6vw] w-[52vw] max-w-[280px] md:w-[32vw] md:max-w-[340px] rounded-2xl overflow-hidden shadow-xl"
+            className="absolute top-[24vh] right-[6vw] w-[52vw] max-w-[280px] md:w-[32vw] md:max-w-[340px] rounded-2xl overflow-hidden shadow-xl"
           >
             <img src="/img/clinic-cell.jpg" className="w-full h-auto object-cover" />
           </div>

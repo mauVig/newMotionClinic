@@ -94,7 +94,7 @@ ad
     pr-[0.35em]        /* ← FIX MAGICO: evita que se corte la última letra */
 
     text-5xl tracking-[-0.02em]
-    sm:text-6xl sm:tracking-tight
+    sm:text-4xl sm:tracking-tight
     md:text-7xl
     lg:text-[9rem]
   "

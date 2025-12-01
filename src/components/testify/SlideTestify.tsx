@@ -51,6 +51,7 @@ export const SlideTestify: React.FC = () => {
   const currentIndexRef = useRef(0);
   const isAnimatingRef = useRef(false);
   const splitInstancesRef = useRef<SplitText[]>([]);
+  const autoplayRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const update = () => setIsMobile(window.innerWidth < 768);
@@ -74,7 +75,6 @@ export const SlideTestify: React.FC = () => {
     }));
 
     const ctx = gsap.context(() => {
-      // Split text globally
       const titleEl = container.querySelector(".active-title");
       if (!titleEl) return;
 
@@ -103,40 +103,32 @@ export const SlideTestify: React.FC = () => {
         const wrapper = document.createElement("div");
         wrapper.className =
           "img absolute inset-0 will-change-transform overflow-hidden";
-
         const img = document.createElement("img");
         img.src = src;
         img.className = "w-full h-full object-cover";
-
         wrapper.appendChild(img);
         return { wrapper, img };
       };
 
-      // FIRST IMAGE
       const first = createImageContainer(slides[0].src);
       imagesWrapper.appendChild(first.wrapper);
 
-      // NEXT SLIDE LOGIC
       const goToIndex = (nextIndex: number, direction: "left" | "right") => {
         if (isAnimatingRef.current) return;
         isAnimatingRef.current = true;
 
-        const currentImgContainer =
-          imagesWrapper.querySelector(".img:last-child");
+        const currentImgContainer = imagesWrapper.querySelector(".img:last-child");
         const currentImg =
           currentImgContainer?.querySelector("img") || null;
 
         const slide = slides[nextIndex];
-        const { wrapper: newWrapper, img: newImg } =
-          createImageContainer(slide.src);
+        const { wrapper: newWrapper, img: newImg } = createImageContainer(slide.src);
 
         imagesWrapper.appendChild(newWrapper);
 
         const offset = window.innerWidth < 900 ? 100 : 400;
 
-        gsap.set(newImg, {
-          x: direction === "left" ? -offset : offset,
-        });
+        gsap.set(newImg, { x: direction === "left" ? -offset : offset });
 
         gsap.to(newImg, {
           x: 0,
@@ -165,21 +157,18 @@ export const SlideTestify: React.FC = () => {
             duration: 1.3,
             ease: "hop",
             onComplete: () => {
-              const imgs =
-                imagesWrapper.querySelectorAll(".img");
+              const imgs = imagesWrapper.querySelectorAll(".img");
               if (imgs.length > 1) {
-                for (let i = 0; i < imgs.length - 1; i++) {
-                  imgs[i].remove();
-                }
+                for (let i = 0; i < imgs.length - 1; i++) imgs[i].remove();
               }
               isAnimatingRef.current = false;
             },
           }
         );
 
-        // UPDATE TITLE
         const newTitle = slides[nextIndex].title;
         const titleEl = container.querySelector(".active-title");
+
         if (titleEl) {
           titleEl.innerHTML = newTitle;
 
@@ -188,38 +177,54 @@ export const SlideTestify: React.FC = () => {
             type: "words",
             wordsClass: "word",
           });
+
           splitInstancesRef.current.push(newSplit);
 
-          gsap.set(".word", {
-            opacity: 0,
-            filter: "blur(40px)",
-          });
+          gsap.set(".word", { opacity: 0, filter: "blur(40px)" });
 
           animateTitle();
         }
 
         currentIndexRef.current = nextIndex;
+
+        resetAutoplay();
       };
 
-      prevBtn.addEventListener("click", () => {
+      const next = () => {
+        const total = slides.length;
+        const nextIndex = (currentIndexRef.current + 1) % total;
+        goToIndex(nextIndex, "right");
+      };
+
+      const prev = () => {
         const total = slides.length;
         const nextIndex =
           (currentIndexRef.current - 1 + total) % total;
         goToIndex(nextIndex, "left");
-      });
+      };
 
-      nextBtn.addEventListener("click", () => {
-        const total = slides.length;
-        const nextIndex =
-          (currentIndexRef.current + 1) % total;
-        goToIndex(nextIndex, "right");
-      });
+      prevBtn.addEventListener("click", prev);
+      nextBtn.addEventListener("click", next);
+
+      const startAutoplay = () => {
+        autoplayRef.current = setInterval(() => {
+          if (!isAnimatingRef.current) next();
+        }, 4500);
+      };
+
+      const resetAutoplay = () => {
+        if (autoplayRef.current) clearInterval(autoplayRef.current);
+        startAutoplay();
+      };
+
+      startAutoplay();
     }, containerRef);
 
     return () => {
       ctx.revert();
       splitInstancesRef.current.forEach((s) => s.revert());
       splitInstancesRef.current = [];
+      if (autoplayRef.current) clearInterval(autoplayRef.current);
     };
   }, [isMobile]);
 
@@ -232,10 +237,9 @@ export const SlideTestify: React.FC = () => {
         text-white
       "
     >
-      {/* SLIDER CON ANCHO LIMITADO */}
       <div
         className="
-          relative 
+          relative
           w-full max-w-[950px]
           h-[320px] sm:h-[420px] md:h-[520px] lg:h-[560px]
           rounded-3xl overflow-hidden
@@ -244,20 +248,13 @@ export const SlideTestify: React.FC = () => {
         <div ref={imagesWrapperRef} className="absolute inset-0 images-wrapper" />
       </div>
 
-      {/* TITULO ABSOLUTAMENTE POSICIONADO - MISMA ALTURA SIEMPRE */}
-      <div
-        className="
-          relative 
-          w-full max-w-[950px]
-          mt-6
-        "
-      >
+      <div className="relative w-full max-w-[950px] mt-6">
         <h1
           className="
             active-title
-            text-2xl sm:text-3xl md:text-4xl 
-            font-semibold 
-            tracking-tight 
+            text-2xl sm:text-3xl md:text-4xl
+            font-semibold
+            tracking-tight
             leading-tight
           "
         >
@@ -265,11 +262,10 @@ export const SlideTestify: React.FC = () => {
         </h1>
       </div>
 
-      {/* CONTROLES */}
       <div
         className="
-          mt-6 
-          flex items-center justify-between 
+          mt-6
+          flex items-center justify-between
           w-full max-w-[950px]
         "
       >
