@@ -7,11 +7,23 @@ export default function MagneticCursor() {
   const followerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const cursor = cursorRef.current;
-    const follower = followerRef.current;
-    if (!cursor || !follower) return;
+    // OCULTAR EN MÓVIL, TABLET Y CUALQUIER DISPOSITIVO TOUCH
+    const isTouchDevice =
+      "ontouchstart" in window ||
+      navigator.maxTouchPoints > 0 ||
+      window.matchMedia("(pointer: coarse)").matches;
 
-    // Cursor base
+    if (window.innerWidth <= 1024 && isTouchDevice);
+
+    if (isTouchDevice) {
+      return; // No monta nada, ni crea divs visibles
+    }
+
+    // ──────── DESKTOP ONLY: CURSOR MAGNÉTICO ────────
+    const cursor = cursorRef.current!;
+    const follower = followerRef.current!;
+
+    // Cursor pequeño blanco
     gsap.set(cursor, {
       width: 8,
       height: 8,
@@ -50,97 +62,63 @@ export default function MagneticCursor() {
     const fySet = gsap.quickSetter(follower, "y", "px");
 
     const moveHandler = (e: MouseEvent) => {
-      mouse.x = e.x;
-      mouse.y = e.y;
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
     };
 
-    gsap.ticker.add(() => {
+    const ticker = () => {
       pos.x += (mouse.x - pos.x) * speed;
       pos.y += (mouse.y - pos.y) * speed;
       xSet(mouse.x);
       ySet(mouse.y);
       fxSet(pos.x);
       fySet(pos.y);
-    });
+    };
 
+    gsap.ticker.add(ticker);
     window.addEventListener("mousemove", moveHandler);
 
-    // --- Efectos magnéticos globales ---
-    const moveIn = (e: MouseEvent) => {
-      const el = e.currentTarget as HTMLElement;
-      const rect = el.getBoundingClientRect();
-      const relX = e.clientX - (rect.left + rect.width / 2);
-      const relY = e.clientY - (rect.top + rect.height / 2);
+    // ──────── EFECTO MAGNÉTICO EN .magnetic ────────
+    const handleMagnetic = (items: NodeListOf<HTMLElement>) => {
+      items.forEach((el) => {
+        if ((el as any)._magnetic) return;
+        (el as any)._magnetic = true;
 
-      // movimiento leve del elemento
-      gsap.to(el, {
-        x: relX * 0.25,
-        y: relY * 0.25,
-        duration: 0.4,
-        ease: "power3.out",
-      });
+        el.addEventListener("mousemove", (e) => {
+          const rect = el.getBoundingClientRect();
+          const relX = e.clientX - (rect.left + rect.width / 2);
+          const relY = e.clientY - (rect.top + rect.height / 2);
 
-      // agrandar el halo
-      gsap.to(follower, {
-        scale: 2.2,
-        duration: 0.4,
-        ease: "power3.out",
-      });
-    };
+          gsap.to(el, { x: relX * 0.25, y: relY * 0.25, duration: 0.5, ease: "power3.out" });
+          gsap.to(follower, { scale: 2.4, duration: 0.5, ease: "power3.out" });
+        });
 
-    const moveOut = (e: MouseEvent) => {
-      const el = e.currentTarget as HTMLElement;
-
-      gsap.to(el, {
-        x: 0,
-        y: 0,
-        duration: 0.6,
-        ease: "elastic.out(1, 0.4)",
-      });
-
-      gsap.to(follower, {
-        scale: 1,
-        duration: 0.5,
-        ease: "power2.out",
+        el.addEventListener("mouseleave", () => {
+          gsap.to(el, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1,0.3)" });
+          gsap.to(follower, { scale: 1, duration: 0.6, ease: "power2.out" });
+        });
       });
     };
 
-    // --- Observador: detecta todos los .magnetic ---
-    const handleMagneticElements = () => {
-      const magneticItems = document.querySelectorAll(".magnetic");
-      magneticItems.forEach((item) => {
-        if ((item as any)._hasMagneticListener) return;
-        (item as any)._hasMagneticListener = true;
-        item.addEventListener("mousemove", moveIn);
-        item.addEventListener("mouseleave", moveOut);
-      });
-    };
+    handleMagnetic(document.querySelectorAll(".magnetic"));
 
-    // Llamar al cargar
-    handleMagneticElements();
-
-    // Delay leve para esperar hidratación de Astro/React
-setTimeout(() => {
-  const observer = new MutationObserver(() => handleMagneticElements());
-  observer.observe(document.body, { childList: true, subtree: true });
-}, 1500);
-
-
-    // Y observar el DOM
-    const observer = new MutationObserver(() => handleMagneticElements());
+    const observer = new MutationObserver(() => {
+      handleMagnetic(document.querySelectorAll(".magnetic"));
+    });
     observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       window.removeEventListener("mousemove", moveHandler);
+      gsap.ticker.remove(ticker);
       observer.disconnect();
-      gsap.ticker.remove(() => {});
     };
   }, []);
 
+  // Siempre renderizamos los divs (Next.js SSR), pero en touch quedan hidden
   return (
     <>
-      <div ref={cursorRef}></div>
-      <div ref={followerRef}></div>
+      <div ref={cursorRef} className="fixed" />
+      <div ref={followerRef} className="fixed" />
     </>
   );
 }
