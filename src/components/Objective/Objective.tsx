@@ -1,11 +1,10 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { useStore } from "@/store/storeGlobal.ts";
 import ShinyText from "./ShinyText.tsx";
 
 const Objective = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef(null);
+  const textRef = useRef(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -24,9 +23,13 @@ const Objective = () => {
       const textEl = textRef.current;
       if (!section || !textEl) return;
 
-      const chars = textEl.querySelectorAll(".char");
+      const chars = textEl.querySelectorAll(".char-inner");
 
-      gsap.set(chars, { yPercent: 100, opacity: 0, filter: "blur(8px)", color: "#ffffffff" });
+      gsap.set(chars, {
+        yPercent: 110,
+        opacity: 0,
+        filter: "blur(12px)",
+      });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -36,29 +39,26 @@ const Objective = () => {
           scrub: 2,
           pin: true,
           anticipatePin: 1,
-          pinSpacing: true,
         },
         defaults: { ease: "power3.out" },
       });
 
-      // Entrada
       tl.to(chars, {
         yPercent: 0,
         opacity: 1,
         filter: "blur(0px)",
-        stagger: { each: 0.08, ease: "power2.out" },
-        duration: 1.8,
+        stagger: 0.06,
+        duration: 1.6,
       });
 
-      // Salida
       tl.to(chars, {
-        opacity: 0.25,
-        yPercent: -10,
-        duration: 4.4,
+        yPercent: -40,
+        opacity: 0.2,
+        duration: 2,
         ease: "power2.inOut",
-        stagger: { each: 0.04 },
+        stagger: 0.04,
       });
-ad
+
       window.addEventListener("load", () => {
         setTimeout(() => {
           if (window.ScrollTrigger) {
@@ -73,39 +73,38 @@ ad
     <section
       ref={sectionRef}
       id="reveal-section"
-      className="relative min-h-[120vh] flex flex-col items-center justify-center px-4 
-                 overflow-hidden bg-[#111]     text-white will-change-transform"
+      className="
+        relative min-h-[120vh] flex flex-col items-center justify-center px-4
+        overflow-hidden bg-[#111] text-white will-change-transform
+      "
     >
-      <div className="flex flex-col items-center justify-center text-center 
-                      space-y-4 sm:space-y-32 md:space-y-40">
+      <div className="flex flex-col items-center justify-center text-center space-y-4 sm:space-y-32 md:space-y-40">
         <div className="max-w-4xl mx-auto">
           <ShinyText disabled={false} speed={1.5} />
         </div>
-<div
-  ref={textRef}
-  className="
-    overflow-hidden
-    leading-[0.9]
-    font-bold italic
-    text-white
-    color-white
 
-    reddit-sans-text
-    max-w-[90vw] mx-auto
-    pr-[0.35em]      
-
-    text-5xl tracking-[-0.02em]
-    sm:text-4xl sm:tracking-tight
-    md:text-7xl
-    lg:text-[9rem]
-    pb-32
-  "
->
-
-
+        <div
+          ref={textRef}
+          className="
+            leading-[1.05]
+            font-bold italic
+            text-white
+            reddit-sans-text
+            max-w-[92vw] mx-auto
+            pr-[0.35em]
+            text-5xl tracking-[-0.02em]
+            sm:text-4xl sm:tracking-tight
+            md:text-7xl
+            lg:text-[9rem]
+            pb-32 pt-20
+            will-change-transform
+          "
+        >
           {"DO IT AGAIN".split("").map((char, i) => (
-            <span key={i} className="char inline-block">
-              {char === " " ? "\u00A0" : char}
+            <span key={i} className="char inline-block overflow-hidden">
+              <span className="char-inner inline-block">
+                {char === " " ? "\u00A0" : char}
+              </span>
             </span>
           ))}
         </div>
