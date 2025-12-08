@@ -134,6 +134,13 @@ export default function CircleVideo() {
         overflow-hidden
       "
     >
+      {/* Elemento ancla para navegación */}
+      <div 
+        id="video" 
+        className="absolute top-0 left-0 w-full h-0"
+        style={{ transform: 'translateY(-100px)' }}
+      />
+      
       {/* CONTENEDOR ANIMABLE */}
       <div
         ref={containerRef}
@@ -141,8 +148,9 @@ export default function CircleVideo() {
           relative flex items-center justify-center
           w-[280px] h-[280px]
           md:w-[420px] md:h-[420px]
-          rounded-full overflow-hidden
+          rounded-full overflow-hidden 
         "
+      
       >
         {/* VIDEO */}
         <video

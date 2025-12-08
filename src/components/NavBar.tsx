@@ -52,17 +52,13 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
   useEffect(() => {
     if (!menuRef.current) return;
     const menu = menuRef.current;
-    const links = menu.querySelectorAll(".menu-link");
 
-    // gsap.set(menu, {
-    //   clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
-    // });
+    // El menú se inicializa cerrado por defecto
+    gsap.set(menu, {
+      clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
+    });
 
-    // gsap.set(links, {
-    //   y: 80,
-    //   opacity: 0,
-    //   filter: "blur(12px)",
-    // });
+    // Los links ya tienen su estado inicial en CSS (ocultos)
 
     isInitializedRef.current = true;
   }, []);
@@ -72,6 +68,50 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
       setIsMenuOpen((prev) => !prev);
     }
   }, [isAnimating]);
+
+  const handleLinkClick = useCallback((href: string, e: React.MouseEvent) => {
+    e.preventDefault(); // Prevenir navegación automática
+    
+    // Siempre cerrar el menú
+    setIsMenuOpen(false);
+    
+    // Si es un hash link (para navegación en la misma página)
+    if (href.startsWith('/#')) {
+      // Verificar si estamos en la página principal
+      const isOnHomePage = window.location.pathname === '/' || window.location.pathname === '';
+      
+      if (isOnHomePage) {
+        // Ya estamos en la página principal, hacer scroll directo
+        setTimeout(() => {
+          if (href === '/#') {
+            // Ir al inicio de la página
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else {
+            // Buscar el elemento por ID
+            const targetId = href.substring(2); // Quitar /#
+            const target = document.getElementById(targetId);
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth' });
+            } else {
+              console.warn(`Elemento con ID "${targetId}" no encontrado`);
+              // Fallback: ir al inicio si no encuentra el elemento
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }
+        }, 300);
+      } else {
+        // Estamos en otra página (como /contacto), navegar a la homepage con el hash
+        setTimeout(() => {
+          window.location.href = href; // Esto llevará a la página principal con el hash
+        }, 300);
+      }
+    } else {
+      // Para links externos como /contacto
+      setTimeout(() => {
+        window.location.href = href;
+      }, 300);
+    }
+  }, []);
 
   const animateMenu = useCallback((open: boolean) => {
     if (!menuRef.current) return;
@@ -97,11 +137,11 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
         ease: "hop",
       }).fromTo(
         links,
-        { y: 60, opacity: 0 },
+        { y: 80, opacity: 0, filter: "blur(12px)" },
         {
           y: 0,
           opacity: 1,
-     
+          filter: "blur(0px)",
           duration: 0.9,
           stagger: 0.1,
           ease: "power3.out",
@@ -259,6 +299,44 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
     );
   }, [loading]);
 
+  // 🔹 Manejar hash en la URL al cargar la página (funcionalidad restaurada)
+  useEffect(() => {
+    // Solo ejecutar en el cliente y si no estamos en loading
+    if (typeof window === "undefined" || loading) return;
+    
+    // Verificar si estamos en la página principal y hay un hash
+    const isOnHomePage = window.location.pathname === '/' || window.location.pathname === '';
+    const hash = window.location.hash;
+    
+    if (isOnHomePage && hash && hash.startsWith('#')) {
+      // Dar tiempo extra para que el loading termine completamente y todos los componentes se monten
+      const timeoutId = setTimeout(() => {
+        const targetId = hash.substring(1); // Quitar #
+        const target = document.getElementById(targetId);
+        
+        if (target) {
+          // Hacer scroll suave a la sección
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          console.log(`✅ Scroll automático realizado a: ${targetId}`);
+        } else {
+          console.warn(`❌ Elemento con ID "${targetId}" no encontrado`);
+          // Intentar de nuevo después de más tiempo
+          setTimeout(() => {
+            const retryTarget = document.getElementById(targetId);
+            if (retryTarget) {
+              retryTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              console.log(`✅ Scroll automático (retry) realizado a: ${targetId}`);
+            } else {
+              console.error(`❌ Elemento "${targetId}" definitivamente no existe`);
+            }
+          }, 1500);
+        }
+      }, 2500); // 2.5 segundos para esperar el loading completo
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [loading]);
+
   
   return (
     <>
@@ -373,7 +451,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
           backdropFilter: "blur(18px)",
           WebkitBackdropFilter: "blur(18px)",
    
-          boxShadow: "0 0 60px rgba(17, 17, 17, 0.45)",
+         boxShadow: "0 0 60px rgba(17, 17, 17, 0.45)",
         }}
       >
 
@@ -382,37 +460,6 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
           className="absolute inset-0 opacity-[0.08]  pointer-events-none z-10"
           // style={{ background: "url('/svg/grain.png')" }}
         />
-
-        <div className="absolute top-0 right-0 z-30 flex items-center gap-6 p-6">
-          {/* <a
-            href="/contacto"
-            onClick={() => {
-              toggleMenu();
-              setTimeout(() => myFocus(), 700);
-            }}
-            className="
-              text-sm md:text-base font-medium 
-              px-4 py-2 rounded-full
-              bg-black text-white 
-              hover:bg-neutral-800
-              transition-all duration-300
-            
-            "
-          >
-            {myLang ? "CONTACT" : "CONTACTO"}
-          </a>
- */}
-
-          {/* <div
-            onClick={toggleMenu}
-            className="cursor-pointer group w-8 h-8 flex items-center justify-center"
-          >
-            <div className="relative w-6 h-6">
-              <span className="absolute left-0 top-1/2 w-6 h-[2px] bg-black rotate-45 group-hover:rotate-180 transition-all duration-300"></span>
-              <span className="absolute left-0 top-1/2 w-6 h-[2px] bg-black -rotate-45 group-hover:-rotate-90 transition-all duration-300"></span>
-            </div>
-          </div> */}
-        </div>
 
         <div
           ref={linksRef}
@@ -439,7 +486,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
               <a
                 key={index}
                 href={link.href}
-                onClick={toggleMenu}
+                onClick={(e) => handleLinkClick(link.href, e)}
                 className="
                   menu-link 
                   flex items-center 
@@ -449,7 +496,9 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
                   tracking-tight 
                   group leading-none
                   relative
+                  opacity-0
                 "
+                style={{ transform: 'translateY(80px)', filter: 'blur(12px)' }}
               >
                 <span className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-transform duration-500 menu-icon">
                   {link.icon}

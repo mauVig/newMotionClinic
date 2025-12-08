@@ -50,7 +50,7 @@ export const Welcome = () => {
         scale: 1.05,
         filter: "blur(8px)",
       });
-      gsap.set(button, { scale: 0.8, opacity: 0, y: 20 });
+      // El botón ya tiene su estado inicial en CSS, no necesita gsap.set
 
       const tl = gsap.timeline({
         defaults: { ease: "power4.out", duration: 1.2 },
@@ -202,10 +202,15 @@ export const Welcome = () => {
                        px-[clamp(2.8rem,6vw,4rem)] py-[clamp(0.4rem,0.8vw,0.6rem)]
                        rounded-[0.7rem] font-semibold text-[clamp(1rem,1.4vw,1.2rem)]
                        uppercase tracking-wide text-white bg-transparent border border-[#a855f7]
-                       transition-all duration-500 ease-out overflow-hidden group
+                       overflow-hidden group
                        hover:bg-[#a855f7]/10 hover:shadow-[0_0_25px_rgba(168,85,247,0.5)]
                        focus-visible:ring-2 focus-visible:ring-[#a855f7]/60
-                       active:scale-[0.97]"
+                       active:scale-[0.97]
+                       opacity-0"
+            style={{ 
+              transform: 'translateY(20px) scale(0.8)',
+              transition: 'box-shadow 0.3s ease, background-color 0.3s ease'
+            }}
           >
             <span className="relative z-10 transition-transform duration-300 group-hover:scale-105">
               {myLang ? "CONTACT" : "CONTACTO"}

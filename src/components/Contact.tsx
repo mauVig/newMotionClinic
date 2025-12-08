@@ -264,7 +264,7 @@ const ContactForm = () => {
                   id="telefono"
                   name="phone"
                   type="text"
-                  className="border-b bg-grey py-1 focus:border-blue-700 w-full"
+                  className="border-b bg-grey py-1 focus:border-blue-700 w-full xl:translate-y-4"
                   value={telefono}
                   onChange={(e) => {
                     setTelefono(e.target.value);

@@ -46,7 +46,7 @@ const Footer: React.FC<FooterProps> = ({ contacto = "no" }) => {
           {/* ============================================================= */}
           {/*     COLUMN 1 — LOGO + LOCALIDAD                              */}
           {/* ============================================================= */}
-          <div className="flex flex-col items-center md:items-start gap-8">
+          <div className="flex flex-col items-center gap-8">
 
             {/* LOGO */}
             <img
@@ -65,7 +65,7 @@ const Footer: React.FC<FooterProps> = ({ contacto = "no" }) => {
                 text-xs 
                 uppercase 
                 text-zinc-500 
-                text-center md:text-left
+                text-center
               "
             >
               Buenos Aires · {year}
@@ -140,33 +140,33 @@ const Footer: React.FC<FooterProps> = ({ contacto = "no" }) => {
 
             {/* CONTACT BUTTON */}
            <button
-  onClick={handleClick}
-  className="
-    w-full md:w-auto
-    px-14 py-5
-    rounded-full
-    border border-white/20
-    hover:border-white/40
-    transition duration-500
-    relative overflow-hidden
-    backdrop-blur-md
-    group
-    flex items-center justify-center   /* ← ESTO CENTRA EL CONTENIDO */
-  "
->
-  <span className="relative z-10 flex items-center gap-3 text-lg tracking-wider text-center w-full justify-center">
-    ✉️ {myLang ? "Contact" : "Contacto"}
-  </span>
+            onClick={handleClick}
+            className="
+              w-full md:w-[240px]
+              py-5
+              rounded-full
+              border border-white/20
+              hover:border-white/40
+              transition duration-500
+              relative overflow-hidden
+              backdrop-blur-md
+              group
+              flex items-center justify-center
+            "
+          >
+            <span className="relative z-10 flex items-center gap-3 text-lg tracking-wider text-center w-full justify-center">
+              ✉️ {myLang ? "Contact" : "Contacto"}
+            </span>
 
-  <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-</button>
+            <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          </button>
 
 
          <button
   onClick={handleClick}
   className="
-    w-full md:w-auto
-    px-14 py-5
+    w-full md:w-[240px]
+     py-5
     rounded-full
     border border-white/20
     hover:border-white/40
@@ -174,7 +174,7 @@ const Footer: React.FC<FooterProps> = ({ contacto = "no" }) => {
     relative overflow-hidden
     backdrop-blur-md
     group
-    flex items-center justify-center   /* ← ESTO ES LA CLAVE */
+    flex items-center justify-center
   "
 >
   <span className="relative z-10 flex items-center gap-3 text-lg tracking-wider text-center w-full justify-center">

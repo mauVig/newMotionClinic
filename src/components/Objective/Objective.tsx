@@ -101,7 +101,7 @@ const Objective = () => {
           "
         >
           {"DO IT AGAIN".split("").map((char, i) => (
-            <span key={i} className="char inline-block overflow-hidden">
+            <span key={i} className="char inline-block ">
               <span className="char-inner inline-block">
                 {char === " " ? "\u00A0" : char}
               </span>

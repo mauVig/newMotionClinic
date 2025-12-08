@@ -167,6 +167,7 @@ const ClinicTestify = () => {
         text-white
         py-[12vh]
       "
+      id='studio'
     >
       <div className="w-full max-w-[950px] flex flex-col gap-8">
         {/* HEADER */}
