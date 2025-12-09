@@ -141,7 +141,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
         {
           y: 0,
           opacity: 1,
-          filter: "blur(0px)",
+          filter: "blur(0px)", 
           duration: 0.9,
           stagger: 0.1,
           ease: "power3.out",
@@ -410,10 +410,10 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
               </span>
             </div>
 
-
+               
             <div
               onClick={toggleMenu}
-              className="cursor-pointer magnetic relative w-10 h-4"
+              className={`cursor-pointer magnetic relative w-10 h-4 ${tab === 'contact' ? 'invisible' : ''}`}
             >
               <img
                 src="/svg/hambur.svg"
