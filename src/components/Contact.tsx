@@ -187,21 +187,44 @@ const ContactForm = () => {
         <div className="w-full mx-auto mt-8 max-w-screen-2xl">
           <form ref={form}>
             <div className="grid md:grid-cols-2 contact-anim">
-              <h2 className="text-4xl font-bold">
-                {!myLang ? (
-                  <>
-                    Hacenos
-                    <br />
-                    <span className="text-violet">tu consulta</span>
-                  </>
-                ) : (
-                  <>
-                    Send us
-                    <br />
-                    <span className="text-violet">your inquiry</span>
-                  </>
-                )}
-              </h2>
+              <div className="relative">
+                <div className="absolute -top-12 -left-1.5">
+                  <a
+                    href="/"
+                    className="mb-4 flex items-center text-violet hover:text-violet/80 transition-colors"
+                  >
+                    <svg 
+                      className="w-6 h-6 mr-2" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M15 19l-7-7 7-7" 
+                      />
+                    </svg>
+                    {myLang ? "Back" : "Volver"}
+                  </a>
+                </div>
+                <h2 className="text-4xl font-bold">
+                  {!myLang ? (
+                    <>
+                      Hacenos
+                      <br />
+                      <span className="text-violet">tu consulta</span>
+                    </>
+                  ) : (
+                    <>
+                      Send us
+                      <br />
+                      <span className="text-violet">your inquiry</span>
+                    </>
+                  )}
+                </h2>
+              </div>
 
               <p className="leading-7 w-[270px] md:w-[350px] text-lg md:text-2xl mt-4 lg:mt-2">
                 {!myLang
