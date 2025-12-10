@@ -169,15 +169,15 @@ export const TestifyVideos: React.FC = () => {
         <a
           href="https://www.youtube.com/@Motion.Clinic"
           target="_blank"
-          className="flex justify-start xl:justify-end group mt-16 text-[.60rem] xs:text-xs mid:text-base"
+          className="flex justify-start xl:justify-end group mt-16 text-[.70rem] xs:text-xs mid:text-base"
         >
           <button
             type="submit"
-            className="border-2 border-violet text-grey py-1 px-8 rounded-l-3xl 
-              group-hover:rounded-r-full group-hover:rounded-l-full 
-              transition-all duration-1000"
+            className={`border-2 border-violet text-grey py-1 px-8 rounded-l-3xl 
+              group-hover:rounded-r-full group-hover:rounded-l-full truncate
+              transition-all duration-1000 ${!myLang ? "w-[335px]" : ""}`}
           >
-            Mirá todas nuestras historias acá
+           { myLang ?  "See all our stories here" : "Mirá todas nuestras historias acá" }
           </button>
           <div className="h-full ml-0.5">
             <div
