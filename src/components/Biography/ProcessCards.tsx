@@ -11,15 +11,15 @@ const ProcessCards = () => {
   const processCardsData = [
     {
       index: "01",
-      title: "Especialiacion médica",
+      title: "Especialiación médica",
       description:
         "Soy Andrés Anania, médico traumatólogo, subespecializado en las afeciones de la cadera y rodilla",
     },
     {
       index: "02",
-      title: "Inovacion Médica",
+      title: "Inovación Médica",
       description:
-        "Mi formación incluye un AVP Fellowship  en el Hospital for Special Surgery en Nueva York, un MBA en el IAE Buisness School, y programas ejecutivos en Hardbard Buisness School y Stanford sobre transformacion digital e inteligencia artificial aplicados a la salud ",
+        "Mi formación incluye un AVP Fellowship  en el Hospital for Special Surgery en Nueva York, un MBA en el IAE Buisness School, y programas ejecutivos en Hardbard Buisness School y Stanford sobre transformación digital e inteligencia artificial aplicados a la salud ",
     },
     {
       index: "03",

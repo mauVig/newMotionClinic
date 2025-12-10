@@ -35,8 +35,8 @@ export const ShinyText = ({ disabled = false, className = "" }) => {
       scrollTrigger: {
         trigger: section,
         start: "top 90%",
-        end: "bottom top", // 👈 se estira el recorrido total
-        scrub: 2.5,        // 👈 lerp largo
+        end: "bottom top", 
+        scrub: 2.5,    
         anticipatePin: 1,
       },
     });
@@ -46,10 +46,10 @@ export const ShinyText = ({ disabled = false, className = "" }) => {
       opacity: 1,
       filter: "blur(0px)",
       stagger: {
-        each: 0.25, // 👈 palabra por palabra más lento
+        each: 0.55, // 
         ease: "power2.out",
       },
-      duration: 2.4, // más tiempo en cada bloque
+      duration: 2.4, 
       ease: "power3.out",
     });
 

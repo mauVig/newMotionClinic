@@ -75,7 +75,7 @@ const Objective = () => {
       id="reveal-section"
       className="
         relative min-h-[120vh] flex flex-col items-center justify-center px-4
-        overflow-hidden bg-[#111] text-white will-change-transform
+       bg-[#111] text-white will-change-transform
       "
     >
       <div className="flex flex-col items-center justify-center text-center space-y-4 sm:space-y-32 md:space-y-40">
@@ -101,8 +101,9 @@ const Objective = () => {
           "
         >
           {"DO IT AGAIN".split("").map((char, i) => (
-            <span key={i} className="char inline-block ">
-              <span className="char-inner inline-block">
+<span key={i} className="char inline-block will-change-transform">
+  <span className="char-inner inline-block will-change-transform">
+
                 {char === " " ? "\u00A0" : char}
               </span>
             </span>

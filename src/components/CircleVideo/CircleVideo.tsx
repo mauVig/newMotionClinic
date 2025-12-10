@@ -11,43 +11,52 @@ export default function CircleVideo() {
 
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // Radios responsive
-  const radiusMobile = 120;
-  const radiusDesktop = 180;
-  const radius =
-    typeof window !== "undefined" && window.innerWidth >= 1024
-      ? radiusDesktop
-      : radiusMobile;
+  // Tamaño dinámico del círculo (se actualiza según ancho real)
+  const [circleSize, setCircleSize] = useState(280);
+
+  // Actualiza circleSize cuando cambia el contenedor o el viewport
+  useEffect(() => {
+    const update = () => {
+      if (!containerRef.current) return;
+      setCircleSize(containerRef.current.offsetWidth);
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  // Radio dinámico
+  const stroke = 12;
+  const radius = circleSize / 2 - stroke;
+  const circumference = 2 * Math.PI * radius;
 
   // PROGRESS RING
   useEffect(() => {
     const video = videoRef.current!;
     const progressCircle = progressRef.current!;
-
-    const circumference = radius * 2 * Math.PI;
+    if (!video || !progressCircle) return;
 
     progressCircle.style.strokeDasharray = `${circumference}`;
     progressCircle.style.strokeDashoffset = `${circumference}`;
 
     const updateProgress = () => {
       if (!video.duration) return;
-
       const progress = video.currentTime / video.duration;
       const offset = circumference * (1 - progress);
 
       gsap.to(progressCircle, {
         strokeDashoffset: offset,
         duration: 0.2,
-        ease: "power3.out",
+        ease: "power3.out"
       });
     };
 
     video.addEventListener("timeupdate", updateProgress);
     video.addEventListener("loadedmetadata", updateProgress);
-  }, [radius]);
+  }, [circumference, radius]);
 
-
-  // PLAY / PAUSE ANIMATION WOW
+  // PLAY / PAUSE ANIMATION
   const togglePlay = () => {
     const video = videoRef.current!;
     const container = containerRef.current!;
@@ -60,13 +69,13 @@ export default function CircleVideo() {
       video.play();
       setIsPlaying(true);
 
-      // ✨ EXPAND TO FULL CINEMATIC
+      // Expand cinematic
       gsap.to(container, {
         width: "100vw",
         height: expandedHeight,
         borderRadius: "24px",
         duration: 1.4,
-        ease: "power3.inOut",
+        ease: "power3.inOut"
       });
 
       gsap.to(video, {
@@ -74,29 +83,29 @@ export default function CircleVideo() {
         height: "100%",
         borderRadius: "inherit",
         duration: 1.4,
-        ease: "power3.inOut",
+        ease: "power3.inOut"
       });
 
-      // ✨ ANILLO VIOLETA DESAPARECE (fade + scale out)
+      // Remove rings
       gsap.to([ring, ringBase], {
         autoAlpha: 0,
         scale: 1.2,
         transformOrigin: "center center",
         duration: 0.7,
-        ease: "power2.out",
+        ease: "power2.out"
       });
 
     } else {
       video.pause();
       setIsPlaying(false);
 
-      // ✨ SHRINK BACK TO CIRCLE
+      // Back to circle
       gsap.to(container, {
         width: window.innerWidth >= 1024 ? 420 : 280,
         height: window.innerWidth >= 1024 ? 420 : 280,
         borderRadius: "9999px",
         duration: 1.2,
-        ease: "power3.inOut",
+        ease: "power3.inOut"
       });
 
       gsap.to(video, {
@@ -104,22 +113,22 @@ export default function CircleVideo() {
         height: window.innerWidth >= 1024 ? 360 : 250,
         borderRadius: "9999px",
         duration: 1.2,
-        ease: "power3.inOut",
+        ease: "power3.inOut"
       });
 
-      // ✨ ANILLO VIOLETA APARECE (fade + scale in)
+      // Bring rings BACK, perfectly scaled
       gsap.fromTo(
         [ring, ringBase],
         {
           autoAlpha: 0,
-          scale: 0.8,
-          transformOrigin: "center center",
+          scale: 0.85,
+          transformOrigin: "center center"
         },
         {
           autoAlpha: 1,
           scale: 1,
           duration: 0.8,
-          ease: "power2.out",
+          ease: "power2.out"
         }
       );
     }
@@ -128,34 +137,31 @@ export default function CircleVideo() {
   return (
     <section
       className="
-        relative w-full min-h-[90vh]
+        relative w-full min-h-[100vh]
         flex flex-col items-center justify-center
-        
-        overflow-hidden
+        pt-80 overflow-hidden
       "
     >
-      {/* Elemento ancla para navegación */}
-      <div 
-        id="video" 
+      <div
+        id="video"
         className="absolute top-0 left-0 w-full h-0"
-        style={{ transform: 'translateY(-100px)' }}
+        style={{ transform: "translateY(-100px)" }}
       />
-      
-      {/* CONTENEDOR ANIMABLE */}
+
+      {/* VIDEO + RINGS WRAPPER */}
       <div
         ref={containerRef}
         className="
           relative flex items-center justify-center
           w-[280px] h-[280px]
           md:w-[420px] md:h-[420px]
-          rounded-full overflow-hidden 
+          rounded-full overflow-hidden
         "
-      
       >
         {/* VIDEO */}
         <video
           ref={videoRef}
-          src='/video/video.mp4'
+          src="/video/video.mp4"
           className="
             object-cover rounded-full
             w-[250px] h-[250px]
@@ -165,34 +171,35 @@ export default function CircleVideo() {
           muted
         />
 
-        {/* RING ANIMABLE */}
+        {/* RESPONSIVE RING SYSTEM */}
         <svg
           className="absolute top-0 left-0 w-full h-full pointer-events-none"
-          viewBox="0 0 400 400"
+          viewBox={`0 0 ${circleSize} ${circleSize}`}
         >
           <circle
             ref={ringBaseRef}
-            cx="200"
-            cy="200"
+            cx={circleSize / 2}
+            cy={circleSize / 2}
             r={radius}
             stroke="rgba(150,90,255,0.25)"
-            strokeWidth="12"
+            strokeWidth={stroke}
             fill="none"
           />
+
           <circle
             ref={progressRef}
-            cx="200"
-            cy="200"
+            cx={circleSize / 2}
+            cy={circleSize / 2}
             r={radius}
             stroke="#A987FF"
-            strokeWidth="12"
+            strokeWidth={stroke}
             fill="none"
             strokeLinecap="round"
           />
         </svg>
       </div>
 
-      {/* CONTROLES */}
+      {/* BUTTON */}
       <div className="mt-6 flex items-center gap-4">
         <button
           onClick={togglePlay}
