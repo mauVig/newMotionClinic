@@ -3,10 +3,14 @@ import ContactForm from "@/components/Contact";
 import Footer from "@/components/Footer";
 import NavBar from "@/components/NavBar";
 import Layout from "@/layouts/Layout.astro";
-
+import MagneticCursor from "@/components/MagneticCursor.tsx";
 ---
+
 <Layout>
-	<NavBar client:only tab="contact"/>
-    <ContactForm client:only/>
-	<Footer client:only contacto="yes"/>
+  <!-- Cursor magnético también en la página de contacto -->
+  <MagneticCursor client:only="react" />
+
+  <NavBar client:only tab="contact" />
+  <ContactForm client:only />
+  <Footer client:only contacto="yes" />
 </Layout>

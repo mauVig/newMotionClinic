@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useStore } from "@/store/storeGlobal.ts";
 import emailjs from "@emailjs/browser";
+import gsap from "gsap";
 
 const ContactForm = () => {
   const { myLang } = useStore();
@@ -21,52 +22,58 @@ const ContactForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const form = useRef(null);
-  const overlayRef = useRef(null);
-  const containerRef = useRef(null);
+  const form = useRef<HTMLFormElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
+  /* ============================
+     GSAP ENTRADA AWWARDS
+  ============================ */
   useEffect(() => {
-    (async () => {
-      const { gsap } = await import("gsap");
+    if (!overlayRef.current || !containerRef.current) return;
 
-      gsap.set(overlayRef.current, { scaleY: 1, transformOrigin: "top" });
-      gsap.set(containerRef.current.querySelectorAll(".contact-anim"), {
-        opacity: 0,
-        y: 40,
-        filter: "blur(15px)",
-      });
+    const items = containerRef.current.querySelectorAll(".contact-anim");
 
-      const tl = gsap.timeline();
+    gsap.set(overlayRef.current, { scaleY: 1, transformOrigin: "top" });
+    gsap.set(items, {
+      opacity: 0,
+      y: 40,
+      filter: "blur(15px)",
+    });
 
-      tl.to(overlayRef.current, {
-        scaleY: 0,
-        duration: 1.2,
-        ease: "power3.inOut",
-      });
+    const tl = gsap.timeline({ delay: 0.15 });
 
-      tl.to(
-        containerRef.current.querySelectorAll(".contact-anim"),
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 1.2,
-          ease: "power3.out",
-          stagger: 0.15,
-        },
-        "-=0.6"
-      );
-    })();
+    tl.to(overlayRef.current, {
+      scaleY: 0,
+      duration: 1.2,
+      ease: "power3.inOut",
+    });
+
+    tl.to(
+      items,
+      {
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        duration: 1.4,
+        ease: "power3.out",
+        stagger: 0.15,
+      },
+      "-=0.7"
+    );
   }, []);
 
-  const clearError = (field) => {
+  /* ============================
+     VALIDACIONES
+  ============================ */
+  const clearError = (field: string) => {
     if (field === "username") setUsernameError("");
     if (field === "email") setEmailError("");
     if (field === "telefono") setTelefonoError("");
     if (field === "mensaje") setMensajeError("");
   };
 
-  const validateUsername = (v = username) => {
+  const validateUsername = (v: string = username) => {
     if (!v.trim()) {
       setUsernameError(myLang ? "Name is required" : "El nombre es requerido");
       return false;
@@ -82,7 +89,7 @@ const ContactForm = () => {
     return true;
   };
 
-  const validateEmail = (v = email) => {
+  const validateEmail = (v: string = email) => {
     if (!v.trim()) {
       setEmailError(myLang ? "Email is required" : "El email es requerido");
       return false;
@@ -97,7 +104,7 @@ const ContactForm = () => {
     return true;
   };
 
-  const validateTelefono = (v = telefono) => {
+  const validateTelefono = (v: string = telefono) => {
     if (!v.trim()) {
       setTelefonoError(
         myLang
@@ -106,28 +113,20 @@ const ContactForm = () => {
       );
       return false;
     }
-    const regex = /^[\+]?[0-9\s\-\(\)]+$/;
-    if (!regex.test(v.trim()) || v.trim().length < 8) {
-      setTelefonoError(
-        myLang
-          ? "Invalid phone number format"
-          : "Formato de número de teléfono inválido"
-      );
-      return false;
-    }
     return true;
   };
 
-  const validateMensaje = (v = mensaje) => {
+  const validateMensaje = (v: string = mensaje) => {
     if (!v.trim()) {
-      setMensajeError(
-        myLang ? "Message is required" : "El mensaje es requerido"
-      );
+      setMensajeError(myLang ? "Message is required" : "El mensaje es requerido");
       return false;
     }
     return true;
   };
 
+  /* ============================
+     EMAILJS
+  ============================ */
   const sendEmail = async () => {
     const ok =
       validateUsername() &&
@@ -135,7 +134,7 @@ const ContactForm = () => {
       validateTelefono() &&
       validateMensaje();
 
-    if (!ok) return;
+    if (!ok || !form.current) return;
 
     setIsLoading(true);
 
@@ -151,65 +150,81 @@ const ContactForm = () => {
 
       setIsSubmitted(true);
       setIsModalOpen(true);
+
       setUsername("");
       setEmail("");
       setTelefono("");
       setMensaje("");
-
-      setIsLoading(false);
     } catch (err) {
       console.log(err);
-      setIsLoading(false);
       setIsSubmitted(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleButtonClick = async (e) => {
+  const handleButtonClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     await sendEmail();
   };
 
+  /* ============================
+     RENDER
+  ============================ */
   return (
     <div ref={containerRef} className="relative">
+      {/* overlay negro de entrada */}
       <div
         ref={overlayRef}
         className="fixed inset-0 bg-black z-50 pointer-events-none"
       />
 
+      {/* strip violeta superior */}
       <div className="h-36 w-full bg-violet contact-anim" />
 
       <aside
         id="contact"
         className="bg-grey relative z-20 text-black px-6 py-20 flex flex-col items-center"
       >
+        {/* gradient suave contra el negro anterior */}
         <div className="absolute w-full top-[-150px] h-[150px] myGradient contact-anim" />
 
         <div className="w-full mx-auto mt-8 max-w-screen-2xl">
           <form ref={form}>
-            <div className="grid md:grid-cols-2 contact-anim">
+            {/* HEADER + BACK */}
+            <div className="grid md:grid-cols-2 gap-6 contact-anim">
               <div className="relative">
-                <div className="absolute -top-12 -left-1.5">
-                  <a
-                    href="/"
-                    className="mb-4 flex items-center text-violet hover:text-violet/80 transition-colors"
+                {/* BACK BUTTON AWWARDS + MAGNETIC */}
+                <a
+                  href="/"
+                  className="
+                    magnetic
+                    inline-flex items-center gap-2
+                    text-violet font-semibold
+                    bg-white/70
+                    px-5 py-2 rounded-full
+                    shadow-[0_14px_40px_rgba(131,91,255,0.35)]
+                    hover:bg-violet hover:text-black
+                    transition-all duration-400
+                  "
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <svg 
-                      className="w-6 h-6 mr-2" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M15 19l-7-7 7-7" 
-                      />
-                    </svg>
-                    {myLang ? "Back" : "Volver"}
-                  </a>
-                </div>
-                <h2 className="text-4xl font-bold">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                  {myLang ? "Back" : "Volver"}
+                </a>
+
+                <h2 className="text-4xl font-bold mt-10">
                   {!myLang ? (
                     <>
                       Hacenos
@@ -233,13 +248,14 @@ const ContactForm = () => {
               </p>
             </div>
 
-            <div className="xl:grid grid-cols-2 contact-anim">
-              <div className="relative my-10 mb-12">
+            {/* NOMBRE / EMAIL */}
+            <div className="xl:grid grid-cols-2 gap-10 contact-anim mt-10">
+              <div className="relative mb-20">
                 <input
                   id="username"
                   name="name"
                   type="text"
-                  className="border-b bg-grey py-1 focus:border-blue-700 w-full"
+                  className="border-b bg-grey py-2 w-full"
                   value={username}
                   onChange={(e) => {
                     setUsername(e.target.value);
@@ -251,18 +267,18 @@ const ContactForm = () => {
                   {!myLang ? "Nombre" : "Name"}
                 </label>
                 {usernameError && (
-                  <p className="absolute -bottom-12 text-red-500 text-sm bg-violet text-grey px-5 rounded-xl">
+                  <p className="absolute -bottom-14 text-red-500 text-sm bg-violet text-grey px-5 rounded-xl">
                     {usernameError}
                   </p>
                 )}
               </div>
 
-              <div className="relative my-10 mb-12">
+              <div className="relative mb-20">
                 <input
                   id="email"
                   name="email"
                   type="email"
-                  className="border-b bg-grey py-1 focus:border-blue-700 w-full"
+                  className="border-b bg-grey py-2 w-full"
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -274,20 +290,21 @@ const ContactForm = () => {
                   Email
                 </label>
                 {emailError && (
-                  <p className="absolute -bottom-12 text-red-500 text-sm bg-violet text-grey px-5 rounded-xl">
+                  <p className="absolute -bottom-14 text-red-500 text-sm bg-violet text-grey px-5 rounded-xl">
                     {emailError}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="xl:grid grid-cols-2 contact-anim">
-              <div className="relative my-10 mb-12">
+            {/* TELÉFONO / MENSAJE */}
+            <div className="xl:grid grid-cols-2 gap-10 contact-anim">
+              <div className="relative mb-20">
                 <input
                   id="telefono"
                   name="phone"
                   type="text"
-                  className="border-b bg-grey py-1 focus:border-blue-700 w-full xl:translate-y-4"
+                  className="border-b bg-grey py-2 w-full"
                   value={telefono}
                   onChange={(e) => {
                     setTelefono(e.target.value);
@@ -296,20 +313,20 @@ const ContactForm = () => {
                   onBlur={() => validateTelefono(telefono)}
                 />
                 <label className="absolute left-0 -bottom-7 font-bold">
-                  Telefono
+                  Teléfono
                 </label>
                 {telefonoError && (
-                  <p className="absolute -bottom-12 text-red-500 text-sm bg-violet text-grey px-5 rounded-xl">
+                  <p className="absolute -bottom-14 text-red-500 text-sm bg-violet text-grey px-5 rounded-xl">
                     {telefonoError}
                   </p>
                 )}
               </div>
 
-              <div className="relative my-10 mb-12">
+              <div className="relative mb-12">
                 <textarea
                   id="mensaje"
                   name="message"
-                  className="border-b bg-grey focus:border-blue-700 w-full resize-none"
+                  className="border-b bg-grey py-2 w-full resize-none"
                   value={mensaje}
                   onChange={(e) => {
                     setMensaje(e.target.value);
@@ -321,53 +338,66 @@ const ContactForm = () => {
                   Mensaje
                 </label>
                 {mensajeError && (
-                  <p className="absolute -bottom-12 text-red-500 text-sm bg-violet text-grey px-5 rounded-xl">
+                  <p className="absolute -bottom-14 text-red-500 text-sm bg-violet text-grey px-5 rounded-xl">
                     {mensajeError}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="flex justify-end group w-full contact-anim">
-              <button
-                type="button"
-                onClick={handleButtonClick}
-                disabled={isLoading || isSubmitted}
-                className="flex justify-end items-center mt-10 w-full"
-              >
-                <div
-                  className={`bg-backBlack text-grey py-2 px-20 rounded-l-3xl w-full mid:w-fit transition-all duration-1000 ${
-                    isLoading ? "opacity-90" : ""
-                  }`}
+            {/* BOTÓN ENVIAR: WRAPPER CON HOVER + BUTTON MAGNETIC */}
+            <div className=" magnetic flex justify-end w-full contact-anim">
+              <div className="magnetic inline-flex transition-transform duration-500 hover:-translate-y-1">
+                <button
+                  type="button"
+                  onClick={handleButtonClick}
+                  disabled={isLoading || isSubmitted}
+                  className={`
+                    magnetic
+                    inline-flex items-center gap-3
+                    rounded-full
+                    bg-backBlack text-grey
+                    px-10 py-3
+                    text-lg tracking-wide
+                    border border-black/40
+                    transition-all duration-500
+                    ${
+                      isLoading || isSubmitted
+                        ? "opacity-60 cursor-default"
+                        : "hover:bg-violet hover:text-black hover:shadow-[0_18px_45px_rgba(131,91,255,0.55)]"
+                    }
+                  `}
                 >
-                  {isLoading
-                    ? myLang
-                      ? "Sending..."
-                      : "Enviando..."
-                    : myLang
-                    ? "Send"
-                    : "Enviar"}
-                </div>
+                  <span className="whitespace-nowrap">
+                    {isLoading
+                      ? myLang
+                        ? "Sending..."
+                        : "Enviando..."
+                      : myLang
+                      ? "Send"
+                      : "Enviar"}
+                  </span>
 
-                {!isSubmitted && (
-                  <div className="h-full">
-                    <div className="bg-backBlack flex justify-center items-center rounded-r-full p-3 transition-all duration-1000">
+                  {!isSubmitted && (
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black/80">
                       <img
                         src="/svg/rightArrow-07.svg"
-                        className="h-4 w-6 mid:w-4"
+                        className="h-4 w-4"
+                        alt="Arrow"
                       />
-                    </div>
-                  </div>
-                )}
-              </button>
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
           </form>
         </div>
       </aside>
 
+      {/* MODAL EXITO */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-backBlack/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-violet text-grey rounded-lg p-8 max-w-md w-full relative">
+          <div className="bg-violet text-grey rounded-lg p-8 max-w-md w-full relative shadow-2xl shadow-violet/30">
             <div className="text-center">
               <h3 className="text-4xl font-bold mb-4">
                 {myLang ? "Message Sent!" : "¡Mensaje Enviado!"}
@@ -381,7 +411,7 @@ const ContactForm = () => {
 
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="bg-backBlack py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
+                className="magnetic bg-backBlack py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
               >
                 {myLang ? "Back to home" : "Volver al inicio"}
               </button>
@@ -392,7 +422,11 @@ const ContactForm = () => {
 
       <style>{`
         .myGradient {
-          background: linear-gradient(0deg, rgba(232,232,232,1) 0%, rgba(237,221,83,0) 100%);
+          background: linear-gradient(
+            0deg,
+            rgba(232,232,232,1) 0%,
+            rgba(237,221,83,0) 100%
+          );
         }
       `}</style>
     </div>
