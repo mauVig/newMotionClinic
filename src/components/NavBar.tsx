@@ -358,7 +358,6 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
               <a
                 href="/contacto"
                 onClick={() => {
-                  toggleMenu();
                   setTimeout(() => myFocus(), 700);
                 }}
                 className="
