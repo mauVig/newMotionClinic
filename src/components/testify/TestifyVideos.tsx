@@ -18,61 +18,48 @@ export const TestifyVideos: React.FC = () => {
     : "Conocé las historias que nos mueven"
   ).split(" ");
 
-  /* ----------------------------------------------------
-      🔥 1) ANIMACIÓN TÍTULO — NO DEPENDE DEL SCROLL
-  ---------------------------------------------------- */
   useEffect(() => {
     if (!h2Ref.current) return;
-
     const el = h2Ref.current;
     const wordsSpan = el.querySelectorAll("span");
+    gsap.set(wordsSpan, { autoAlpha: 0, y: 40, filter: "blur(12px)" });
 
-    gsap.set(wordsSpan, {
-      autoAlpha: 0,
-      y: 40,
-      filter: "blur(12px)",
-    });
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
+    const obs = new IntersectionObserver(
+      (e) => {
+        if (e[0].isIntersecting) {
           gsap.to(wordsSpan, {
             autoAlpha: 1,
             y: 0,
             filter: "blur(0px)",
             duration: 1.2,
             ease: "power3.out",
-            stagger: 0.08,
+            stagger: 0.08
           });
-
-          observer.disconnect();
+          obs.disconnect();
         }
       },
       { threshold: 0.3 }
     );
 
-    observer.observe(el);
+    obs.observe(el);
   }, []);
 
-  /* ----------------------------------------------------
-      🔥 2) ANIMACIÓN VIDEOS — REVEAL ÉPICO (SIN DOLLY)
-  ---------------------------------------------------- */
   useEffect(() => {
     if (!videosRef.current) return;
 
-    const vids = videosRef.current.querySelectorAll("iframe");
+    const vids = videosRef.current.querySelectorAll(".video-box");
 
     gsap.set(vids, {
       autoAlpha: 0,
       y: 60,
       scale: 0.92,
       filter: "blur(14px)",
-      clipPath: "inset(40% 0 40% 0)",
+      clipPath: "inset(40% 0 40% 0)"
     });
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
+    const obs = new IntersectionObserver(
+      (e) => {
+        if (e[0].isIntersecting) {
           gsap.to(vids, {
             autoAlpha: 1,
             y: 0,
@@ -81,31 +68,26 @@ export const TestifyVideos: React.FC = () => {
             clipPath: "inset(0% 0 0% 0)",
             duration: 1.4,
             ease: "power3.out",
-            stagger: 0.25,
+            stagger: 0.25
           });
-
-          // 🔥 Se quitó el movimiento infinito.
-          observer.disconnect();
+          obs.disconnect();
         }
       },
       { threshold: 0.3 }
     );
 
-    observer.observe(videosRef.current);
+    obs.observe(videosRef.current);
   }, []);
 
-  /* ----------------------------------------------------
-      🔥 3) COLOR SHINY — TU EFECTO ORIGINAL
-  ---------------------------------------------------- */
   useEffect(() => {
     const section = h2Ref.current;
     if (!section) return;
 
-    const handleScroll = () => {
+    const onScroll = () => {
       const rect = section.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-
       let textProgress = 0;
+
       if (rect.top <= windowHeight * 0.7) {
         textProgress = Math.min(
           1,
@@ -116,10 +98,10 @@ export const TestifyVideos: React.FC = () => {
       setScrollProgress(Math.pow(textProgress, 0.9));
     };
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
+    window.addEventListener("scroll", onScroll);
+    onScroll();
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const getWordColor = (word: string, index: number) => {
@@ -127,7 +109,6 @@ export const TestifyVideos: React.FC = () => {
       0,
       Math.min(1, (scrollProgress * (words.length + 5) - index) / 4)
     );
-
     if (wordProgress <= 0) return START_COLOR;
     if (wordProgress >= 1) return END_COLOR;
 
@@ -143,72 +124,80 @@ export const TestifyVideos: React.FC = () => {
   };
 
   return (
-    <section className="bg-backBlack p-4 relative z-10" id="testifyVideos">
-      <div className="max-w-screen-2xl mx-auto xl:flex justify-between items-end mb-16 mt-8">
+    <section 
+      id="testifyVideos"
+      className="relative flex flex-col items-center w-full text-white pt-24 pb-28 bg-backBlack"
+    >
+      <div className="w-full max-w-[950px] px-4 mx-auto">
         
-        {/* TITLE */}
         <h2
           ref={h2Ref}
-          className="text-4xl mid:text-7xl text-violet font-bold leading-tight"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[3.7rem]
+          font-semibold tracking-tight leading-tight mb-10"
         >
-          <span>
-            {words.map((word, index) => (
-              <Fragment key={index}>
-                <span
-                  className="inline-block"
-                  style={{ color: getWordColor(word, index) }}
-                >
-                  {word}
-                </span>{" "}
-              </Fragment>
-            ))}
-          </span>
+          {words.map((word, index) => (
+            <Fragment key={index}>
+              <span
+                className="inline-block"
+                style={{ color: getWordColor(word, index) }}
+              >
+                {word}
+              </span>{" "}
+            </Fragment>
+          ))}
         </h2>
 
-        {/* CTA */}
         <a
           href="https://www.youtube.com/@Motion.Clinic"
           target="_blank"
-          className="flex justify-start xl:justify-end group mt-16 text-[.70rem] xs:text-xs mid:text-base"
+          className="inline-flex group text-xs sm:text-sm md:text-base mb-16"
         >
           <button
             type="submit"
-            className={`border-2 border-violet text-grey py-1 px-8 rounded-l-3xl 
-              group-hover:rounded-r-full group-hover:rounded-l-full truncate
-              transition-all duration-1000 ${!myLang ? "w-[335px]" : ""}`}
+            className={`
+              border border-violet text-grey py-2 px-6 rounded-l-3xl
+              group-hover:rounded-full transition-all duration-500
+              ${!myLang ? "w-[320px]" : ""}
+            `}
           >
-           { myLang ?  "See all our stories here" : "Mirá todas nuestras historias acá" }
+            {myLang ? "See all our stories here" : "Mirá todas nuestras historias acá"}
           </button>
-          <div className="h-full ml-0.5">
+
+          <div className="ml-1">
             <div
-              className="bg-violet flex justify-center items-center rounded-r-3xl 
-                group-hover:rounded-r-full group-hover:rounded-l-full 
-                p-3 transition-all duration-1000"
+              className="
+                bg-violet h-full flex items-center justify-center rounded-r-3xl
+                p-3 group-hover:rounded-full transition-all duration-500
+              "
             >
               <img src="/svg/rightArrow-07.svg" alt="Arrow" className="h-4 w-4" />
             </div>
           </div>
         </a>
-      </div>
 
-      {/* VIDEOS */}
-      <div
-        ref={videosRef}
-        className="flex flex-col md:flex-row justify-center items-center gap-y-4"
-      >
-        <iframe
-          src="https://www.youtube.com/embed/omRTk4AG_yE"
-          title="YouTube video"
-          className="w-full xl:w-1/2 h-[700px]"
-          allowFullScreen
-        ></iframe>
+        <div
+          ref={videosRef}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
+          <div className="video-box rounded-3xl overflow-hidden shadow-lg">
+            <iframe
+              src="https://www.youtube.com/embed/omRTk4AG_yE"
+              title="Video 1"
+              className="w-full h-[320px] sm:h-[420px] md:h-[480px] lg:h-[520px] object-cover"
+              allowFullScreen
+            ></iframe>
+          </div>
 
-        <iframe
-          src="https://www.youtube.com/embed/JhfeY0h7D9M"
-          title="YouTube video"
-          className="w-full xl:w-1/2 h-[700px]"
-          allowFullScreen
-        ></iframe>
+          <div className="video-box rounded-3xl overflow-hidden shadow-lg">
+            <iframe
+              src="https://www.youtube.com/embed/JhfeY0h7D9M"
+              title="Video 2"
+              className="w-full h-[320px] sm:h-[420px] md:h-[480px] lg:h-[520px] object-cover"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+
       </div>
     </section>
   );
