@@ -168,30 +168,27 @@ const ContactForm = () => {
     await sendEmail();
   };
 
-  /* ============================
-     RENDER
-  ============================ */
   return (
     <div ref={containerRef} className="relative">
-      {/* overlay negro de entrada */}
+
       <div
         ref={overlayRef}
         className="fixed inset-0 bg-black z-50 pointer-events-none"
       />
 
-      {/* strip violeta superior */}
+     
       <div className="h-36 w-full bg-violet contact-anim" />
 
       <aside
         id="contact"
         className="bg-grey relative z-20 text-black px-6 py-20 flex flex-col items-center"
       >
-        {/* gradient suave contra el negro anterior */}
+    
         <div className="absolute w-full top-[-150px] h-[150px] myGradient contact-anim" />
 
         <div className="w-full mx-auto mt-8 max-w-screen-2xl">
           <form ref={form}>
-            {/* HEADER + BACK */}
+      
             <div className="grid md:grid-cols-2 gap-6 contact-anim">
               <div className="relative">
           
