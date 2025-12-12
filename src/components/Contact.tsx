@@ -194,11 +194,11 @@ const ContactForm = () => {
             {/* HEADER + BACK */}
             <div className="grid md:grid-cols-2 gap-6 contact-anim">
               <div className="relative">
-                {/* BACK BUTTON AWWARDS + MAGNETIC */}
+          
                 <a
                   href="/"
                   className="
-                    magnetic
+               
                     inline-flex items-center gap-2
                     text-violet font-semibold
                     bg-white/70
@@ -297,7 +297,6 @@ const ContactForm = () => {
               </div>
             </div>
 
-            {/* TELÉFONO / MENSAJE */}
             <div className="xl:grid grid-cols-2 gap-10 contact-anim">
               <div className="relative mb-20">
                 <input
@@ -345,15 +344,14 @@ const ContactForm = () => {
               </div>
             </div>
 
-            {/* BOTÓN ENVIAR: WRAPPER CON HOVER + BUTTON MAGNETIC */}
-            <div className=" magnetic flex justify-end w-full contact-anim">
-              <div className="magnetic inline-flex transition-transform duration-500 hover:-translate-y-1">
+            <div className=" flex justify-end w-full contact-anim">
+              <div className="inline-flex transition-transform duration-500 hover:-translate-y-1">
                 <button
                   type="button"
                   onClick={handleButtonClick}
                   disabled={isLoading || isSubmitted}
                   className={`
-                    magnetic
+                    
                     inline-flex items-center gap-3
                     rounded-full
                     bg-backBlack text-grey
@@ -411,7 +409,7 @@ const ContactForm = () => {
 
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="magnetic bg-backBlack py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
+                className=" bg-backBlack py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
               >
                 {myLang ? "Back to home" : "Volver al inicio"}
               </button>
