@@ -1,0 +1,19 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import NavBar from '@/components/NavBar.tsx';
+import Footer from '@/components/Footer';
+import ContentBlog from '@/components/blog/ContentBlog.tsx';
+
+
+---
+
+<Layout>
+    <NavBar client:only tab="blog"/>
+    
+    <ContentBlog client:only/>
+
+    <Footer />
+</Layout>
+
+
+

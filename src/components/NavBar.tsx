@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 interface NavBarProps {
-  tab: "home" | "contact";
+  tab: "home" | "contact" | "blog";
 }
 
 const NavBar: FC<NavBarProps> = ({ tab }) => {
