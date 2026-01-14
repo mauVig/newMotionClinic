@@ -1,0 +1,33 @@
+/* Estilos que no se pueden replicar completamente con Tailwind */
+.newsParagraph {
+    hyphens: auto;
+}
+
+.newsParagraph:first-letter {
+    font-weight: bold;
+}
+
+/* Responsive específico para el layout de noticias */
+@media (max-width: 1280px) {
+    .flex {
+        flex-direction: column;
+    }
+    
+    .w1_2 {
+        width: 100%;
+    }
+    
+    /* Reorganizar meta información para que el logo esté a la izquierda */
+    .metaDateContainer {
+        flex-direction: row !important;
+        gap: 0.5rem !important;
+    }
+    
+    .metaIcon {
+        order: -1;
+    }
+    
+    .metaText {
+        white-space: nowrap;
+    }
+}

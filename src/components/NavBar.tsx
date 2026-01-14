@@ -376,7 +376,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
 
   
           <div className="w-44 flex justify-center">
-            <a href="#">
+            <a href="/">
               <img
                 src="/svg/logo.svg"
                 alt="Logo"
@@ -475,7 +475,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
           <div className="space-y-8 md:space-y-12">
 
             {[
-              { href: "/#", icon: <House strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Home" : "Inicio" },
+              { href: "/", icon: <House strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Home" : "Inicio" },
               { href: "/#experience", icon: <BriefcaseBusiness strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Experience" : "Experiencia" },
               { href: "/#video", icon: <Video strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Watch Video" : "Ver Video" },
               { href: "/#skills", icon: <Hammer strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Skills" : "Tratamientos" },

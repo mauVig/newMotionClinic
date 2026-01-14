@@ -1,0 +1,33 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import NavBar from '@/components/NavBar.tsx';
+import Footer from '@/components/Footer';
+import ContentBlog from '@/components/blog/ContentBlog.tsx';
+import blogData from '@/data/blogData.json';
+
+export function getStaticPaths() {
+    return blogData.map((blog) => ({
+        params: { 
+            slug: blog.title
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9\s-]/g, "")
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-")
+                .trim()
+        },
+        props: { blog }
+    }));
+}
+
+const { blog } = Astro.props;
+---
+
+<Layout>
+    <NavBar client:only tab="blog"/>
+    
+    <ContentBlog client:only blog={blog} isIndividual={true}/>
+
+    <Footer />
+</Layout>
