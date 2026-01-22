@@ -52,24 +52,11 @@ const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false })
                                    {principalBlog.title}
                             </h2>
                             <div className="transition-transform duration-300">
-                                {principalBlog.youtube  && (
-                                    <>
-                                        <iframe
-                                            src={`https://www.youtube.com/embed/${principalBlog.youtube}`}
-                                            title="Video 1"
-                                            className="w-full h-[320px] sm:h-[420px] md:h-[480px] lg:h-[520px] object-cover rounded-lg"
-                                            allowFullScreen
-                                            >
-                                        </iframe>
-                                    </>
-                                )}
-                                {principalBlog.youtube === null && (
-                                    <img 
-                                        src={principalBlog.minImg} 
-                                        alt="Cirugía Robótica"
-                                        className="w-full h-[320px] sm:h-[420px] md:h-[480px] lg:h-[520px] object-cover rounded-lg"
-                                        />
-                                )}
+                                <img 
+                                    src={principalBlog.img} 
+                                    alt={principalBlog.title}
+                                    className="w-full h-[320px] sm:h-[420px] md:h-[480px] lg:h-[520px] object-cover rounded-lg"
+                                    />
                             </div>
                         </div>
                         
@@ -95,10 +82,42 @@ const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false })
                         
                             
                             {/* Párrafos del artículo */}
-                            <article className="news-article space-y-6">
+                            <article className="text-xl space-y-6">
                                 <div 
-                                    dangerouslySetInnerHTML={{ __html: processContent(principalBlog.develop) }}
+                                    dangerouslySetInnerHTML={{ __html: principalBlog.develop }}
                                 />
+                                {/* Fuente del artículo */}
+                                {principalBlog.source && (
+                                    <div className="mt-8 pt-6">
+                                        <div className="flex items-center gap-3 text-sm text-gray-400">
+                                            
+                                            <span className="font-medium text-gray-300">Fuente:</span>
+                                            <a 
+                                                href={principalBlog.source}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="magnetic relative inline-flex items-center justify-center
+                                                           px-[clamp(1.5rem,3vw,2.5rem)] py-[clamp(0.3rem,0.6vw,0.5rem)]
+                                                           rounded-[0.7rem] font-semibold text-[clamp(0.8rem,1vw,1rem)]
+                                                           uppercase tracking-wide text-white bg-transparent border border-[#5b25d4]
+                                                           overflow-hidden group
+                                                           hover:bg-[#5b25d4]/10 hover:shadow-[0_0_25px_rgba(91,37,212,0.5)]
+                                                           focus-visible:ring-2 focus-visible:ring-[#5b25d4]/60
+                                                           active:scale-[0.97]
+                                                           transition-all duration-300"
+                                            >
+                                                <span className="relative z-10 transition-transform duration-300 group-hover:scale-105">
+                                                    {new URL(principalBlog.source).hostname.replace('www.', '')}
+                                                </span>
+                                                <span
+                                                    className="absolute inset-0 bg-gradient-to-r from-[#5b25d4] to-[#8b5cf6]
+                                                               opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out
+                                                               rounded-[0.7rem]"
+                                                />
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
                             </article>
                         </div>
                     </div>
@@ -118,20 +137,20 @@ const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false })
                                     <a href={`/blog/${generateSlug(blogItem.title)}`} className="block">
                                         <div className="relative overflow-hidden rounded-lg mb-4">
                                             <img 
-                                                src={blogItem.minImg} 
-                                                alt="Terapia de rehabilitación"
+                                                src={blogItem.img} 
+                                                alt={blogItem.title}
                                                 className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <div className='h-[100px]'>
-                                                <h4 className="text-xl font-bold text-white mb-2 group-hover:text-purple transition-colors">
+                                            <div className='  '>
+                                                <h4 className="h-14 text-xl font-bold text-white mb-2 group-hover:text-purple transition-colors">
                                                     {blogItem.title}
                                                 </h4>
                                             </div>
-                                            <div 
-                                                dangerouslySetInnerHTML={{ __html: processContent(blogItem.develop.substring(0, 210) + ' ...') }}
+                                            <div
+                                                dangerouslySetInnerHTML={{ __html: blogItem.develop.substring(0, 210) + ' ...' }}
                                             />
                                         </div>
                                     </a>

@@ -151,11 +151,11 @@ export const Welcome = () => {
 
       {/* 🔹 Contenido */}
       {showContent && (
-        <div
+        <header
           ref={sectionRef}
           className="content relative z-[3] text-left text-white max-w-[70rem]"
         >
-        <h2 className="
+        <h1 className="
   text-[clamp(1.8rem,6vw,6rem)]
   font-bold 
   leading-[1.15]
@@ -168,17 +168,17 @@ export const Welcome = () => {
                 <span className="inline-block">{word}</span>
               </div>
             ))}
-          </h2>
+          </h1>
 
-      <div className="
-  text-white/80 
-  text-[clamp(0.85rem,1.4vw,1.4rem)]
-  leading-[1.45]
-  font-light
-  max-w-[32rem]
-  mb-[clamp(1.5rem,4vh,2.5rem)]
-  mr-auto
-">
+          <div className="
+            text-white/80 
+            text-[clamp(0.85rem,1.4vw,1.4rem)]
+            leading-[1.45]
+            font-light
+            max-w-[32rem]
+            mb-[clamp(1.5rem,4vh,2.5rem)]
+            mr-auto
+          ">
 
             <div className="line-wrapper overflow-hidden">
               <span className="inline-block">
@@ -221,7 +221,7 @@ export const Welcome = () => {
                          rounded-[0.7rem]"
             />
           </a>
-        </div>
+        </header>
       )}
     </section>
   );

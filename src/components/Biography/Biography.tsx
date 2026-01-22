@@ -146,9 +146,70 @@ const Biography: React.FC = () => {
     </p>
   </div>
 
+     
 
       <ProcessCards />
+   {/* BLOG SECTION */}
+        <div className="max-w-[850px] mx-auto text-center my-16 mt-40">
+          <h3 
+            className="
+              font-bold
+              leading-[0.95]
+              tracking-tight
+              text-[2rem] 
+              sm:text-[2.8rem] 
+              md:text-[3.2rem] 
+              lg:text-[3.8rem]
+              text-white
+              mb-6
+              drop-shadow-[0_3px_12px_rgba(0,0,0,0.3)]
+            "
+          >
+            {myLang ? "News Blog" : "Blog de Noticias"}
+          </h3>
+          
+          <p className="
+            text-base sm:text-lg
+            font-light
+            leading-relaxed
+            text-white/60
+            mb-8
+            max-w-[600px]
+            mx-auto
+          ">
+            {myLang 
+              ? "Discover specific information about our treatments and procedures."
+              : "Descubrí información específica sobre los tratamientos."
+            }
+          </p>
 
+            <a
+            href="/blog"
+            className="
+              inline-flex items-center gap-3
+              bg-gradient-to-r from-[#8a7fff] to-[#7366ff]
+              hover:from-[#9a8fff] hover:to-[#8376ff]
+              text-white font-semibold
+              px-8 py-4
+              rounded-xl
+              transition-all duration-500
+              hover:scale-[1.02]
+              hover:shadow-[0_8px_32px_rgba(138,127,255,0.3)]
+              group
+              text-base sm:text-lg
+            "
+            >
+            <span>{myLang ? "Visit Blog" : "Visitar Blog"}</span>
+            <svg 
+              className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
 
       <div className="w-full overflow-hidden mt-32 py-10 opacity-90 select-none">
         <div

@@ -16,6 +16,7 @@ import { useStore } from "@/store/storeGlobal.ts";
 import useScrollDirection from "@/hooks/navHook.ts";
 
 import {
+  BookOpen,
   BriefcaseBusiness,
   Hammer,
   House,
@@ -340,7 +341,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
   
   return (
     <>
-      <header
+      <div
         ref={headerRef}
         className={`fixed top-0 z-[999999] w-full transition-all duration-300 ${
           scrollDirection === "down" && !isMenuOpen
@@ -431,7 +432,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
             </div>
           </div>
         </div>
-      </header>
+      </div>
 
       <div
         ref={menuRef}
@@ -476,6 +477,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
 
             {[
               { href: "/", icon: <House strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Home" : "Inicio" },
+              { href: "/blog", icon: <BookOpen strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Blog" : "Blog" },
               { href: "/#experience", icon: <BriefcaseBusiness strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Experience" : "Experiencia" },
               { href: "/#video", icon: <Video strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Watch Video" : "Ver Video" },
               { href: "/#skills", icon: <Hammer strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Skills" : "Tratamientos" },
