@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import blogData from '@/data/blogData.json';
 
 interface StoreState {
   myLang: boolean;
@@ -8,6 +9,7 @@ interface StoreState {
   changeLoading: () => void;
   getLoading: () => boolean;
   myFocus: () => void;
+  getLinkprincipal: () => string;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -42,4 +44,19 @@ export const useStore = create<StoreState>((set, get) => ({
     const username = document.getElementById("username") as HTMLInputElement;
     username?.focus();
   },
+  getLinkprincipal: ()=> {
+    const titlePrincipalLink = blogData[0].title;
+    
+    const generateSlug = (title: string) => {
+        return title
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9\s-]/g, "")
+            .replace(/\s+/g, "-")
+            .replace(/-+/g, "-")
+            .trim();
+    };
+    return generateSlug(titlePrincipalLink);
+  }
 }));

@@ -20,7 +20,7 @@ const Biography: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  const { myLang } = useStore();
+  const { myLang, getLinkprincipal } = useStore();
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
@@ -184,7 +184,7 @@ const Biography: React.FC = () => {
           </p>
 
             <a
-            href="/blog"
+            href={`/blog/${getLinkprincipal()}`}
             className="
               inline-flex items-center gap-3
               bg-gradient-to-r from-[#8a7fff] to-[#7366ff]

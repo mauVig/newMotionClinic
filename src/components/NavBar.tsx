@@ -31,7 +31,7 @@ interface NavBarProps {
 
 const NavBar: FC<NavBarProps> = ({ tab }) => {
   const { scrollDirection, isAtTop } = useScrollDirection();
-  const { changeLanguage, myLang, myFocus, loading } = useStore();
+  const { changeLanguage, myLang, myFocus, loading, getLinkprincipal } = useStore();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -477,7 +477,7 @@ const NavBar: FC<NavBarProps> = ({ tab }) => {
 
             {[
               { href: "/", icon: <House strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Home" : "Inicio" },
-              { href: "/blog", icon: <BookOpen strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Blog" : "Blog" },
+              { href: `/blog/${getLinkprincipal()}`, icon: <BookOpen strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Blog" : "Blog" },
               { href: "/#experience", icon: <BriefcaseBusiness strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Experience" : "Experiencia" },
               { href: "/#video", icon: <Video strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Watch Video" : "Ver Video" },
               { href: "/#skills", icon: <Hammer strokeWidth={1} className="menu-icon" size={38} />, label: myLang ? "Skills" : "Tratamientos" },
