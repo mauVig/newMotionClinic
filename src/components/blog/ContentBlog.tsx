@@ -1,6 +1,7 @@
 import React from 'react';
 import blogData from '@/data/blogData.json';
 import styles from './ContentBlog.module.css';
+import { generateSlugPath } from '@/utility/grobalUtility';
 
 interface ContentBlogProps {
     blog?: any;
@@ -8,34 +9,6 @@ interface ContentBlogProps {
 }
 
 const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false }) => {
-    console.log('Blog Data in ContentBlog:', blogData);
-    
-    // Función para generar slug
-    const generateSlug = (title: string) => {
-        return title
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9\s-]/g, "")
-            .replace(/\s+/g, "-")
-            .replace(/-+/g, "-")
-            .trim();
-    };
-
-    // Función para procesar el contenido y crear párrafos
-    const processContent = (content: string) => {
-        // Dividir por doble salto de línea para crear párrafos
-        const paragraphs = content.split('\n\n');
-        
-        return paragraphs
-            .filter(paragraph => paragraph.trim() !== '') // Eliminar párrafos vacíos
-            .map((paragraph, index) => {
-                // Convertir saltos simples en <br>
-                const processedParagraph = paragraph.replace(/\n/g, '<br>');
-                return `<p class="${styles.newsParagraph} text-lg text-gray-300 leading-relaxed text-justify mt-6">${processedParagraph}</p>`;
-            })
-            .join('');
-    };
 
     // Si es vista individual, mostrar blog específico
     if (isIndividual && blog) {
@@ -134,7 +107,7 @@ const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false })
                                 <article className="group cursor-pointer transition-all duration-300 hover:transform 
                                     hover:bg-violet/10 p-4 rounded-lg " key={index}>
                                     
-                                    <a href={`/blog/${generateSlug(blogItem.title)}`} className="block">
+                                    <a href={`/blog/${generateSlugPath(blogItem.title)}`} className="block">
                                         <div className="relative overflow-hidden rounded-lg mb-4">
                                             <img 
                                                 src={blogItem.img} 
@@ -144,7 +117,7 @@ const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false })
                                         </div>
                                         
                                         <div>
-                                            <div className='  '>
+                                            <div>
                                                 <h4 className="h-14 text-xl font-bold text-white mb-2 group-hover:text-purple transition-colors">
                                                     {blogItem.title}
                                                 </h4>

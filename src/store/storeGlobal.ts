@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import blogData from '@/data/blogData.json';
+import { generateSlugPath } from "@/utility/grobalUtility";
 
 interface StoreState {
   myLang: boolean;
@@ -45,18 +46,20 @@ export const useStore = create<StoreState>((set, get) => ({
     username?.focus();
   },
   getLinkprincipal: ()=> {
-    const titlePrincipalLink = blogData[0].title;
+    let idPrincipal = 10;
+
+    if (idPrincipal > blogData.length) {
+      idPrincipal = 1
+    }
+
+    const dataPrincipal = blogData.find(blog => blog.id === idPrincipal);
     
-    const generateSlug = (title: string) => {
-        return title
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/[^a-z0-9\s-]/g, "")
-            .replace(/\s+/g, "-")
-            .replace(/-+/g, "-")
-            .trim();
-    };
-    return generateSlug(titlePrincipalLink);
+    if (!dataPrincipal) {
+        throw new Error(`Blog with id ${idPrincipal} not found`);
+    }
+    
+    const titlePrincipalLink = dataPrincipal.title;
+
+    return generateSlugPath(titlePrincipalLink);
   }
 }));
