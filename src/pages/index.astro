@@ -15,11 +15,12 @@ import Whatsapp from '@/components/Whatsapp';
 import MagneticCursor from "@/components/MagneticCursor.tsx";
 // import Gallery2 from '@/components/gallery/Gallery2';
 import CircleVideo from '@/components/CircleVideo/CircleVIdeo';
+import medicalOrgSchema from "../schemas/medicalOrganization";
 
 ---
 <Loading client:only />
 
-<Layout>
+<Layout schema={medicalOrgSchema}>
   <MagneticCursor client:only="react" />
 
   <NavBar client:only tab="home" />

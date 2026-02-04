@@ -24,7 +24,7 @@ export function getStaticPaths() {
 const { blog } = Astro.props;
 ---
 
-<Layout>
+<Layout title={blog.SEOtitle} description={blog.metadescription}>
     <NavBar client:only tab="blog"/>
     
     <ContentBlog client:only blog={blog} isIndividual={true}/>

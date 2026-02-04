@@ -22,7 +22,7 @@ const firstBlogSlug = generateSlug(blogData[0].title);
 return Astro.redirect(`/blog/${firstBlogSlug}`);
 ---
 
-<Layout>
+<Layout title="Blog de Ortopedia y Cirugía de Cadera y Rodilla | Motion Clinic" metadescription="Artículos médicos de Motion Clinic sobre ortopedia, cirugía de cadera y rodilla, rehabilitación y salud articular. Información clara y confiable para pacientes.">
     <NavBar client:only tab="blog"/>
     
     <ContentBlog client:only isIndividual={false}/>
