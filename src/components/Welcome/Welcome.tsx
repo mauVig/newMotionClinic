@@ -155,7 +155,7 @@ export const Welcome = () => {
           ref={sectionRef}
           className="content relative z-[3] text-left text-white max-w-[70rem]"
         >
-        <h1 className="
+        <h2 className="
   text-[clamp(1.8rem,6vw,6rem)]
   font-bold 
   leading-[1.15]
@@ -168,7 +168,7 @@ export const Welcome = () => {
                 <span className="inline-block">{word}</span>
               </div>
             ))}
-          </h1>
+          </h2>
 
           <div className="
             text-white/80 
@@ -181,18 +181,11 @@ export const Welcome = () => {
           ">
 
             <div className="line-wrapper overflow-hidden">
-              <span className="inline-block">
+              <h1 className="inline-block">
                 {myLang
-                  ? "A masterpiece of modern hip and"
-                  : "Primer Centro Integral de Cirugía Robótica"}
-              </span>
-            </div>
-            <div className="line-wrapper overflow-hidden">
-              <span className="inline-block">
-                {myLang
-                  ? "knee surgery."
-                  : "en Cadera y Rodilla de Argentina."}
-              </span>
+                  ? "A masterpiece of modern hip and knee surgery."
+                  : "Primer Centro Integral de Cirugía Robótica en Cadera y Rodilla de Argentina."}
+              </h1>
             </div>
           </div>
 
