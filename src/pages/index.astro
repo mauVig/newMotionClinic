@@ -18,29 +18,17 @@ import CircleVideo from '@/components/CircleVideo/CircleVIdeo';
 import medicalOrgSchema from "../schemas/medicalOrganization";
 
 ---
-<Loading client:only />
-
-<Layout schema={medicalOrgSchema}>
-  <MagneticCursor client:only="react" />
-
-  <NavBar client:only tab="home" />
-
-
-  <Welcome client:visible />
-  <Objective client:visible />
- 
-   
-  <Experience client:visible />
-  <CircleVideo client:only/>
-  <Biography client:visible />
-
-
-  <Skills client:only />
-
-  <TestifyWrapp />
-  <!-- <Gallery client:only /> -->
-  <!-- <Gallery2 client:only /> -->
-
-  <Footer client:only contacto="no"/>
-  <Whatsapp client:only />
+<Loading client:only /> 
+<Layout>
+  <MagneticCursor client:only="react" /> 
+  <NavBar client:load tab="home" /> 
+  <Welcome client:visible /> 
+  <Objective client:visible /> 
+  <Experience client:visible /> 
+  <CircleVideo client:load /> 
+  <Biography client:visible /> 
+  <Skills client:visible /> 
+  <TestifyWrapp /> 
+  <Footer client:visible contacto="no"/> 
+  <Whatsapp client:load />
 </Layout>

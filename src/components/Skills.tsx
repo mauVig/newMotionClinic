@@ -25,6 +25,7 @@ const Skills: React.FC = () => {
       const container = containerRef.current;
       if (!container) return;
 
+      // Cambio de fondo del Body (Efecto Inmersivo)
       ScrollTrigger.create({
         trigger: container,
         start: "top 80%",
@@ -81,65 +82,9 @@ const Skills: React.FC = () => {
   }, [myLang]);
 
   // ============================================================
-  // Hover header
+  // Lógica de Animación de Acordeón
   // ============================================================
-  const handleMouseEnter = (index: number) => {
-    if (openIndex === index) return;
-
-    const header = itemRefs.current[index];
-    if (!header) return;
-
-    const title = header.querySelector("h3");
-    const plus = header.querySelector(".skills-plus");
-
-    if (title) {
-      gsap.to(title, {
-        x: 8,
-        color: "#444",
-        duration: 0.25,
-        ease: "power2.out",
-      });
-    }
-
-    if (plus) {
-      gsap.to(plus, {
-        scale: 1.12,
-        duration: 0.25,
-        ease: "power2.out",
-      });
-    }
-  };
-
-  const handleMouseLeave = (index: number) => {
-    if (openIndex === index) return;
-
-    const header = itemRefs.current[index];
-    if (!header) return;
-
-    const title = header.querySelector("h3");
-    const plus = header.querySelector(".skills-plus");
-
-    if (title) {
-      gsap.to(title, {
-        x: 0,
-        color: "#111",
-        duration: 0.25,
-        ease: "power2.out",
-      });
-    }
-
-    if (plus) {
-      gsap.to(plus, {
-        scale: 1,
-        duration: 0.25,
-        ease: "power2.out",
-      });
-    }
-  };
-
-  // ============================================================
-  // Accordion open / close
-  // ============================================================
+  
   const closeAccordion = (index: number) => {
     const content = contentRefs.current[index];
     const header = itemRefs.current[index];
@@ -155,28 +100,10 @@ const Skills: React.FC = () => {
       filter: "blur(4px)",
       duration: 0.4,
       ease: "power2.inOut",
-      onComplete: () => {
-        content.style.height = "0px";
-      },
     });
 
-    if (title) {
-      gsap.to(title, {
-        x: 0,
-        color: "#111",
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    }
-
-    if (plus) {
-      gsap.to(plus, {
-        rotation: 0,
-        scale: 1,
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    }
+    if (title) gsap.to(title, { x: 0, color: "#111", duration: 0.3 });
+    if (plus) gsap.to(plus, { rotation: 0, scale: 1, duration: 0.3 });
   };
 
   const openAccordion = (index: number) => {
@@ -187,7 +114,7 @@ const Skills: React.FC = () => {
     const title = header.querySelector("h3");
     const plus = header.querySelector(".skills-plus");
 
-    // medir altura real
+    // Cálculo de altura dinámica para GSAP
     content.style.height = "auto";
     const targetHeight = content.scrollHeight;
     content.style.height = "0px";
@@ -204,38 +131,17 @@ const Skills: React.FC = () => {
       },
     });
 
-    const inner = content.querySelectorAll(".skills-inner");
-    if (inner.length) {
+    const innerElements = content.querySelectorAll(".skills-inner");
+    if (innerElements.length) {
       gsap.fromTo(
-        inner,
-        { y: 10, autoAlpha: 0 },
-        {
-          y: 0,
-          autoAlpha: 1,
-          duration: 0.45,
-          ease: "power2.out",
-          stagger: 0.06,
-        }
+        innerElements,
+        { y: 15, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.08, ease: "power2.out" }
       );
     }
 
-    if (title) {
-      gsap.to(title, {
-        x: 8,
-        color: "#111",
-        duration: 0.35,
-        ease: "power2.out",
-      });
-    }
-
-    if (plus) {
-      gsap.to(plus, {
-        rotation: 45,
-        scale: 1.15,
-        duration: 0.35,
-        ease: "power2.out",
-      });
-    }
+    if (title) gsap.to(title, { x: 8, color: "#111", duration: 0.35 });
+    if (plus) gsap.to(plus, { rotation: 45, scale: 1.15, duration: 0.35 });
   };
 
   const handleToggle = (index: number) => {
@@ -253,20 +159,31 @@ const Skills: React.FC = () => {
   };
 
   // ============================================================
-  // Render
+  // Eventos de Hover (Feedback visual)
   // ============================================================
+  const handleMouseEnter = (index: number) => {
+    if (openIndex === index) return;
+    const header = itemRefs.current[index];
+    if (header) {
+        gsap.to(header.querySelector("h3"), { x: 8, color: "#444", duration: 0.25 });
+        gsap.to(header.querySelector(".skills-plus"), { scale: 1.1, duration: 0.25 });
+    }
+  };
+
+  const handleMouseLeave = (index: number) => {
+    if (openIndex === index) return;
+    const header = itemRefs.current[index];
+    if (header) {
+        gsap.to(header.querySelector("h3"), { x: 0, color: "#111", duration: 0.25 });
+        gsap.to(header.querySelector(".skills-plus"), { scale: 1, duration: 0.25 });
+    }
+  };
+
   return (
     <section
       ref={containerRef}
       id="skills"
-      className="
-        w-full 
-        flex justify-center
-        bg-white 
-        py-[14vh] 
-        px-6
-        relative z-20 
-      "
+      className="w-full flex justify-center bg-white py-[14vh] px-6 relative z-20"
     >
       <div className="w-full max-w-[950px] mx-auto">
         <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-20 text-[#111]">
@@ -275,108 +192,80 @@ const Skills: React.FC = () => {
 
         <div className="space-y-20">
           {skillsData.map((skill, i) => {
-            const titleText =
-              typeof skill.title === "object"
-                ? myLang
-                  ? skill.title.en
-                  : skill.title.es
-                : skill.title;
+            const titleText = typeof skill.title === "object" 
+              ? (myLang ? skill.title.en : skill.title.es) 
+              : skill.title;
 
-            const descText =
-              typeof skill.description === "object"
-                ? myLang
-                  ? skill.description.en
-                  : skill.description.es
-                : skill.description;
+            const descText = typeof skill.description === "object"
+              ? (myLang ? skill.description.en : skill.description.es)
+              : skill.description;
 
             return (
-              <div
-                key={i}
+              <article 
+                key={i} 
                 className={i !== 0 ? "border-t border-black/10 pt-10" : ""}
               >
-                {/* HEADER */}
+                {/* HEADER - Accesible y Semántico */}
                 <div
                   ref={(el) => (itemRefs.current[i] = el)}
-                  className="
-                    flex justify-between items-center 
-                    cursor-pointer group select-none
-                  "
+                  className="flex justify-between items-center cursor-pointer group select-none"
                   onClick={() => handleToggle(i)}
                   onMouseEnter={() => handleMouseEnter(i)}
                   onMouseLeave={() => handleMouseLeave(i)}
+                  role="button"
+                  aria-expanded={openIndex === i}
+                  tabIndex={0} // Permite navegar con el teclado
                 >
                   <h3 className="text-2xl md:text-3xl font-semibold text-[#111] transition-all">
                     {titleText}
                   </h3>
 
-                  {/* ICONO + HECHO A MANO */}
-                  <span
-                    className="
-                      skills-plus
-                      relative
-                      w-9 h-9 
-                      flex-shrink-0
-                      transition-transform duration-300
-                    "
-                  >
-                    {/* barra horizontal */}
-                    <span
-                      className="
-                        absolute 
-                        left-1/2 top-1/2
-                        -translate-x-1/2 -translate-y-1/2
-                        w-6 h-[2px]
-                        bg-black 
-                        rounded-full
-                      "
-                    />
-                    {/* barra vertical */}
-                    <span
-                      className="
-                        absolute 
-                        left-1/2 top-1/2
-                        -translate-x-1/2 -translate-y-1/2
-                        w-[2px] h-6
-                        bg-black 
-                        rounded-full
-                      "
-                    />
+                  <span className="skills-plus relative w-9 h-9 flex-shrink-0 transition-transform duration-300">
+                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-[2px] bg-black rounded-full" />
+                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[2px] h-6 bg-black rounded-full" />
                   </span>
                 </div>
 
-                {/* CONTENT */}
+                {/* CONTENT - Renderizado para SEO pero controlado por GSAP */}
                 <div
                   ref={(el) => (contentRefs.current[i] = el)}
                   className="overflow-hidden"
-                  style={{ height: 0, opacity: 0 }}
+                  style={{ height: 0, opacity: 0 }} // Estado inicial para evitar parpadeo
                 >
                   <div className="pt-8 pb-4">
                     <div className="grid md:grid-cols-2 gap-12">
-                      {/* IMG */}
+                      {/* Imagen con Lazy Loading */}
                       <div className="skills-inner overflow-hidden rounded-3xl bg-white shadow-xl border border-black/5">
                         <img
                           src={skill.img}
                           alt={titleText}
+                          loading="lazy"
                           className="w-full h-auto object-cover"
                         />
                       </div>
 
-                      {/* TEXT */}
+                      {/* Texto - Google lo lee aquí perfectamente */}
                       <div className="skills-inner flex items-center">
-                        <p
-                          className="
-                            text-[#111]/80 
-                            text-base sm:text-lg 
-                            leading-8 
-                            tracking-wide
-                          "
-                          dangerouslySetInnerHTML={{ __html: descText }}
-                        />
+                        {/* Añadimos un ID o una clase específica y nos aseguramos 
+                            de que el contenido NO sea nulo antes de renderizar 
+                        */}
+                        {descText ? (
+                          <div
+                            itemProp="description"
+                            className="text-[#111]/80 text-base sm:text-lg leading-8 tracking-wide content-rich-text"
+                            dangerouslySetInnerHTML={{ __html: descText }}
+                          />
+                        ) : (
+                          <div itemProp="description" className="hidden">
+                            {/* Fallback para que la etiqueta exista siempre para el SEO */}
+                            Cargando descripción de {titleText}...
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>

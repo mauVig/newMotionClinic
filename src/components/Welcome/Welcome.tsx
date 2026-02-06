@@ -150,18 +150,19 @@ export const Welcome = () => {
       />
 
       {/* 🔹 Contenido */}
-      {showContent && (
-        <header
-          ref={sectionRef}
-          className="content relative z-[3] text-left text-white max-w-[70rem]"
-        >
+     <header
+        ref={sectionRef}
+        className={`content relative z-[3] text-left text-white max-w-[70rem] transition-opacity duration-500 ${
+          showContent ? "opacity-100" : "opacity-0"
+        }`}
+      >
         <h2 className="
-  text-[clamp(1.8rem,6vw,6rem)]
-  font-bold 
-  leading-[1.15]
-  tracking-[-0.02em]
-  mb-[clamp(0.8rem,1.5vh,2rem)]
-">
+          text-[clamp(1.8rem,6vw,6rem)]
+          font-bold 
+          leading-[1.15]
+          tracking-[-0.02em]
+          mb-[clamp(0.8rem,1.5vh,2rem)]
+        ">
 
             {["The Perfect", "Surgery"].map((word, i) => (
               <div key={i} className="line-wrapper overflow-hidden block">
@@ -215,7 +216,6 @@ export const Welcome = () => {
             />
           </a>
         </header>
-      )}
     </section>
   );
 };

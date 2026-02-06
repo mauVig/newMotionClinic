@@ -153,6 +153,7 @@ const Experience: React.FC = () => {
           <div className="experience-text max-w-[700px] mx-auto">
             <h2 className="font-bold tracking-tight text-[clamp(3rem,7vw,4.5rem)] leading-[0.9] uppercase">
               +{years}
+              <span className="absolute invisible">{new Date().getFullYear() - 2009}</span>
               {myLang ? (
                 <>
                   <span className="block mt-2">Years of</span>
