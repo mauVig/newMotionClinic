@@ -185,28 +185,28 @@ const Experience: React.FC = () => {
             ref={(el) => (imgRefs.current[0] = el)}
             className="absolute top-[4vh] right-[6vw] w-[52vw] max-w-[280px] md:w-[32vw] md:max-w-[340px] rounded-2xl overflow-hidden shadow-xl"
           >
-            <img src="/img/clinic-cell.jpg" className="w-full h-auto object-cover" />
+            <img src="/img/clinic-cell.webp" alt="Clinica de Rehabilitación en Buenos Aires" className="w-full h-auto object-cover" />
           </div>
 
           <div
             ref={(el) => (imgRefs.current[1] = el)}
             className="absolute top-[80vh] left-[10vw] w-[50vw] max-w-[270px] md:w-[30vw] md:max-w-[330px] rounded-2xl overflow-hidden shadow-xl"
           >
-            <img src="/img/clinic2-cell.jpg" className="w-full h-auto object-cover" />
+            <img src="/img/clinic2-cell.webp" alt='Médico revisando estudios de rodilla' className="w-full h-auto object-cover" />
           </div>
 
           <div
             ref={(el) => (imgRefs.current[2] = el)}
             className="absolute top-[150vh] right-[10vw] w-[48vw] max-w-[260px] md:w-[28vw] md:max-w-[320px] rounded-2xl overflow-hidden shadow-xl"
           >
-            <img src="/img/clinic3-cell.jpg" className="w-full h-auto object-cover" />
+            <img src="/img/clinic3-cell.webp" alt="Andrés Anania, cirujano ortopedista especializado" className="w-full h-auto object-cover" />
           </div>
 
           <div
             ref={(el) => (imgRefs.current[3] = el)}
             className="absolute top-[200vh] left-[8vw] w-[50vw] max-w-[270px] md:w-[30vw] md:max-w-[330px] rounded-2xl overflow-hidden shadow-xl"
           >
-            <img src="/img/clinic4-cell.jpg" className="w-full h-auto object-cover" />
+            <img src="/img/clinic4-cell.webp" alt="Andrés Anania, trabajando en su centro" className="w-full h-auto object-cover" />
           </div>
         </div>
       </section>

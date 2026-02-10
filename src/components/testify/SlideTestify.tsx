@@ -16,26 +16,31 @@ CustomEase.create(
 const SLIDES = [
   {
     title: "Robotic Precision in Motion",
+    alt: "Imagen de precisión robótica en movimiento",
     desktopSrc: "/img/cubeSlide/cube1.webp",
     mobileSrc: "/img/cubeSlide/cube1-cell.webp",
   },
   {
     title: "Designed Around Your Recovery",
+    alt: "Imagen diseñada alrededor de su recuperación",
     desktopSrc: "/img/cubeSlide/cube2.webp",
     mobileSrc: "/img/cubeSlide/cube2-cell.webp",
   },
   {
     title: "Inside the Motion Clinic Suite",
+    alt: "Imagen del interior de la suite de la clínica de movimiento",
     desktopSrc: "/img/cubeSlide/cube3.webp",
     mobileSrc: "/img/cubeSlide/cube3-cell.webp",
   },
   {
     title: "Every Angle Under Control",
+    alt: "Imagen de todos los ángulos bajo control",
     desktopSrc: "/img/cubeSlide/cube4.webp",
     mobileSrc: "/img/cubeSlide/cube4-cell.webp",
   },
   {
     title: "Real Patients. Real Movement.",
+    alt: "Imagen de pacientes reales. Movimiento real.",
     desktopSrc: "/img/cubeSlide/testify.webp",
     mobileSrc: "/img/cubeSlide/testify-cell.webp",
   },
@@ -99,18 +104,19 @@ export const SlideTestify: React.FC = () => {
 
       animateTitle();
 
-      const createImageContainer = (src: string) => {
+      const createImageContainer = (src: string, alt: string) => {
         const wrapper = document.createElement("div");
         wrapper.className =
           "img absolute inset-0 will-change-transform overflow-hidden";
         const img = document.createElement("img");
         img.src = src;
+        img.alt = alt; 
         img.className = "w-full h-full object-cover";
         wrapper.appendChild(img);
         return { wrapper, img };
       };
 
-      const first = createImageContainer(slides[0].src);
+      const first = createImageContainer(slides[0].src, slides[0].alt);
       imagesWrapper.appendChild(first.wrapper);
 
       const goToIndex = (nextIndex: number, direction: "left" | "right") => {
@@ -122,7 +128,7 @@ export const SlideTestify: React.FC = () => {
           currentImgContainer?.querySelector("img") || null;
 
         const slide = slides[nextIndex];
-        const { wrapper: newWrapper, img: newImg } = createImageContainer(slide.src);
+        const { wrapper: newWrapper, img: newImg } = createImageContainer(slide.src, slide.alt);
 
         imagesWrapper.appendChild(newWrapper);
 
@@ -272,6 +278,7 @@ export const SlideTestify: React.FC = () => {
         <div className="flex gap-4">
           <button
             ref={prevBtnRef}
+            aria-label="Slide anterior"
             className="
               group w-10 h-10 rounded-full
               border border-white/20
@@ -281,6 +288,7 @@ export const SlideTestify: React.FC = () => {
             "
           >
             <svg
+              aria-hidden="true"
               viewBox="0 0 24 24"
               className="w-5 h-5 translate-x-[1px] group-hover:-translate-x-[1px] transition-transform"
             >
@@ -295,6 +303,7 @@ export const SlideTestify: React.FC = () => {
           </button>
 
           <button
+            aria-label="Siguiente slide"
             ref={nextBtnRef}
             className="
               group w-10 h-10 rounded-full

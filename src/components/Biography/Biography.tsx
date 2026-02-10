@@ -9,11 +9,11 @@ gsap.registerPlugin(ScrollTrigger);
 
 // LOGOS + TEXTOS
 const LOGOS = [
-  { src: "/svg/acreditaciones-01.svg", label: "Cirujano Ortopedista Internacional" },
-  { src: "/svg/acreditaciones-02.svg", label: "Miembro Internacional" },
-  { src: "/svg/acreditaciones-03.svg", label: "Miembro Certificado" },
-  { src: "/svg/acreditaciones-04.svg", label: "Miembro Titular" },
-  { src: "/svg/acreditaciones-05.svg", label: "Miembro Certificado" },
+  { src: "/svg/acreditaciones-01.svg", label: "Cirujano Ortopedista Internacional", alt: "Ícono de cirujano ortopedista internacional" },
+  { src: "/svg/acreditaciones-02.svg", label: "Miembro Internacional", alt: "Ícono de miembro internacional" },
+  { src: "/svg/acreditaciones-03.svg", label: "Miembro Certificado", alt: "Ícono de miembro certificado" },
+  { src: "/svg/acreditaciones-04.svg", label: "Miembro Titular", alt: "Ícono de miembro titular" },
+  { src: "/svg/acreditaciones-05.svg", label: "Miembro Certificado", alt: "Ícono de miembro certificado" },
 ];
 
 const Biography: React.FC = () => {

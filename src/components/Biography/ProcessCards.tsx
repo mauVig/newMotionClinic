@@ -12,24 +12,28 @@ const ProcessCards = () => {
     {
       index: "01",
       title: "Especialización médica",
+      alt: "Ícono de especialización médica",
       description:
         "Soy Andrés Anania, médico traumatólogo, subespecializado en las afeciones de la cadera y rodilla",
     },
     {
       index: "02",
       title: "Innovación Médica",
+      alt: "Ícono de innovación médica",
       description:
         "Mi formación incluye un AVP Fellowship  en el Hospital for Special Surgery en Nueva York, un MBA en el IAE Buisness School, y programas ejecutivos en Hardbard Buisness School y Stanford sobre transformación digital e inteligencia artificial aplicados a la salud ",
     },
     {
       index: "03",
       title: "Compromiso con el paciente",
+      alt: "Ícono de compromiso con el paciente",
       description:
         "Trabajamos en la intersección entre diseño y técnica. Cada detalle se resuelve con precisión, coherencia y cuidado material.",
     },
     {
       index: "04",
       title: "Formación Académica",
+      alt: "Ícono de formación académica",
       description:
         "Creemos en una arquitectura atemporal, humana y sostenible. Nuestro objetivo es crear espacios que trasciendan y generen valor duradero.",
     },
@@ -158,7 +162,7 @@ const ProcessCards = () => {
       >
         <img
           src={`/svg/icon-${i + 1}.svg`}
-          className="w-10 h-10 opacity-90"
+          className="w-10 h-10 opacity-90" alt={card.alt}
         />
       </div>
     </div>

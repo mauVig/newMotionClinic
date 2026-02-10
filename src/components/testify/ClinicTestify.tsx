@@ -206,6 +206,7 @@ const ClinicTestify = () => {
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3285.5261873764753!2d-58.43667917068962!3d-34.56555015989195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb5b97072cbb1%3A0xfec53bcc88faa676!2sMaure%201608%2C%20C1426CUD%20Cdad.%20Aut%C3%B3noma%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1757915667649!5m2!1ses-419!2sar"
             loading="lazy"
             style={{ border: 0 }}
+            title="Mapa de la clínica de rehabilitación en Buenos Aires"
           ></iframe>
         </div>
 

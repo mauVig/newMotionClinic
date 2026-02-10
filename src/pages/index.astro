@@ -1,6 +1,6 @@
 ---
-import Welcome from '@/components/Welcome/Welcome.tsx';
 import Layout from '@/layouts/Layout.astro';
+import Welcome from '@/components/Welcome/Welcome.tsx';
 import Biography from '@/components/Biography/Biography.tsx';
 import Objective from '@/components/Objective/Objective.tsx';
 import Skills from '@/components/Skills.tsx';
@@ -22,7 +22,7 @@ import medicalOrgSchema from "../schemas/medicalOrganization";
 <Layout>
   <MagneticCursor client:only="react" /> 
   <NavBar client:load tab="home" /> 
-  <Welcome client:visible /> 
+  <Welcome client:visible />
   <Objective client:visible /> 
   <Experience client:visible /> 
   <CircleVideo client:load /> 

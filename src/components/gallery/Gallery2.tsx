@@ -35,7 +35,7 @@ const Gallery2: React.FC = () => {
                 className="flex-shrink-0 flex justify-center items-center mb-8 opacity-0 w-full max-w-none sm:w-auto sm:max-w-sm"
             >
                 <img
-                    src={`/img/gallery/gallery${8 + index }.jpg`}
+                    src={`/img/gallery/gallery${8 + index }.webp`}
                     alt={`Galería ${8 + index }`}
                     className="w-full"
                 />

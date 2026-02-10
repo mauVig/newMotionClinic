@@ -69,7 +69,7 @@ export const Gallery: React.FC = () => {
                             className="w-[400px] flex-shrink-0 opacity-0"
                         >
                             <img
-                                src={`/img/gallery/gallery${index + 1}.jpg`}
+                                src={`/img/gallery/gallery${index + 1}.webp`}
                                 alt={`Galería ${index + 1}`}
                                 className={imageClasses[index % 7]}
                             />

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/react": "4.1.5",
+    "@astrojs/sitemap": "^3.7.0",
     "@astrojs/tailwind": "5.1.4",
     "@emailjs/browser": "4.4.1",
     "@number-flow/react": "0.5.5",
