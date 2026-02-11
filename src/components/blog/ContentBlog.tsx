@@ -48,9 +48,9 @@ const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false })
                     <div className={`flex gap-8 items-start ${styles.flex}`}>
                         {/* Imagen */}
                         <div className={`flex-shrink-0 w-1/2 xl:sticky top-24 self-start ${styles.w1_2}`}>
-                            <h2 className=" xl:hidden text-4xl xl:text-5xl font-black text-white leading-tight mb-4 border-l-4 border-[#5b25d4] pl-4 font-sans drop-shadow-lg">
+                            <h1 className=" xl:hidden text-4xl xl:text-5xl font-black text-white leading-tight mb-4 border-l-4 border-[#5b25d4] pl-4 font-sans drop-shadow-lg">
                                    {principalBlog.title}
-                            </h2>
+                            </h1>
                             <div className="transition-transform duration-300">
                                 <img 
                                     src={principalBlog.img} 

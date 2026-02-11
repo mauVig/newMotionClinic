@@ -221,7 +221,7 @@ const ContactForm = () => {
                   {myLang ? "Back" : "Volver"}
                 </a>
 
-                <h2 className="text-4xl font-bold mt-10">
+                <h1 className="text-4xl font-bold mt-10">
                   {!myLang ? (
                     <>
                       Hacenos
@@ -235,7 +235,7 @@ const ContactForm = () => {
                       <span className="text-violet">your inquiry</span>
                     </>
                   )}
-                </h2>
+                </h1>
               </div>
 
               <p className="leading-7 w-[270px] md:w-[350px] text-lg md:text-2xl mt-4 lg:mt-2">
