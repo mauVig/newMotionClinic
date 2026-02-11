@@ -1,0 +1,15 @@
+# llms.txt
+# Purpose: Guidance for AI / LLM crawlers
+
+User-agent: *
+Allow: /
+
+# Medical notice
+# Content is for informational purposes only and does not replace professional medical advice.
+
+# Metadata
+Site-Name: Motion Clinic
+Site-Type: Medical / Healthcare
+Language: es
+Country: AR
+Contact: info@motionclinic.com.ar

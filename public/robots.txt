@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://motionclinic.com.ar/sitemap.xml
+Sitemap: https://motionclinic.com.ar/sitemap-0.xml
