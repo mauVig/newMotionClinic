@@ -73,9 +73,9 @@ const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false })
                                         <span className={`${styles.metaText}`}>{principalBlog.date}</span>
                                     </span>
                                 </div>
-                                <h2 className="hidden xl:block text-4xl xl:text-5xl font-black text-white leading-tight mb-4 border-l-4 border-[#5b25d4] pl-4 font-sans drop-shadow-lg">
+                                <h1 className="hidden xl:block text-4xl xl:text-5xl font-black text-white leading-tight mb-4 border-l-4 border-[#5b25d4] pl-4 font-sans drop-shadow-lg">
                                     {principalBlog.title}
-                                </h2>
+                                </h1>
                                 
                             </header>
                             
@@ -125,7 +125,7 @@ const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false })
                     {/* Portal de Noticias - Otras Noticias */}
                     <section className="mt-16 border-t border-gray-700 pt-12">
                         <div className="mb-8 border-l-4 border-[#5b25d4]">
-                            <h3 className="text-3xl font-bold text-white  pl-4 mb-2">Blog de noticias</h3>
+                            <h2 className="text-3xl font-bold text-white  pl-4 mb-2">Blog de noticias</h2>
                             <p className="text-gray-400 ml-4">Mantente informado con las últimas novedades de Motion Clinic</p>
                         </div>
                         
@@ -145,9 +145,9 @@ const ContentBlog: React.FC<ContentBlogProps> = ({ blog, isIndividual = false })
                                         
                                         <div>
                                             <div className='  '>
-                                                <h4 className="h-14 text-xl font-bold text-white mb-2 group-hover:text-purple transition-colors">
+                                                <h3 className="h-14 text-xl font-bold text-white mb-2 group-hover:text-purple transition-colors">
                                                     {blogItem.title}
-                                                </h4>
+                                                </h3>
                                             </div>
                                             <div
                                                 dangerouslySetInnerHTML={{ __html: blogItem.develop.substring(0, 210) + ' ...' }}
