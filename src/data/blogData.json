@@ -1,13 +1,13 @@
 [
-  {
-    "id": 1,
-    "title": "Cirugía robótica MAKO",
-    "date": "21 de diciembre, 2025",
+    {
+    "id": 10,
+    "title": "Ya se hacen en Argentina cirugías de cadera y rodilla asistidas por robots",
+    "date": "21 de enero, 2026",
     "img": "/img/blog1.webp",
-    "develop": "La cirugía robótica MAKO es una de las tecnologías más avanzadas aplicadas al reemplazo de articulaciones. Este sistema combina planificación 3D preoperatoria con asistencia robótica intraoperatoria, lo que permite al cirujano ejecutar cada paso con precisión submilimétrica y reducir al mínimo la variabilidad humana. Esta combinación ofrece resultados más reproducibles, una mejor alineación del implante y una recuperación más confortable para el paciente, con menor dolor postoperatorio y mayor durabilidad del implante.",
-    "source": "https://www.iprofesional.com/salud/444088-cirugia-robotica-de-cadera-y-rodilla-como-es-y-cuanto-sale-en-argentina",
-    "SEOtitle": "Cirugía Robótica MAKO | Motion Clinic",
-    "metadescription": "Cirugía robótica MAKO para reemplazo articular: planificación 3D y precisión submilimétrica que mejoran alineación, reducen dolor y optimizan la recuperación."
+    "develop": "La incorporación de robots al ámbito de la salud viene avanzando desde comienzos de este siglo. Uno de los pioneros fue el robot cirujano Da Vinci, especializado en intervenciones cardiovasculares y abdominales. Y desde hace un par de años se sumó el sistema Mako SmartRobotics, que permite hacer cirugías mínimamente invasivas de cadera y rodilla.",
+    "source": "https://www.lanacion.com.ar/tecnologia/cirugias-de-cadera-y-rodilla-asistidas-por-robots-ya-se-hacen-en-argentina-nid19012026/",
+    "SEOtitle": "Cirugías de Cadera y Rodilla Asistidas por Robots en Argentina | Motion Clinic",
+    "metadescription": "En Argentina ya se realizan cirugías de cadera y rodilla asistidas por robots como el sistema Mako SmartRobotics, que mejora la precisión y recuperación."
   },
   {
     "id": 2,
@@ -88,5 +88,15 @@
     "source": "https://mercado.com.ar/innovacion/palermo-emerge-como-distrito-de-tecnologia-aplicada-a-la-salud-y-biotecnologia-en-buenos-aires",
     "SEOtitle": "Innovación Médica en Palermo: Cirugía Robótica | Motion Clinic",
     "metadescription": "Palermo se consolida como polo médico. Motion Clinic integra cirugía robótica, diagnóstico avanzado y rehabilitación."
+  },
+    {
+    "id": 1,
+    "title": "Cirugía robótica MAKO",
+    "date": "21 de diciembre, 2025",
+    "img": "/img/blog1.webp",
+    "develop": "La cirugía robótica MAKO es una de las tecnologías más avanzadas aplicadas al reemplazo de articulaciones. Este sistema combina planificación 3D preoperatoria con asistencia robótica intraoperatoria, lo que permite al cirujano ejecutar cada paso con precisión submilimétrica y reducir al mínimo la variabilidad humana. Esta combinación ofrece resultados más reproducibles, una mejor alineación del implante y una recuperación más confortable para el paciente, con menor dolor postoperatorio y mayor durabilidad del implante.",
+    "source": "https://www.iprofesional.com/salud/444088-cirugia-robotica-de-cadera-y-rodilla-como-es-y-cuanto-sale-en-argentina",
+    "SEOtitle": "Cirugía Robótica MAKO | Motion Clinic",
+    "metadescription": "Cirugía robótica MAKO para reemplazo articular: planificación 3D y precisión submilimétrica que mejoran alineación, reducen dolor y optimizan la recuperación."
   }
 ]
