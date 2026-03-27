@@ -1,0 +1,271 @@
+---
+// Welcome.astro - sin React, Three.js via CDN, GSAP vanilla
+---
+
+<section
+  id="welcome-section"
+  class="relative flex items-center justify-start w-full min-h-screen overflow-hidden px-[clamp(2rem,6vw,6rem)] bg-black"
+  style="color: #e8e8e8;"
+>
+  <!-- Fondo Three.js -->
+  <div id="fractal-container" class="absolute inset-0 z-[1]"></div>
+
+  <!-- Gradiente encima del shader -->
+  <div
+    class="absolute inset-0 pointer-events-none z-[2]"
+    style="background: linear-gradient(to top, rgba(0,0,0,0.8) 15%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%);"
+  ></div>
+
+  <!-- Contenido -->
+  <header
+    id="welcome-content"
+    class="content relative z-[3] text-left text-white max-w-[70rem] opacity-0 transition-opacity duration-500"
+  >
+    <h2 class="font-bold leading-[1.15] tracking-[-0.02em] mb-[clamp(0.8rem,1.5vh,2rem)]"
+        style="font-size: clamp(1.8rem,6vw,6rem);">
+      <div class="line-wrapper overflow-hidden block">
+        <span class="inline-block">The Perfect</span>
+      </div>
+      <div class="line-wrapper overflow-hidden block">
+        <span class="inline-block">Surgery</span>
+      </div>
+    </h2>
+
+    <div
+      class="text-white/80 font-light max-w-[32rem] mb-[clamp(1.5rem,4vh,2.5rem)] mr-auto"
+      style="font-size: clamp(0.85rem,1.4vw,1.4rem); line-height: 1.45;"
+    >
+      <div class="line-wrapper overflow-hidden">
+        <h1 class="inline-block">
+          Primer Centro Integral de Cirugía Robótica en Cadera y Rodilla de Argentina.
+        </h1>
+      </div>
+    </div>
+
+    <a
+      href="/contacto"
+      id="welcome-cta"
+      class="relative inline-flex items-center justify-center
+             rounded-[0.7rem] font-semibold uppercase tracking-wide
+             text-white bg-transparent border border-[#a855f7]
+             overflow-hidden group
+             hover:bg-[#a855f7]/10 hover:shadow-[0_0_25px_rgba(168,85,247,0.5)]
+             active:scale-[0.97]"
+      style="
+        padding: clamp(0.4rem,0.8vw,0.6rem) clamp(2.8rem,6vw,4rem);
+        font-size: clamp(1rem,1.4vw,1.2rem);
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+        transition: box-shadow 0.3s ease, background-color 0.3s ease;
+      "
+    >
+      <span class="relative z-10 transition-transform duration-300 group-hover:scale-105">
+        CONTACTO
+      </span>
+      <span
+        class="absolute inset-0 bg-gradient-to-r from-[#a855f7] to-[#ec4899]
+               opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out
+               rounded-[0.7rem]"
+      ></span>
+    </a>
+  </header>
+</section>
+
+<script>
+  // ── Three.js desde CDN ──────────────────────────────────────────────────────
+  const THREE_CDN = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+
+  const vertexShader = `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `;
+
+  const fragmentShader = `
+    uniform sampler2D uTexture;
+    uniform vec2 uResolution;
+    uniform vec2 uTextureSize;
+    uniform vec2 uMouse;
+    uniform float uParallaxStrength;
+    uniform float uDistortionMultiplier;
+    uniform float uGlassStrength;
+    uniform float ustripesFrequency;
+    uniform float uglassSmoothness;
+    uniform float uEdgePadding;
+    varying vec2 vUv;
+
+    vec2 getCoverUV(vec2 uv, vec2 textureSize) {
+      if (textureSize.x < 1.0 || textureSize.y < 1.0) return uv;
+      vec2 s = uResolution / textureSize;
+      float scale = max(s.x, s.y);
+      vec2 scaledSize = textureSize * scale;
+      vec2 offset = (uResolution - scaledSize) * 0.5;
+      return (uv * uResolution - offset) / scaledSize;
+    }
+
+    float displacement(float x, float num_stripes, float strength) {
+      float modulus = 1.0 / num_stripes;
+      return mod(x, modulus) * strength;
+    }
+
+    float fractalGlass(float x) {
+      float d = 0.0;
+      for (int i = -5; i <= 5; i++) {
+        d += displacement(x + float(i) * uglassSmoothness, ustripesFrequency, uGlassStrength);
+      }
+      d = d / 11.0;
+      return x + d;
+    }
+
+    float smoothEdge(float x, float padding) {
+      float edge = padding;
+      if (x < edge) return smoothstep(0.0, edge, x);
+      else if (x > 1.0 - edge) return smoothstep(1.0, 1.0 - edge, x);
+      return 1.0;
+    }
+
+    void main() {
+      vec2 uv = vUv;
+      float originalX = uv.x;
+      float edgeFactor = smoothEdge(originalX, uEdgePadding);
+      float distortedX = fractalGlass(originalX);
+      uv.x = mix(originalX, distortedX, edgeFactor);
+      float distortionFactor = uv.x - originalX;
+      float parallaxDirection = -sign(0.5 - uMouse.x);
+      vec2 parallaxOffset = vec2(
+        parallaxDirection * abs(uMouse.x - 0.5) * uParallaxStrength * (1.0 + abs(distortionFactor) * uDistortionMultiplier),
+        0.0
+      );
+      parallaxOffset *= edgeFactor;
+      uv += parallaxOffset;
+      vec2 coverUV = getCoverUV(uv, uTextureSize);
+      coverUV = clamp(coverUV, 0.0, 1.0);
+      vec4 color = texture2D(uTexture, coverUV);
+      gl_FragColor = color;
+    }
+  `;
+
+  const config = {
+    lerpFactor: 0.035,
+    parallaxStrength: 0.1,
+    distortionMultiplier: 10,
+    glassStrength: 2.0,
+    glassSmoothness: 0.01,
+    stripesFrequency: 15,
+    edgePadding: 0.1,
+  };
+
+  // ── Inicializar Three.js ────────────────────────────────────────────────────
+  const initThree = (THREE: any) => {
+    const container = document.getElementById("fractal-container") as HTMLElement;
+    if (!container) return;
+
+    const isMobile = window.innerWidth < 1024;
+    const imageSrc = isMobile ? "/img/welcome-cell.webp" : "/img/welcome.webp";
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+
+    const mouse = { x: 0.5, y: 0.5 };
+    const targetMouse = { x: 0.5, y: 0.5 };
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        uTexture:             { value: null },
+        uResolution:          { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
+        uTextureSize:         { value: new THREE.Vector2(1, 1) },
+        uMouse:               { value: new THREE.Vector2(0.5, 0.5) },
+        uParallaxStrength:    { value: config.parallaxStrength },
+        uDistortionMultiplier:{ value: config.distortionMultiplier },
+        uGlassStrength:       { value: config.glassStrength },
+        ustripesFrequency:    { value: config.stripesFrequency },
+        uglassSmoothness:     { value: config.glassSmoothness },
+        uEdgePadding:         { value: config.edgePadding },
+      },
+      vertexShader,
+      fragmentShader,
+    });
+
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+    scene.add(mesh);
+
+    // Cargar textura
+    const img = new Image();
+    img.src = imageSrc;
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const texture = new THREE.Texture(img);
+      texture.needsUpdate = true;
+      material.uniforms.uTexture.value = texture;
+      material.uniforms.uTextureSize.value.set(img.naturalWidth, img.naturalHeight);
+      imageLoaded = true;
+      tryShowContent();
+    };
+    setTimeout(() => { imageLoaded = true; tryShowContent(); }, 2500);
+
+    // Mouse
+    window.addEventListener("mousemove", (e: MouseEvent) => {
+      targetMouse.x = e.clientX / window.innerWidth;
+      targetMouse.y = 1.0 - e.clientY / window.innerHeight;
+    });
+
+    // Resize
+    window.addEventListener("resize", () => {
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      material.uniforms.uResolution.value.set(container.clientWidth, container.clientHeight);
+    });
+
+    // Loop
+    const animate = () => {
+      requestAnimationFrame(animate);
+      mouse.x = lerp(mouse.x, targetMouse.x, config.lerpFactor);
+      mouse.y = lerp(mouse.y, targetMouse.y, config.lerpFactor);
+      material.uniforms.uMouse.value.set(mouse.x, mouse.y);
+      renderer.render(scene, camera);
+    };
+    animate();
+  };
+
+  // ── Estado de carga ─────────────────────────────────────────────────────────
+  let imageLoaded = false;
+  let loadingDone = false;
+
+  const tryShowContent = async () => {
+    if (!imageLoaded || !loadingDone) return;
+
+    const content = document.getElementById("welcome-content") as HTMLElement;
+    content.style.opacity = "1";
+
+    const { gsap } = await import("gsap");
+    const lines = content.querySelectorAll(".line-wrapper span");
+    const button = content.querySelector("#welcome-cta");
+
+    gsap.set(lines, { yPercent: 100, opacity: 0, scale: 1.05, filter: "blur(8px)" });
+
+    gsap.timeline({ defaults: { ease: "power4.out", duration: 1.2 }, delay: 0.3 })
+      .to(lines, { yPercent: 0, opacity: 1, scale: 1, filter: "blur(0px)", stagger: 0.12 })
+      .to(button, { y: 0, scale: 1, opacity: 1, duration: 1, ease: "back.out(1.7)" }, "-=0.5");
+  };
+
+  // Escucha el evento del Loading cuando termina
+  document.addEventListener("loadingComplete", () => {
+    loadingDone = true;
+    tryShowContent();
+  });
+  // Fallback
+  setTimeout(() => { loadingDone = true; tryShowContent(); }, 2600);
+
+  // ── Cargar Three.js desde CDN y arrancar ────────────────────────────────────
+  const script = document.createElement("script");
+  script.src = THREE_CDN;
+  script.onload = () => initThree((window as any).THREE);
+  document.head.appendChild(script);
+</script>

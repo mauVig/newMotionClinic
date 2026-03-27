@@ -1,14 +1,162 @@
 ---
-import ClinicTestify from "./ClinicTestify.tsx";
+// TestifyWrapp.astro - ClinicTestify + SlideTestify + TestifyVideos integrados
+import ClinicTestify from "./ClinicTestify.astro";
 import SlideTestify from "./SlideTestify.tsx";
-import TestifyVideos from "./TestifyVideos.tsx"
+
+const words = "Conocé las historias que nos mueven".split(" ");
+
+const SLIDES = [
+  { title: "Robotic Precision in Motion",    alt: "Imagen de precisión robótica en movimiento",     desktopSrc: "/img/cubeSlide/cube1.webp",   mobileSrc: "/img/cubeSlide/cube1-cell.webp" },
+  { title: "Designed Around Your Recovery",  alt: "Imagen diseñada alrededor de su recuperación",   desktopSrc: "/img/cubeSlide/cube2.webp",   mobileSrc: "/img/cubeSlide/cube2-cell.webp" },
+  { title: "Inside the Motion Clinic Suite", alt: "Imagen del interior de la suite de la clínica",  desktopSrc: "/img/cubeSlide/cube3.webp",   mobileSrc: "/img/cubeSlide/cube3-cell.webp" },
+  { title: "Every Angle Under Control",      alt: "Imagen de todos los ángulos bajo control",       desktopSrc: "/img/cubeSlide/cube4.webp",   mobileSrc: "/img/cubeSlide/cube4-cell.webp" },
+  { title: "Real Patients. Real Movement.",  alt: "Imagen de pacientes reales. Movimiento real.",   desktopSrc: "/img/cubeSlide/testify.webp", mobileSrc: "/img/cubeSlide/testify-cell.webp" },
+];
 ---
 
-<div >
- <section class="flex flex-col gap-12 px-6 py-20">
+<div>
+  <section class="flex flex-col gap-12 px-6 py-20">
 
-    <ClinicTestify client:only />
-    <SlideTestify client:only />
-    <TestifyVideos client:only />
+    <!-- ClinicTestify -->
+    <ClinicTestify />
+
+    <!-- SlideTestify -->
+    <SlideTestify />
+
+    <!-- TestifyVideos -->
+    <section
+      id="testifyVideos"
+      class="relative flex flex-col items-center w-full text-white pt-24 pb-28 bg-backBlack"
+    >
+      <div class="w-full max-w-[950px] px-4 mx-auto">
+
+        <!-- Título con palabras estáticas para SEO -->
+        <h2
+          id="testify-title"
+          class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[3.7rem] font-semibold tracking-tight leading-tight mb-10"
+        >
+          {words.map((word) => (
+            <span class="testify-word inline-block mr-[0.25em]" style="color: #6e6e6ea4;">{word}</span>
+          ))}
+        </h2>
+
+        <!-- Botón YouTube -->
+        <a
+          href="https://www.youtube.com/@Motion.Clinic"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex group text-xs sm:text-sm md:text-base mb-16"
+        >
+          <button
+            type="button"
+            class="border border-violet text-grey py-2 px-6 rounded-l-3xl w-[320px] group-hover:rounded-full transition-all duration-500"
+          >
+            Mirá todas nuestras historias acá
+          </button>
+          <div class="ml-1">
+            <div class="bg-violet h-full flex items-center justify-center rounded-r-3xl p-3 group-hover:rounded-full transition-all duration-500">
+              <img src="/svg/rightArrow-07.svg" alt="Arrow" class="h-4 w-4" />
+            </div>
+          </div>
+        </a>
+
+        <!-- Videos -->
+        <div id="videos-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="video-box rounded-3xl overflow-hidden shadow-lg">
+            <iframe
+              src="https://www.youtube.com/embed/omRTk4AG_yE"
+              title="Testimonio de paciente Motion Clinic - Video 1"
+              class="w-full h-[320px] sm:h-[420px] md:h-[480px] lg:h-[520px] object-cover"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+          </div>
+          <div class="video-box rounded-3xl overflow-hidden shadow-lg">
+            <iframe
+              src="https://www.youtube.com/embed/JhfeY0h7D9M"
+              title="Testimonio de paciente Motion Clinic - Video 2"
+              class="w-full h-[320px] sm:h-[420px] md:h-[480px] lg:h-[520px] object-cover"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
   </section>
 </div>
+
+<script>
+  import { gsap } from "gsap";
+
+  // ── TestifyVideos: título con color por scroll ──────────────────────────────
+  const titleEl  = document.getElementById("testify-title") as HTMLElement;
+  const wordEls  = titleEl.querySelectorAll<HTMLElement>(".testify-word");
+  const totalWords = wordEls.length;
+
+  const START = { r: 110, g: 110, b: 110, a: 0.64 };
+  const END   = { r: 207, g: 177, b: 251, a: 1 };
+
+  const lerp = (a: number, b: number, t: number) => Math.round(a + (b - a) * t);
+
+  const getWordColor = (wordIndex: number, scrollProgress: number) => {
+    const wordProgress = Math.max(0, Math.min(1,
+      (scrollProgress * (totalWords + 5) - wordIndex) / 4
+    ));
+    if (wordProgress <= 0) return `rgba(${START.r},${START.g},${START.b},${START.a})`;
+    if (wordProgress >= 1) return `rgba(${END.r},${END.g},${END.b},${END.a})`;
+    const alpha = START.a + (END.a - START.a) * wordProgress;
+    return `rgba(${lerp(START.r, END.r, wordProgress)},${lerp(START.g, END.g, wordProgress)},${lerp(START.b, END.b, wordProgress)},${alpha.toFixed(2)})`;
+  };
+
+  const onScroll = () => {
+    const rect = titleEl.getBoundingClientRect();
+    const wh   = window.innerHeight;
+    let progress = 0;
+    if (rect.top <= wh * 0.7) {
+      progress = Math.min(1, (wh * 0.7 - rect.top) / (wh * 0.6));
+    }
+    const p = Math.pow(progress, 0.9);
+    wordEls.forEach((el, i) => { el.style.color = getWordColor(i, p); });
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  // ── TestifyVideos: animación entrada título ─────────────────────────────────
+  gsap.set(wordEls, { autoAlpha: 0, y: 40, filter: "blur(12px)" });
+
+  const titleObs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      gsap.to(wordEls, {
+        autoAlpha: 1, y: 0, filter: "blur(0px)",
+        duration: 1.2, ease: "power3.out", stagger: 0.08,
+      });
+      titleObs.disconnect();
+    }
+  }, { threshold: 0.3 });
+  titleObs.observe(titleEl);
+
+  // ── TestifyVideos: animación entrada videos ─────────────────────────────────
+  const videosGrid = document.getElementById("videos-grid") as HTMLElement;
+  const vids = videosGrid.querySelectorAll(".video-box");
+
+  gsap.set(vids, {
+    autoAlpha: 0, y: 60, scale: 0.92,
+    filter: "blur(14px)", clipPath: "inset(40% 0 40% 0)",
+  });
+
+  const videosObs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      gsap.to(vids, {
+        autoAlpha: 1, y: 0, scale: 1,
+        filter: "blur(0px)", clipPath: "inset(0% 0 0% 0)",
+        duration: 1.4, ease: "power3.out", stagger: 0.25,
+      });
+      videosObs.disconnect();
+    }
+  }, { threshold: 0.3 });
+  videosObs.observe(videosGrid);
+</script>

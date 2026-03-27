@@ -1,0 +1,198 @@
+---
+// Skills.astro - acordeón GSAP vanilla, sin React
+import { skillsData } from "@/data/GlobalData";
+---
+
+<section
+  id="skills"
+  class="w-full flex justify-center bg-white py-[14vh] px-6 relative z-20"
+>
+  <div class="w-full max-w-[950px] mx-auto">
+
+    <h2 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-20 text-[#111]">
+      Tratamientos
+    </h2>
+
+    <div class="space-y-20">
+      {skillsData.map((skill, i) => (
+        <article class={i !== 0 ? "border-t border-black/10 pt-10" : ""}>
+
+          <!-- Header del acordeón -->
+          <div
+            class="skill-header flex justify-between items-center cursor-pointer select-none"
+            data-index={i}
+            role="button"
+            aria-expanded="false"
+            tabindex="0"
+          >
+            <h3 class="skill-title text-2xl md:text-3xl font-semibold text-[#111] transition-all">
+              {skill.title.es}
+            </h3>
+
+            <span class="skills-plus relative w-9 h-9 flex-shrink-0">
+              <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-[2px] bg-black rounded-full"></span>
+              <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[2px] h-6 bg-black rounded-full"></span>
+            </span>
+          </div>
+
+          <!-- Contenido del acordeón — en HTML estático para SEO -->
+<div class="skill-content overflow-hidden">
+
+            <div class="pt-8 pb-4">
+              <div class="grid md:grid-cols-2 gap-12">
+
+                <div class="skills-inner overflow-hidden rounded-3xl bg-white shadow-xl border border-black/5">
+                  <img
+                    src={skill.img}
+                    alt={skill.title.es}
+                    loading="lazy"
+                    class="w-full h-auto object-cover"
+                  />
+                </div>
+
+                <div class="skills-inner flex items-center">
+                  <div
+                    itemprop="description"
+                    class="text-[#111]/80 text-base sm:text-lg leading-8 tracking-wide content-rich-text"
+                    set:html={skill.description.es}
+                  />
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </article>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<script>import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const section   = document.getElementById("skills") as HTMLElement;
+  const headers   = section.querySelectorAll<HTMLElement>(".skill-header");
+  const contents  = section.querySelectorAll<HTMLElement>(".skill-content");
+  const titles    = section.querySelectorAll<HTMLElement>(".skill-title");
+  const plusIcons = section.querySelectorAll<HTMLElement>(".skills-plus");
+
+  let openIndex: number | null = null;
+
+  // ── Colapsar acordeón DESPUÉS del primer render (para que Google vea el contenido) ──
+  requestAnimationFrame(() => {
+    contents.forEach((content) => {
+      gsap.set(content, { height: 0, opacity: 0 });
+    });
+  });
+
+  // ── Entrada animada con ScrollTrigger ───────────────────────────────────────
+  ScrollTrigger.create({
+    trigger: section,
+    start: "top 80%",
+    onEnter: () =>
+      gsap.to("body", { backgroundColor: "#ffffff", duration: 0.7, ease: "power2.out" }),
+    onLeaveBack: () =>
+      gsap.to("body", { backgroundColor: "#000000", duration: 0.7, ease: "power2.out" }),
+  });
+
+  gsap.timeline({
+    scrollTrigger: { trigger: section, start: "top 85%", once: true },
+  })
+  .from(section.querySelector("h2"), {
+    y: 40, autoAlpha: 0, duration: 0.9, ease: "power3.out",
+  })
+  .from(
+    headers,
+    { y: 24, autoAlpha: 0, duration: 0.8, stagger: 0.12, ease: "power3.out" },
+    "-=0.3"
+  );
+
+  // ── Cerrar acordeón ─────────────────────────────────────────────────────────
+  const closeAccordion = (index: number) => {
+    const content = contents[index];
+    const title   = titles[index];
+    const plus    = plusIcons[index];
+    if (!content) return;
+
+    gsap.to(content, {
+      height: 0, opacity: 0, marginTop: 0, filter: "blur(4px)",
+      duration: 0.4, ease: "power2.inOut",
+    });
+    gsap.to(title, { x: 0, color: "#111", duration: 0.3 });
+    gsap.to(plus,  { rotation: 0, scale: 1, duration: 0.3 });
+    headers[index].setAttribute("aria-expanded", "false");
+  };
+
+  // ── Abrir acordeón ──────────────────────────────────────────────────────────
+  const openAccordion = (index: number) => {
+    const content = contents[index];
+    const title   = titles[index];
+    const plus    = plusIcons[index];
+    if (!content) return;
+
+    // Calcular altura real antes de animar
+    content.style.height = "auto";
+    const targetHeight = content.scrollHeight;
+    content.style.height = "0px";
+
+    gsap.to(content, {
+      height: targetHeight, opacity: 1, marginTop: 16, filter: "blur(0px)",
+      duration: 0.45, ease: "power2.out",
+      onComplete: () => { content.style.height = "auto"; },
+    });
+
+    const innerEls = content.querySelectorAll(".skills-inner");
+    if (innerEls.length) {
+      gsap.fromTo(
+        innerEls,
+        { y: 15, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.08, ease: "power2.out" }
+      );
+    }
+
+    gsap.to(title, { x: 8, color: "#111", duration: 0.35 });
+    gsap.to(plus,  { rotation: 45, scale: 1.15, duration: 0.35 });
+    headers[index].setAttribute("aria-expanded", "true");
+  };
+
+  // ── Toggle ──────────────────────────────────────────────────────────────────
+  const handleToggle = (index: number) => {
+    if (openIndex !== null && openIndex !== index) closeAccordion(openIndex);
+
+    if (openIndex === index) {
+      closeAccordion(index);
+      openIndex = null;
+    } else {
+      openAccordion(index);
+      openIndex = index;
+    }
+  };
+
+  // ── Eventos ─────────────────────────────────────────────────────────────────
+  headers.forEach((header, i) => {
+    header.addEventListener("click", () => handleToggle(i));
+
+    header.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        handleToggle(i);
+      }
+    });
+
+    header.addEventListener("mouseenter", () => {
+      if (openIndex === i) return;
+      gsap.to(titles[i],    { x: 8, color: "#444", duration: 0.25 });
+      gsap.to(plusIcons[i], { scale: 1.1, duration: 0.25 });
+    });
+
+    header.addEventListener("mouseleave", () => {
+      if (openIndex === i) return;
+      gsap.to(titles[i],    { x: 0, color: "#111", duration: 0.25 });
+      gsap.to(plusIcons[i], { scale: 1, duration: 0.25 });
+    });
+  });
+</script>

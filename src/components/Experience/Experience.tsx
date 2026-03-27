@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useStore } from "@/store/storeGlobal";
-import CircleVideo from "../CircleVideo/CircleVideo";
+import CircleVideo from "../CircleVideo/CircleVideo-deprecated";
 
 gsap.registerPlugin(ScrollTrigger);
 

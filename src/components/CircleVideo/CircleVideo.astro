@@ -1,0 +1,182 @@
+---
+// CircleVideo.astro - GSAP vanilla, sin React
+---
+
+<section
+  id="circle-video-section"
+  class="relative w-full min-h-[100vh] flex flex-col items-center justify-center pt-80 overflow-hidden"
+>
+  <!-- Anchor para scroll -->
+  <div
+    id="video"
+    class="absolute top-0 left-0 w-full h-0"
+    style="transform: translateY(-100px);"
+  ></div>
+
+  <!-- Video + anillo SVG -->
+  <div
+    id="circle-container"
+    class="relative flex items-center justify-center w-[280px] h-[280px] md:w-[420px] md:h-[420px] rounded-full overflow-hidden"
+  >
+    <video
+      id="circle-video"
+      src="/video/video.mp4"
+      class="object-cover rounded-full w-[250px] h-[250px] md:w-[360px] md:h-[360px]"
+      playsinline
+      muted
+    ></video>
+
+    <svg
+      id="progress-svg"
+      class="absolute top-0 left-0 w-full h-full pointer-events-none"
+      viewBox="0 0 280 280"
+    >
+      <circle
+        id="ring-base"
+        cx="140" cy="140" r="128"
+        stroke="rgba(150,90,255,0.25)"
+        stroke-width="12"
+        fill="none"
+      />
+      <circle
+        id="progress-ring"
+        cx="140" cy="140" r="128"
+        stroke="#A987FF"
+        stroke-width="12"
+        fill="none"
+        stroke-linecap="round"
+      />
+    </svg>
+  </div>
+
+  <!-- Botón play/pause -->
+  <div class="mt-6 flex items-center gap-4">
+    <button
+      id="play-btn"
+      class="px-6 py-3 rounded-full bg-[#1c1c1c] text-white text-lg border border-[#333] hover:bg-[#2a2a2a] transition"
+    >
+      Play
+    </button>
+  </div>
+</section>
+
+<script>
+  import gsap from "gsap";
+
+  const container  = document.getElementById("circle-container") as HTMLElement;
+  const video      = document.getElementById("circle-video") as HTMLVideoElement;
+  const svg        = document.getElementById("progress-svg") as unknown as SVGSVGElement;
+  const ringBase   = document.getElementById("ring-base") as unknown as SVGCircleElement;
+  const progressRing = document.getElementById("progress-ring") as unknown as SVGCircleElement;
+  const playBtn    = document.getElementById("play-btn") as HTMLButtonElement;
+
+  let isPlaying = false;
+
+  // ── Tamaño dinámico del SVG y radio ────────────────────────────────────────
+  const stroke = 12;
+
+  const updateSVG = () => {
+    const size = container.offsetWidth;
+    const r = size / 2 - stroke;
+    const circ = 2 * Math.PI * r;
+
+    svg.setAttribute("viewBox", `0 0 ${size} ${size}`);
+
+    [ringBase, progressRing].forEach((el) => {
+      el.setAttribute("cx", String(size / 2));
+      el.setAttribute("cy", String(size / 2));
+      el.setAttribute("r", String(r));
+    });
+
+    progressRing.style.strokeDasharray  = String(circ);
+    progressRing.style.strokeDashoffset = String(circ);
+  };
+
+  updateSVG();
+  window.addEventListener("resize", updateSVG);
+
+  // ── Progress ring ───────────────────────────────────────────────────────────
+  const updateProgress = () => {
+    if (!video.duration) return;
+    const size = container.offsetWidth;
+    const r    = size / 2 - stroke;
+    const circ = 2 * Math.PI * r;
+    const offset = circ * (1 - video.currentTime / video.duration);
+
+    gsap.to(progressRing, {
+      strokeDashoffset: offset,
+      duration: 0.2,
+      ease: "power3.out",
+    });
+  };
+
+  video.addEventListener("timeupdate", updateProgress);
+  video.addEventListener("loadedmetadata", updateProgress);
+
+  // ── Play / Pause ────────────────────────────────────────────────────────────
+  const isDesktop = () => window.innerWidth >= 1024;
+
+  playBtn.addEventListener("click", () => {
+    if (!isPlaying) {
+      video.play();
+      isPlaying = true;
+      playBtn.textContent = "Minimizar";
+
+      const expandedH = isDesktop() ? "80vh" : "60vh";
+
+      gsap.to(container, {
+        width: "100vw",
+        height: expandedH,
+        borderRadius: "24px",
+        duration: 1.4,
+        ease: "power3.inOut",
+      });
+
+      gsap.to(video, {
+        width: "100%",
+        height: "100%",
+        borderRadius: "inherit",
+        duration: 1.4,
+        ease: "power3.inOut",
+      });
+
+      gsap.to([ringBase, progressRing], {
+        autoAlpha: 0,
+        scale: 1.2,
+        transformOrigin: "center center",
+        duration: 0.7,
+        ease: "power2.out",
+      });
+
+    } else {
+      video.pause();
+      isPlaying = false;
+      playBtn.textContent = "Play";
+
+      const sz = isDesktop() ? 420 : 280;
+      const vSz = isDesktop() ? 360 : 250;
+
+      gsap.to(container, {
+        width: sz,
+        height: sz,
+        borderRadius: "9999px",
+        duration: 1.2,
+        ease: "power3.inOut",
+      });
+
+      gsap.to(video, {
+        width: vSz,
+        height: vSz,
+        borderRadius: "9999px",
+        duration: 1.2,
+        ease: "power3.inOut",
+      });
+
+      gsap.fromTo(
+        [ringBase, progressRing],
+        { autoAlpha: 0, scale: 0.85, transformOrigin: "center center" },
+        { autoAlpha: 1, scale: 1, duration: 0.8, ease: "power2.out" }
+      );
+    }
+  });
+</script>

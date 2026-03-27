@@ -1,7 +1,7 @@
 ---
 import ContactForm from "@/components/Contact";
 import Footer from "@/components/Footer";
-import NavBar from "@/components/NavBar";
+import NavBarv2 from '@/components/NavBarv2.astro';
 import Layout from "@/layouts/Layout.astro";
 import MagneticCursor from "@/components/MagneticCursor.tsx";
 ---
@@ -10,7 +10,7 @@ import MagneticCursor from "@/components/MagneticCursor.tsx";
   <!-- Cursor magnético también en la página de contacto -->
   <MagneticCursor client:only="react" />
 
-  <NavBar client:only tab="contact" />
+  <NavBarv2/>
   <ContactForm client:only />
   <Footer client:only contacto="yes" />
 </Layout>

@@ -1,0 +1,122 @@
+---
+// Footer.astro - vanilla, sin React, sin Zustand
+interface Props {
+  contacto?: "yes" | "no";
+}
+
+const { contacto = "no" } = Astro.props;
+const year = new Date().getFullYear();
+
+const contactHref = contacto === "no"
+  ? "/contacto"
+  : "#username"; // cuando está en la página de contacto hace scroll al campo
+
+const waHref = "https://api.whatsapp.com/send?phone=5491139266548&text=Hola%20doctor%20me%20gustaria%20hablar%20con%20usted";
+---
+
+<footer class="relative w-full bg-[#0b0b0b] text-white pt-[18vh] pb-[12vh] overflow-hidden">
+
+  <!-- Background gradient -->
+  <div class="absolute inset-0 bg-gradient-to-t from-black via-[#0b0b0b]/90 to-black pointer-events-none"></div>
+
+  <div class="relative max-w-7xl mx-auto px-6">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-20 md:gap-32 items-start">
+
+      <!-- COLUMNA 1 — Logo + ubicación -->
+      <div class="flex flex-col items-center gap-8">
+        <img
+          src="/svg/logo.svg"
+          alt="Motion Clinic"
+          class="w-[180px] sm:w-[230px] md:w-[260px] lg:w-[300px] opacity-90"
+        />
+        <p class="tracking-[0.25em] text-xs uppercase text-zinc-500 text-center">
+          Buenos Aires · {year}
+        </p>
+      </div>
+
+      <!-- COLUMNA 2 — Links sociales -->
+      <div class="flex flex-col items-center gap-7">
+        <p class="uppercase underline tracking-[0.22em] text-[11px] text-zinc-500">
+          Conectar
+        </p>
+        <div class="flex flex-col gap-4 text-sm tracking-wider">
+          <a
+            href="https://www.linkedin.com/in/andres-anania"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group relative overflow-hidden py-1"
+          >
+            <span class="relative z-10">LinkedIn</span>
+            <div class="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500"></div>
+          </a>
+          <a
+            href="https://www.instagram.com/motionclinic.ba"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group relative overflow-hidden py-1"
+          >
+            <span class="relative z-10">Instagram</span>
+            <div class="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500"></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- COLUMNA 3 — CTAs -->
+      <div class="flex flex-col items-center md:items-end gap-7">
+        <p class="underline uppercase tracking-[0.22em] text-[11px] text-zinc-500">
+          Contacto
+        </p>
+
+        <!-- Botón Contacto -->
+        <a
+          href={contactHref}
+          id="footer-contact-btn"
+          data-contacto={contacto}
+          class="w-full md:w-[240px] py-5 rounded-full border border-white/20 hover:border-white/40 transition duration-500 relative overflow-hidden backdrop-blur-md group flex items-center justify-center"
+        >
+          <span class="relative z-10 flex items-center gap-3 text-lg tracking-wider text-center w-full justify-center">
+            ✉️ Contacto
+          </span>
+          <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        </a>
+
+        <!-- Botón WhatsApp -->
+        <a
+          href={waHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="w-full md:w-[240px] py-5 rounded-full border border-white/20 hover:border-white/40 transition duration-500 relative overflow-hidden backdrop-blur-md group flex items-center justify-center"
+        >
+          <span class="relative z-10 flex items-center gap-3 text-lg tracking-wider text-center w-full justify-center">
+            💬 Whatsapp
+          </span>
+          <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Divider -->
+    <div class="w-full border-t border-white/10 mt-24 mb-10"></div>
+
+    <!-- Copyright -->
+    <p class="text-center text-xs tracking-[0.2em] text-zinc-600">
+      © {year} MOTION CLINIC — ALL RIGHTS RESERVED.
+    </p>
+
+  </div>
+</footer>
+
+<script>
+  // Solo necesario cuando contacto="yes" — hace focus al campo del formulario
+  const btn = document.getElementById("footer-contact-btn") as HTMLAnchorElement;
+
+  if (btn?.dataset.contacto === "yes") {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const input = document.getElementById("username") as HTMLInputElement;
+      input?.focus();
+    });
+  }
+</script>

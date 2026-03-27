@@ -1,0 +1,255 @@
+---
+import blogData from '@/data/blogData.json';
+
+interface Props {
+  tab: "home" | "contact" | "blog";
+}
+
+const { tab } = Astro.props;
+
+const generateSlug = (title: string) =>
+  title.toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+
+const blogLink = generateSlug(blogData[0].title);
+
+const links = [
+  { href: "/",                 label: "Inicio" },
+  { href: `/blog/${blogLink}`, label: "Blog" },
+  { href: "/#experience",      label: "Experiencia" },
+  { href: "/#video",           label: "Ver Video" },
+  { href: "/#skills",          label: "Tratamientos" },
+  { href: "/#studio",          label: "Ubicación" },
+  { href: "/contacto",         label: "Contacto" },
+];
+---
+
+<header
+  id="navbar-header"
+  class="fixed top-0 z-[999999] w-full transition-all duration-300 opacity-0"
+>
+  <div id="navbar-inner" class="flex justify-between items-center px-4 py-2 transition-all duration-300">
+
+    <div class="w-44 hidden sm:flex justify-start">
+      {tab === "home" && (
+        <a
+          href="/contacto"
+          class="transition-all duration-700 px-4 py-1 rounded-full bg-violet text-white hover:bg-white hover:text-black"
+        >
+          CONTACTO
+        </a>
+      )}
+    </div>
+
+    <div class="w-44 flex justify-center">
+      <a href="/">
+        <img src="/svg/logo.svg" alt="Logo" class="h-6 mid:h-8 transition-all" />
+      </a>
+    </div>
+
+    <div class="w-44 flex justify-end items-center">
+      <div
+        id="menu-toggle"
+        class={`cursor-pointer relative w-10 h-4 ${tab === "contact" ? "invisible" : ""}`}
+      >
+        <img src="/svg/hambur.svg" alt="Abrir menú" id="icon-open" class="absolute top-0 left-0 transition-all duration-300" />
+        <img src="/svg/hambur-close.svg" alt="Cerrar menú" id="icon-close" class="absolute top-0 left-0 transition-all duration-300 opacity-0 -rotate-180" />
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<div
+  id="nav-menu"
+  class="fixed top-0 left-0 w-screen h-screen z-[9999] overflow-hidden pointer-events-none flex flex-col"
+  style="background: rgba(172,172,172,0.82); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 0 60px rgba(17,17,17,0.45);"
+>
+  <div class="relative z-20 flex flex-col justify-center h-full px-10 md:px-28 text-white fill-white">
+    <div class="space-y-8 md:space-y-12">
+
+      {links.map(({ href, label }) => (
+        <a
+          href={href}
+          data-href={href}
+          class="menu-link flex items-center gap-6 text-3xl md:text-4xl font-light tracking-tight leading-none relative opacity-0"
+          style="transform: translateY(80px); filter: blur(12px)"
+        >
+          <span class="relative overflow-visible">
+            <span class="menu-text inline-block">{label}</span>
+            <span class="absolute left-0 bottom-[-6px] w-full h-[2px] scale-x-0 origin-left underline-anim"></span>
+          </span>
+        </a>
+      ))}
+
+    </div>
+  </div>
+</div>
+
+<script>
+  import gsap from "gsap";
+  import CustomEase from "gsap/CustomEase";
+
+  gsap.registerPlugin(CustomEase);
+  CustomEase.create("hop", "M0,0 C0.354,0 0.464,0.133 0.498,0.502 0.532,0.872 0.651,1 1,1");
+
+  let isMenuOpen = false;
+  let isAnimating = false;
+
+  const header   = document.getElementById("navbar-header") as HTMLElement;
+  const navInner = document.getElementById("navbar-inner") as HTMLElement;
+  const menu     = document.getElementById("nav-menu") as HTMLElement;
+  const iconOpen  = document.getElementById("icon-open") as HTMLElement;
+  const iconClose = document.getElementById("icon-close") as HTMLElement;
+
+  // Init menú cerrado
+  gsap.set(menu, { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" });
+
+  // Scroll direction
+  let lastScrollY = window.scrollY;
+  window.addEventListener("scroll", () => {
+    const currentY = window.scrollY;
+    const goingDown = currentY > lastScrollY;
+    const atTop = currentY < 10;
+    header.style.transform = goingDown && !isMenuOpen ? "translateY(-105%)" : "translateY(0)";
+    navInner.className = `flex justify-between items-center px-4 py-2 transition-all duration-300 ${!atTop ? "backdrop-blur-sm bg-black/10" : ""}`;
+    lastScrollY = currentY;
+  }, { passive: true });
+
+  // Animación del menú
+  const animateMenu = (open: boolean) => {
+    const links = menu.querySelectorAll(".menu-link");
+    isAnimating = true;
+
+    if (open) {
+      gsap.set(menu, { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" });
+      gsap.timeline({
+        onStart: () => { menu.style.pointerEvents = "all"; },
+        onComplete: () => { isAnimating = false; },
+      })
+      .to(menu, {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+        duration: 1.15,
+        ease: "hop",
+      })
+      .fromTo(links,
+        { y: 80, opacity: 0, filter: "blur(12px)" },
+        { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.9, stagger: 0.1, ease: "power3.out" },
+        "-=0.55"
+      );
+    } else {
+      gsap.timeline({
+        onComplete: () => {
+          menu.style.pointerEvents = "none";
+          gsap.set(menu, { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" });
+          gsap.set(links, { y: 80, opacity: 0 });
+          isAnimating = false;
+        },
+      })
+      .to(links, { y: 40, opacity: 0, duration: 0.35 })
+      .to(menu, {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+        duration: 1,
+        ease: "hop",
+      }, "-=0.2");
+    }
+  };
+
+  // Toggle hamburger
+  document.getElementById("menu-toggle")?.addEventListener("click", () => {
+    if (isAnimating) return;
+    isMenuOpen = !isMenuOpen;
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    iconOpen.style.opacity  = isMenuOpen ? "0" : "1";
+    iconClose.style.opacity = isMenuOpen ? "1" : "0";
+    animateMenu(isMenuOpen);
+  });
+
+  // Click en links del menú
+  menu.querySelectorAll(".menu-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const href = (link as HTMLAnchorElement).dataset.href ?? "/";
+      isMenuOpen = false;
+      document.body.style.overflow = "";
+      animateMenu(false);
+
+      setTimeout(() => {
+        if (href.startsWith("/#")) {
+          const isHome = window.location.pathname === "/" || window.location.pathname === "";
+          if (isHome) {
+            const id = href.substring(2);
+            const target = document.getElementById(id);
+            target
+              ? target.scrollIntoView({ behavior: "smooth" })
+              : window.scrollTo({ top: 0, behavior: "smooth" });
+          } else {
+            window.location.href = href;
+          }
+        } else {
+          window.location.href = href;
+        }
+      }, 300);
+    });
+  });
+
+  // ── Entrada del header ──────────────────────────────────────────────────────
+  const animateHeader = () => {
+    gsap.fromTo(
+      header,
+      { y: -80, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.2, ease: "power4.out", delay: 0.4 }
+    );
+  };
+
+  // Si hay Loading en la página (index), esperar su evento
+  // En el resto de páginas (blog, contacto), animar rápido
+  const hasLoading = document.querySelector("astro-island[opts*='Loading']");
+
+  if (hasLoading) {
+    document.addEventListener("loadingComplete", animateHeader);
+    setTimeout(animateHeader, 2600); // fallback
+  } else {
+    setTimeout(animateHeader, 300); // sin loading, animar rápido
+  }
+
+  // Hash scroll al cargar
+  const hash = window.location.hash;
+  if (hash && (window.location.pathname === "/" || window.location.pathname === "")) {
+    setTimeout(() => {
+      document.getElementById(hash.substring(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 2500);
+  }
+
+  // Scramble text
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  menu.querySelectorAll(".menu-text").forEach((el) => {
+    const original = el.textContent ?? "";
+    (el as HTMLElement).closest(".menu-link")?.addEventListener("mouseenter", () => {
+      let i = 0;
+      const interval = setInterval(() => {
+        el.textContent = original
+          .split("")
+          .map((_, idx) => (idx < i ? original[idx] : chars[Math.floor(Math.random() * chars.length)]))
+          .join("");
+        i += 0.5;
+        if (i >= original.length) clearInterval(interval);
+      }, 25);
+    });
+  });
+
+  // Underline hover
+  menu.querySelectorAll(".underline-anim").forEach((ul) => {
+    const parent = ul.closest(".menu-link");
+    parent?.addEventListener("mouseenter", () =>
+      gsap.to(ul, { scaleX: 1, duration: 0.35, ease: "power3.out" })
+    );
+    parent?.addEventListener("mouseleave", () =>
+      gsap.to(ul, { scaleX: 0, duration: 0.35, ease: "power2.inOut" })
+    );
+  });
+</script>

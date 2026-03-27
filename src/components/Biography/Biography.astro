@@ -1,0 +1,229 @@
+---
+// Biography.astro - ProcessCards inlineado, GSAP vanilla, sin React
+import blogData from '@/data/blogData.json';
+
+const generateSlug = (title: string) =>
+  title.toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+
+const blogLink = generateSlug(blogData[0].title);
+
+const LOGOS = [
+  { src: "/svg/acreditaciones-01.svg", label: "Cirujano Ortopedista Internacional", alt: "Ícono de cirujano ortopedista internacional" },
+  { src: "/svg/acreditaciones-02.svg", label: "Miembro Internacional",              alt: "Ícono de miembro internacional" },
+  { src: "/svg/acreditaciones-03.svg", label: "Miembro Certificado",                alt: "Ícono de miembro certificado" },
+  { src: "/svg/acreditaciones-04.svg", label: "Miembro Titular",                    alt: "Ícono de miembro titular" },
+  { src: "/svg/acreditaciones-05.svg", label: "Miembro Certificado",                alt: "Ícono de miembro certificado" },
+];
+
+const processCards = [
+  {
+    index: "01",
+    title: "Especialización médica",
+    alt: "Ícono de especialización médica",
+    description: "Soy Andrés Anania, médico traumatólogo, subespecializado en las afecciones de la cadera y rodilla.",
+  },
+  {
+    index: "02",
+    title: "Innovación Médica",
+    alt: "Ícono de innovación médica",
+    description: "Mi formación incluye un AVP Fellowship en el Hospital for Special Surgery en Nueva York, un MBA en el IAE Business School, y programas ejecutivos en Harvard Business School y Stanford sobre transformación digital e inteligencia artificial aplicados a la salud.",
+  },
+  {
+    index: "03",
+    title: "Compromiso con el paciente",
+    alt: "Ícono de compromiso con el paciente",
+    description: "Trabajamos en la intersección entre diseño y técnica. Cada detalle se resuelve con precisión, coherencia y cuidado material.",
+  },
+  {
+    index: "04",
+    title: "Formación Académica",
+    alt: "Ícono de formación académica",
+    description: "Creemos en una medicina atemporal, humana y sostenible. Nuestro objetivo es crear resultados que trasciendan y generen valor duradero.",
+  },
+];
+---
+
+<section
+  id="biography"
+  class="relative w-full bg-[#111] text-white flex flex-col items-center px-6 pt-[18vh] pb-[20vh] overflow-hidden"
+>
+
+  <!-- HEADER -->
+  <div
+    id="biography-header"
+    class="max-w-[850px] mx-auto text-center flex flex-col items-center justify-center gap-6 pb-32"
+  >
+    <p class="text-xs sm:text-sm tracking-[0.25em] uppercase text-[#b4afff] opacity-80">
+      Biografía
+    </p>
+
+    <h2 class="font-bold leading-[0.9] tracking-tight text-[2.8rem] sm:text-[4.5rem] md:text-[5rem] lg:text-[6.3rem] drop-shadow-[0_4px_18px_rgba(0,0,0,0.4)] text-white">
+      Andrés Anania
+    </h2>
+
+    <p class="text-base sm:text-lg md:text-xl font-light leading-relaxed max-w-[650px] text-white/70 mt-4">
+      Cirujano ortopedista especializado en procedimientos mínimamente invasivos con acreditaciones internacionales avanzadas.
+    </p>
+  </div>
+
+  <!-- PROCESS CARDS -->
+  <div id="process-root" class="relative w-full overflow-hidden select-none">
+    {processCards.map((card, i) => (
+      <div
+        class="process-card relative w-full h-screen flex flex-col justify-center items-center px-8 md:px-14 bg-[#151515] text-white rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-hidden"
+      >
+        <!-- Número decorativo -->
+        <div class="absolute top-10 left-10 text-[#5b5bc4] font-extrabold opacity-[1] text-[22vw] leading-none select-none pointer-events-none">
+          {card.index}
+        </div>
+
+        <!-- Ícono -->
+        <div class="mb-10 flex items-center justify-center">
+          <div class="w-20 h-20 md:w-24 md:h-24 flex items-center justify-center bg-[#5b5bc41a] border border-[#5b5bc440] rounded-2xl shadow-[0_4px_16px_rgba(91,91,196,0.35)] backdrop-blur-md">
+            <img src={`/svg/icon-${i + 1}.svg`} class="w-10 h-10 opacity-90" alt={card.alt} />
+          </div>
+        </div>
+
+        <!-- Texto -->
+        <div class="z-10 max-w-[700px] text-center">
+          <h3 class="text-[#d6bcfc] font-semibold uppercase tracking-tight text-[1.8rem] sm:text-[2.3rem] md:text-[2.8rem] mb-5">
+            {card.title}
+          </h3>
+          <p class="text-[#e2dfff] font-light leading-relaxed text-[1rem] sm:text-[1.15rem] md:text-[1.25rem] opacity-85">
+            {card.description}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- BLOG -->
+  <div class="max-w-[850px] mx-auto text-center my-16 mt-40">
+    <h3 class="font-bold leading-[0.95] tracking-tight text-[2rem] sm:text-[2.8rem] md:text-[3.2rem] lg:text-[3.8rem] text-white mb-6 drop-shadow-[0_3px_12px_rgba(0,0,0,0.3)]">
+      Blog de Noticias
+    </h3>
+    <p class="text-base sm:text-lg font-light leading-relaxed text-white/60 mb-8 max-w-[600px] mx-auto">
+      Descubrí información específica sobre los tratamientos.
+    </p>
+    <a
+      href={`/blog/${blogLink}`}
+      class="inline-flex items-center gap-3 bg-gradient-to-r from-[#8a7fff] to-[#7366ff] hover:from-[#9a8fff] hover:to-[#8376ff] text-white font-semibold px-8 py-4 rounded-xl transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_8px_32px_rgba(138,127,255,0.3)] group text-base sm:text-lg"
+    >
+      <span>Visitar Blog</span>
+      <svg class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+  </div>
+
+  <!-- CARRUSEL DE LOGOS -->
+  <div class="w-full overflow-hidden mt-32 py-10 opacity-90 select-none">
+    <div id="carousel-track" class="flex gap-32 items-center whitespace-nowrap will-change-transform">
+      <!-- Duplicado para loop infinito -->
+      {[...LOGOS, ...LOGOS].map((item) => (
+        <div class="flex flex-col items-center justify-center text-center hover:opacity-100 hover:scale-[1.05] transition-all duration-600 w-[200px] md:w-[260px]">
+          <img
+            src={item.src}
+            alt={item.alt}
+            class="h-24 md:h-32 w-auto mb-4 opacity-90 transition-all duration-600 will-change-transform"
+          />
+          <p class="text-sm md:text-base text-white/70 tracking-wide">{item.label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // ── Header intro ────────────────────────────────────────────────────────────
+  const section = document.getElementById("biography") as HTMLElement;
+  const header  = document.getElementById("biography-header") as HTMLElement;
+
+  gsap.fromTo(
+    header.querySelectorAll("p, h2"),
+    { autoAlpha: 0, y: 40, filter: "blur(12px)" },
+    {
+      autoAlpha: 1,
+      y: 0,
+      filter: "blur(0px)",
+      duration: 1.3,
+      ease: "power4.out",
+      stagger: 0.18,
+      scrollTrigger: {
+        trigger: section,
+        start: "top 85%",
+        once: true,
+      },
+    }
+  );
+
+  // ── Process Cards: pin + scale/rotate out ───────────────────────────────────
+  const initCards = () => {
+    const cards = gsap.utils.toArray<HTMLElement>(".process-card");
+    if (!cards.length) return;
+
+    cards.forEach((card, index) => {
+      // Pin todas menos la última
+      if (index < cards.length - 1) {
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top top",
+          endTrigger: cards[cards.length - 1],
+          end: "top top",
+          pin: true,
+          pinSpacing: false,
+          id: `pin-${index}`,
+        });
+      }
+
+      // Scale + rotate + fade al entrar la siguiente
+      if (index < cards.length - 1) {
+        ScrollTrigger.create({
+          trigger: cards[index + 1],
+          start: "top bottom",
+          end: "top top",
+          onUpdate: (self) => {
+            const p = self.progress;
+            gsap.set(card, {
+              scale: 1 - p * 0.25,
+              rotation: (index % 2 === 0 ? 4 : -4) * p,
+              opacity: 1 - p * 0.5,
+              filter: `blur(${p * 5}px)`,
+            });
+          },
+        });
+      }
+    });
+
+    setTimeout(() => ScrollTrigger.refresh(), 300);
+  };
+
+  if (document.readyState === "complete") {
+    requestAnimationFrame(() => requestAnimationFrame(initCards));
+  } else {
+    window.addEventListener("load", () => {
+      requestAnimationFrame(() => requestAnimationFrame(initCards));
+    }, { once: true });
+  }
+
+  // ── Carrusel infinito ───────────────────────────────────────────────────────
+  const track = document.getElementById("carousel-track") as HTMLElement;
+  const totalWidth = track.scrollWidth / 2;
+
+  gsap.fromTo(
+    track,
+    { x: 0 },
+    { x: -totalWidth, repeat: -1, duration: 20, ease: "linear" }
+  );
+</script>

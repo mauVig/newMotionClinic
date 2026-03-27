@@ -1,34 +1,30 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import Welcome from '@/components/Welcome/Welcome.tsx';
-import Biography from '@/components/Biography/Biography.tsx';
-import Objective from '@/components/Objective/Objective.tsx';
-import Skills from '@/components/Skills.tsx';
-import TestifyWrapp from '@/components/testify/TestifyWrapp.astro';
-// import TestifyVideos from '@/components/testify/TestifyVideos.tsx';
-import Footer from '@/components/Footer.tsx';
-import Experience from '@/components/Experience/Experience';
-// import Gallery from '@/components/gallery/Gallery';
-import NavBar from '@/components/NavBar.tsx';
 import Loading from '@/components/Loading.tsx';
-import Whatsapp from '@/components/Whatsapp';
+import Layout from '@/layouts/Layout.astro';
 import MagneticCursor from "@/components/MagneticCursor.tsx";
-// import Gallery2 from '@/components/gallery/Gallery2';
-import CircleVideo from '@/components/CircleVideo/CircleVIdeo';
-import medicalOrgSchema from "../schemas/medicalOrganization";
-
+import NavBarv2 from '@/components/NavBarv2.astro';
+import Welcome from '@/components/Welcome/Welcomev2.astro';
+import Objective from '@/components/Objective/Objectivev2.astro';
+import Biography from '@/components/Biography/Biography.astro';
+import Skills from '@/components/Skills.astro';
+import TestifyWrapp from '@/components/testify/TestifyWrapp.astro';
+import Footer from '@/components/Footer.astro';
+import Experience from '@/components/Experience/Experience.astro';
+import Whatsapp from '@/components/Whatsapp.astro';
+import CircleVideo from '@/components/CircleVideo/CircleVideo.astro';
 ---
-<Loading client:only />
+
 <Layout>
-  <MagneticCursor client:only="react" /> 
-  <NavBar client:load tab="home" /> 
-  <Welcome client:visible />
-  <Objective client:visible /> 
-  <Experience client:visible /> 
-  <CircleVideo client:load /> 
-  <Biography client:visible /> 
-  <Skills client:visible /> 
-  <TestifyWrapp /> 
-  <Footer client:visible contacto="no"/> 
+  <Loading client:only="react" />
+  <MagneticCursor client:only="react" />
+  <NavBarv2 tab="home" />
+  <Welcome />
+  <Objective />
+  <Experience />
+  <CircleVideo />
+  <Biography />
+  <Skills />
+  <TestifyWrapp />
+  <Footer contacto="no" />
   <Whatsapp client:load />
 </Layout>

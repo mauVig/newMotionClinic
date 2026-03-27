@@ -1,34 +1,16 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import NavBar from '@/components/NavBar.tsx';
-import Footer from '@/components/Footer';
-import ContentBlog from '@/components/blog/ContentBlog.tsx';
+import NavBarv2 from '@/components/NavBarv2.astro';
+import Footer from '@/components/Footer.astro';
+import ContentBlog from '@/components/blog/ContentBlog.astro';
 import blogData from '@/data/blogData.json';
 
-// Función para generar slug
-const generateSlug = (title: string) => {
-    return title
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-")
-        .trim();
-};
-
-// Redirigir al primer blog
-const firstBlogSlug = generateSlug(blogData[0].title);
-return Astro.redirect(`/blog/${firstBlogSlug}`);
+// El último blog agregado (el primero del array)
+const latestBlog = blogData[0];
 ---
 
-<Layout title="Blog de Ortopedia y Cirugía de Cadera y Rodilla | Motion Clinic" metadescription="Artículos médicos de Motion Clinic sobre ortopedia, cirugía de cadera y rodilla, rehabilitación y salud articular. Información clara y confiable para pacientes.">
-    <NavBar client:only tab="blog"/>
-    
-    <ContentBlog client:only isIndividual={false}/>
-
-    <Footer />
+<Layout title={latestBlog.SEOtitle} description={latestBlog.metadescription}>
+  <NavBarv2 tab="blog" />
+  <ContentBlog blog={latestBlog} />
+  <Footer contacto="no" />
 </Layout>
-
-
-
