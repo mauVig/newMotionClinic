@@ -1,0 +1,253 @@
+---
+// ContactForm.astro - validación y emailjs en vanilla JS, sin React
+---
+
+<div id="contact-root" class="relative">
+
+  <!-- Overlay de entrada (GSAP lo anima) -->
+  <div id="contact-overlay" class="fixed inset-0 bg-black z-50 pointer-events-none"></div>
+
+  <!-- Banda violeta superior -->
+  <div class="h-36 w-full bg-violet contact-anim"></div>
+
+  <aside id="contact" class="bg-grey relative z-20 text-black px-6 py-20 flex flex-col items-center">
+
+    <div class="absolute w-full top-[-150px] h-[150px] contact-anim" style="background: linear-gradient(0deg, rgba(232,232,232,1) 0%, rgba(237,221,83,0) 100%);"></div>
+
+    <div class="w-full mx-auto mt-8 max-w-screen-2xl">
+      <form id="contact-form">
+
+        <!-- Header -->
+        <div class="grid md:grid-cols-2 gap-6 contact-anim">
+          <div class="relative">
+            <a
+              href="/"
+              class="inline-flex items-center gap-2 text-violet font-semibold bg-white/70 px-5 py-2 rounded-full shadow-[0_14px_40px_rgba(131,91,255,0.35)] hover:bg-violet hover:text-black transition-all duration-400"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              Volver
+            </a>
+
+            <h1 class="text-4xl font-bold mt-10">
+              Hacenos<br />
+              <span class="text-violet">tu consulta</span>
+            </h1>
+          </div>
+
+          <p class="leading-7 w-[270px] md:w-[350px] text-lg md:text-2xl mt-4 lg:mt-2">
+            Complete el siguiente formulario y nos comunicaremos con usted a la brevedad.
+          </p>
+        </div>
+
+        <!-- Nombre + Email -->
+        <div class="xl:grid grid-cols-2 gap-10 contact-anim mt-10">
+          <div class="relative mb-20">
+            <input
+              id="username"
+              name="name"
+              type="text"
+              class="border-b bg-grey py-2 w-full outline-none"
+            />
+            <label for="username" class="absolute left-0 -bottom-7 font-bold">Nombre</label>
+            <p id="username-error" class="hidden absolute -bottom-14 text-sm bg-violet text-grey px-5 rounded-xl"></p>
+          </div>
+
+          <div class="relative mb-20">
+            <input
+              id="email"
+              name="email"
+              type="email"
+              class="border-b bg-grey py-2 w-full outline-none"
+            />
+            <label for="email" class="absolute left-0 -bottom-7 font-bold">Email</label>
+            <p id="email-error" class="hidden absolute -bottom-14 text-sm bg-violet text-grey px-5 rounded-xl"></p>
+          </div>
+        </div>
+
+        <!-- Teléfono + Mensaje -->
+        <div class="xl:grid grid-cols-2 gap-10 contact-anim">
+          <div class="relative mb-20">
+            <input
+              id="telefono"
+              name="phone"
+              type="text"
+              class="border-b bg-grey py-2 w-full outline-none"
+            />
+            <label for="telefono" class="absolute left-0 -bottom-7 font-bold">Teléfono</label>
+            <p id="telefono-error" class="hidden absolute -bottom-14 text-sm bg-violet text-grey px-5 rounded-xl"></p>
+          </div>
+
+          <div class="relative mb-12">
+            <textarea
+              id="mensaje"
+              name="message"
+              class="border-b bg-grey py-2 w-full resize-none outline-none"
+            ></textarea>
+            <label for="mensaje" class="absolute left-0 -bottom-7 font-bold">Mensaje</label>
+            <p id="mensaje-error" class="hidden absolute -bottom-14 text-sm bg-violet text-grey px-5 rounded-xl"></p>
+          </div>
+        </div>
+
+        <!-- Botón enviar -->
+        <div class="flex justify-end w-full contact-anim">
+          <div class="inline-flex transition-transform duration-500 hover:-translate-y-1">
+            <button
+              id="submit-btn"
+              type="button"
+              class="inline-flex items-center gap-3 rounded-full bg-backBlack text-grey px-10 py-3 text-lg tracking-wide border border-black/40 transition-all duration-500 hover:bg-violet hover:text-black hover:shadow-[0_18px_45px_rgba(131,91,255,0.55)]"
+            >
+              <span id="btn-label" class="whitespace-nowrap">Enviar</span>
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-black/80">
+                <img src="/svg/rightArrow-07.svg" class="h-4 w-4" alt="Arrow" />
+              </span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </aside>
+
+  <!-- Modal de éxito -->
+  <div id="success-modal" class="hidden fixed inset-0 bg-backBlack/80 flex items-center justify-center z-50 p-4">
+    <div class="bg-violet text-grey rounded-lg p-8 max-w-md w-full relative shadow-2xl shadow-violet/30">
+      <div class="text-center">
+        <h3 class="text-4xl font-bold mb-4">¡Mensaje Enviado!</h3>
+        <p class="text-gray-200 mb-6">Gracias por tu mensaje. Nos pondremos en contacto contigo.</p>
+        <button
+          id="modal-close"
+          class="bg-backBlack py-2 px-6 rounded-full hover:bg-gray-800 transition-colors"
+        >
+          Volver al inicio
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  import gsap from "gsap";
+
+  // ── Animación de entrada ────────────────────────────────────────────────────
+  const overlay = document.getElementById("contact-overlay") as HTMLElement;
+  const items   = document.querySelectorAll<HTMLElement>(".contact-anim");
+
+  gsap.set(overlay, { scaleY: 1, transformOrigin: "top" });
+  gsap.set(items,   { opacity: 0, y: 40, filter: "blur(15px)" });
+
+  gsap.timeline({ delay: 0.15 })
+    .to(overlay, { scaleY: 0, duration: 1.2, ease: "power3.inOut" })
+    .to(items, {
+      opacity: 1, y: 0, filter: "blur(0px)",
+      duration: 1.4, ease: "power3.out", stagger: 0.15,
+    }, "-=0.7");
+
+  // ── Referencias DOM ─────────────────────────────────────────────────────────
+  const form       = document.getElementById("contact-form") as HTMLFormElement;
+  const submitBtn  = document.getElementById("submit-btn") as HTMLButtonElement;
+  const btnLabel   = document.getElementById("btn-label") as HTMLElement;
+  const modal      = document.getElementById("success-modal") as HTMLElement;
+  const modalClose = document.getElementById("modal-close") as HTMLButtonElement;
+
+  const usernameInput  = document.getElementById("username")  as HTMLInputElement;
+  const emailInput     = document.getElementById("email")     as HTMLInputElement;
+  const telefonoInput  = document.getElementById("telefono")  as HTMLInputElement;
+  const mensajeInput   = document.getElementById("mensaje")   as HTMLTextAreaElement;
+
+  const usernameError  = document.getElementById("username-error")  as HTMLElement;
+  const emailError     = document.getElementById("email-error")     as HTMLElement;
+  const telefonoError  = document.getElementById("telefono-error")  as HTMLElement;
+  const mensajeError   = document.getElementById("mensaje-error")   as HTMLElement;
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+  const showError = (el: HTMLElement, msg: string) => {
+    el.textContent = msg;
+    el.classList.remove("hidden");
+  };
+  const clearError = (el: HTMLElement) => {
+    el.textContent = "";
+    el.classList.add("hidden");
+  };
+
+  // ── Validaciones ────────────────────────────────────────────────────────────
+  const validateUsername = () => {
+    const v = usernameInput.value.trim();
+    if (!v)        { showError(usernameError, "El nombre es requerido"); return false; }
+    if (v.length < 2) { showError(usernameError, "El nombre debe tener al menos 2 caracteres"); return false; }
+    clearError(usernameError);
+    return true;
+  };
+
+  const validateEmail = () => {
+    const v = emailInput.value.trim();
+    if (!v) { showError(emailError, "El email es requerido"); return false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { showError(emailError, "Formato de email inválido"); return false; }
+    clearError(emailError);
+    return true;
+  };
+
+  const validateTelefono = () => {
+    if (!telefonoInput.value.trim()) { showError(telefonoError, "El número de teléfono es requerido"); return false; }
+    clearError(telefonoError);
+    return true;
+  };
+
+  const validateMensaje = () => {
+    if (!mensajeInput.value.trim()) { showError(mensajeError, "El mensaje es requerido"); return false; }
+    clearError(mensajeError);
+    return true;
+  };
+
+  // ── Blur listeners ──────────────────────────────────────────────────────────
+  usernameInput.addEventListener("blur",  validateUsername);
+  emailInput.addEventListener("blur",    validateEmail);
+  telefonoInput.addEventListener("blur", validateTelefono);
+  mensajeInput.addEventListener("blur",  validateMensaje);
+
+  usernameInput.addEventListener("input",  () => clearError(usernameError));
+  emailInput.addEventListener("input",    () => clearError(emailError));
+  telefonoInput.addEventListener("input", () => clearError(telefonoError));
+  mensajeInput.addEventListener("input",  () => clearError(mensajeError));
+
+  // ── EmailJS ─────────────────────────────────────────────────────────────────
+  const sendEmail = async () => {
+    const ok = validateUsername() && validateEmail() && validateTelefono() && validateMensaje();
+    if (!ok) return;
+
+    btnLabel.textContent = "Enviando...";
+    submitBtn.disabled = true;
+    submitBtn.classList.add("opacity-60", "cursor-default");
+
+    try {
+      const emailjs = await import("@emailjs/browser");
+
+      await emailjs.sendForm(
+        import.meta.env.PUBLIC_EMAIL_SERVICE_ID,
+        import.meta.env.PUBLIC_EMAIL_TEMPLATE_ID,
+        form,
+        { publicKey: import.meta.env.PUBLIC_EMAIL_PUBLIC_KEY }
+      );
+
+      modal.classList.remove("hidden");
+      form.reset();
+    } catch (err) {
+      console.error("EmailJS error:", err);
+      btnLabel.textContent = "Error al enviar";
+    } finally {
+      btnLabel.textContent = "Enviar";
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("opacity-60", "cursor-default");
+    }
+  };
+
+  submitBtn.addEventListener("click", sendEmail);
+
+  // ── Modal close ─────────────────────────────────────────────────────────────
+  modalClose.addEventListener("click", () => {
+    modal.classList.add("hidden");
+    window.location.href = "/";
+  });
+</script>

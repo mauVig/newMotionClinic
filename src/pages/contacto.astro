@@ -1,16 +1,14 @@
 ---
-import ContactForm from "@/components/Contact";
-import Footer from "@/components/Footer";
+import ContactForm from "@/components/ContactForm.astro";
+import Footer from "@/components/Footer.astro";
 import NavBarv2 from '@/components/NavBarv2.astro';
 import Layout from "@/layouts/Layout.astro";
 import MagneticCursor from "@/components/MagneticCursor.tsx";
 ---
 
-<Layout title="Contacto | Motion Clinic" description="Contactá a Motion Clinic para consultar lo que quieras sobre cirugía ortopédica y robótica de cadera y rodilla. ">
-  <!-- Cursor magnético también en la página de contacto -->
+<Layout title="Contacto | Motion Clinic" description="Contactá a Motion Clinic para consultar lo que quieras sobre cirugía ortopédica y robótica de cadera y rodilla.">
   <MagneticCursor client:only="react" />
-
-  <NavBarv2/>
-  <ContactForm client:only />
-  <Footer client:only contacto="yes" />
+  <NavBarv2 tab="contact" />
+  <ContactForm />
+  <Footer contacto="yes" />
 </Layout>
