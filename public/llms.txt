@@ -1,15 +1,46 @@
-# llms.txt
-# Purpose: Guidance for AI / LLM crawlers
+# Motion Clinic
 
-User-agent: *
-Allow: /
+> Motion Clinic es el primer centro integral de cirugía robótica en cadera y rodilla de Argentina. Dirigido por el Dr. Andrés Anania, médico traumatólogo subespecializado en cadera y rodilla, con AVP Fellowship en el Hospital for Special Surgery de Nueva York, MBA en IAE Business School y programas ejecutivos en Harvard Business School y Stanford sobre transformación digital e inteligencia artificial aplicada a la salud.
 
-# Medical notice
-# Content is for informational purposes only and does not replace professional medical advice.
+## Especialidades
 
-# Metadata
-Site-Name: Motion Clinic
-Site-Type: Medical / Healthcare
-Language: es
-Country: AR
-Contact: info@motionclinic.com.ar
+- Cirugía robótica MAKO de cadera y rodilla (MAKO SmartRobotics™)
+- Reemplazo articular convencional de cadera y rodilla
+- Cirugía mini invasiva de cadera y rodilla
+- Medicina regenerativa (PRP y células madre)
+- Medicina deportiva y lesiones de rodilla
+- Prevención de infecciones en cirugía ortopédica
+- Cierre de heridas sin puntos
+
+## Tecnología
+
+Motion Clinic utiliza el sistema MAKO SmartRobotics™ de Stryker, que permite planificación quirúrgica en 3D a partir de tomografía computada y asistencia robótica intraoperatoria con retroalimentación háptica. Esto permite una colocación más precisa del implante, menor daño en tejidos blandos y recuperaciones más rápidas.
+
+## Ubicación
+
+Palermo, Buenos Aires, Argentina
+
+## Contacto
+
+- Web: https://motionclinic.com.ar
+- WhatsApp: +54 11 3926-6548
+- Instagram: https://www.instagram.com/motionclinic.ba
+- LinkedIn: https://www.linkedin.com/in/andres-anania
+
+## Nota médica
+
+El contenido de este sitio es de carácter informativo y no reemplaza el consejo médico profesional.
+
+## Blog
+
+Artículos sobre cirugía robótica, artrosis, reemplazos articulares y tecnología médica:
+
+- https://motionclinic.com.ar/blog/cirugia-robotica-mako/
+- https://motionclinic.com.ar/blog/robot-mako/
+- https://motionclinic.com.ar/blog/reemplazo-de-cadera-mako/
+- https://motionclinic.com.ar/blog/reemplazo-de-rodilla-mako/
+- https://motionclinic.com.ar/blog/cirugia-robotica-de-cadera/
+- https://motionclinic.com.ar/blog/cirugia-robotica-de-rodilla/
+- https://motionclinic.com.ar/blog/artrosis-de-cadera/
+- https://motionclinic.com.ar/blog/artrosis-de-rodilla/
+- https://motionclinic.com.ar/blog/innovacion-medica-y-ecosistema-de-salud-en-palermo/

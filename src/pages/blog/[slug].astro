@@ -4,6 +4,7 @@ import NavBarv2 from '@/components/NavBarv2.astro';
 import Footer from '@/components/Footer.astro';
 import ContentBlog from '@/components/blog/ContentBlog.astro';
 import blogData from '@/data/blogData.json';
+import { createBlogPostingSchema, createBreadcrumbSchema } from '@/schemas/blogPosting';
 
 export function getStaticPaths() {
   const generateSlug = (title: string) =>
@@ -16,14 +17,24 @@ export function getStaticPaths() {
 
   return blogData.map((blog) => ({
     params: { slug: generateSlug(blog.title) },
-    props: { blog },
+    props: { blog, slug: generateSlug(blog.title) },
   }));
 }
 
-const { blog } = Astro.props;
+const { blog, slug } = Astro.props;
+
+const blogSchema = [
+  createBlogPostingSchema(blog, slug),
+  createBreadcrumbSchema(blog.title, slug),
+];
 ---
 
-<Layout title={blog.SEOtitle} description={blog.metadescription}>
+<Layout
+  title={blog.SEOtitle}
+  description={blog.metadescription}
+  image={blog.img}
+  schema={blogSchema}
+>
   <NavBarv2 tab="blog" />
   <ContentBlog blog={blog} />
   <Footer contacto="no" />

@@ -9,7 +9,11 @@ import blogData from '@/data/blogData.json';
 const latestBlog = blogData[0];
 ---
 
-<Layout title={latestBlog.SEOtitle} description={latestBlog.metadescription}>
+<Layout
+  title="Blog de Motion Clinic — Cirugía Robótica y Ortopedia"
+  description="Artículos sobre cirugía robótica de cadera y rodilla, tecnología MAKO, artrosis y tratamientos ortopédicos. Escritos por el Dr. Andrés Anania."
+  image={latestBlog.img}
+>
   <NavBarv2 tab="blog" />
   <ContentBlog blog={latestBlog} />
   <Footer contacto="no" />

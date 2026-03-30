@@ -12,9 +12,13 @@ import Footer from '@/components/Footer.astro';
 import Experience from '@/components/Experience/Experience.astro';
 import Whatsapp from '@/components/Whatsapp.astro';
 import CircleVideo from '@/components/CircleVideo/CircleVideo.astro';
+import medicalOrgSchema from '@/schemas/medicalOrganization';
+import personSchema from '@/schemas/person';
+
+const combinedSchema = [medicalOrgSchema, personSchema];
 ---
 
-<Layout>
+<Layout schema={combinedSchema} preloadHero={true}>
   <Loading client:only="react" />
   <MagneticCursor client:only="react" />
   <NavBarv2 tab="home" />

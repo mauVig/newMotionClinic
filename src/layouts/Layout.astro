@@ -4,8 +4,13 @@
 const {
   title = "Motion Clinic | Centro de Cirugía Robótica en Argentina",
   description = "Cirugía ortopédica y robótica en Argentina con tecnología avanzada, especialistas médicos y atención personalizada.",
-  schema = null
+  image = "/img/welcome.webp",
+  schema = null,
+  preloadHero = false,
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
 
 ---
 
@@ -17,7 +22,35 @@ const {
     <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
 
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content="Motion Clinic" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="es-AR" href={canonicalURL} />
+    <link rel="alternate" hreflang="es" href={canonicalURL} />
+    <link rel="alternate" hreflang="x-default" href={canonicalURL} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Schema JSON-LD -->
     {schema && (
       <script
         type="application/ld+json"
@@ -25,10 +58,22 @@ const {
       />
     )}
 
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preload LCP hero image (solo homepage) -->
+    {preloadHero && (
+      <link rel="preload" as="image" href="/img/welcome.webp" fetchpriority="high" />
+    )}
+
+    <!-- DNS prefetch for Three.js CDN -->
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+
     <!-- MATERIAL SYMBOLS ICON FONT -->
-    <link 
-      rel="stylesheet" 
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1,wght@100..700,GRAD@-50..200,opsz@20..48" 
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1,wght@100..700,GRAD@-50..200,opsz@20..48&display=swap"
     />
 
     <style>
