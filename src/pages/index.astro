@@ -10,7 +10,7 @@ import Skills from '@/components/Skills.astro';
 import TestifyWrapp from '@/components/testify/TestifyWrapp.astro';
 import Footer from '@/components/Footer.astro';
 import Experience from '@/components/Experience/Experience.astro';
-import Whatsapp from '@/components/Whatsapp.astro';
+import Whatsapp from '../components/Wa.astro';
 import CircleVideo from '@/components/CircleVideo/CircleVideo.astro';
 import medicalOrgSchema from '@/schemas/medicalOrganization';
 import personSchema from '@/schemas/person';
@@ -30,5 +30,5 @@ const combinedSchema = [medicalOrgSchema, personSchema];
   <Skills />
   <TestifyWrapp />
   <Footer contacto="no" />
-  <Whatsapp client:load />
+  <Whatsapp />
 </Layout>
