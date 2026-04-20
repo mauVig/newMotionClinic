@@ -1,5 +1,5 @@
 ---
-import ContactForm from "@/components/ContactForm.astro";
+import ContactForm from "@/components/Contact.tsx";
 import Footer from "@/components/Footer.astro";
 import NavBarv2 from '@/components/NavBarv2.astro';
 import Layout from "@/layouts/Layout.astro";
@@ -12,6 +12,6 @@ import MagneticCursor from "@/components/MagneticCursor.tsx";
 >
   <MagneticCursor client:only="react" />
   <NavBarv2 tab="contact" />
-  <ContactForm />
+  <ContactForm client:load />
   <Footer contacto="yes" />
 </Layout>
