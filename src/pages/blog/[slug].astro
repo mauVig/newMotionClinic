@@ -5,6 +5,7 @@ import Footer from '@/components/Footer.astro';
 import ContentBlog from '@/components/blog/ContentBlog.astro';
 import blogData from '@/data/blogData.json';
 import { createBlogPostingSchema, createBreadcrumbSchema } from '@/schemas/blogPosting';
+import ContactForm from '@/components/Contact';
 
 export function getStaticPaths() {
   const generateSlug = (title: string) =>
@@ -37,5 +38,6 @@ const blogSchema = [
 >
   <NavBarv2 tab="blog" />
   <ContentBlog blog={blog} />
+  <ContactForm client:load contact/>
   <Footer contacto="no" />
 </Layout>

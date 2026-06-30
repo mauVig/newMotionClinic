@@ -5,7 +5,7 @@ import { useStore } from "@/store/storeGlobal.ts";
 import emailjs from "@emailjs/browser";
 import gsap from "gsap";
 
-const ContactForm = () => {
+const ContactForm = ({contact}) => {
   const { myLang } = useStore();
 
   const [username, setUsername] = useState("");
@@ -191,8 +191,8 @@ const ContactForm = () => {
       
             <div className="grid md:grid-cols-2 gap-6 contact-anim">
               <div className="relative">
-          
-                <a
+                {!contact && (
+                  <a
                   href="/"
                   className="
                
@@ -221,6 +221,8 @@ const ContactForm = () => {
                   {myLang ? "Back" : "Volver"}
                 </a>
 
+                )}
+                
                 <h1 className="text-4xl font-bold mt-10">
                   {!myLang ? (
                     <>
